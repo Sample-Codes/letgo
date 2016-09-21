@@ -6,10 +6,10 @@
     <link href="letgo.css" rel="stylesheet" type="text/css" />
 </head>
 <body ng-controller="letgoCtrl">
-   <h1><span ng-bind="welcomeMessage"></span></h1>
+   <h1><span ng-bind="welcomeMessage"></span> <img src="letgo_logo.png" /></h1>
    <div id="login-box">
       <form ng-submit="login()">
-        <div id="login-box-field">
+        <div>
             <input ng-model="userName" id="userName" name="userName" class="form-login" title="Username" value="" placeholder="Username" size="30" maxlength="2048" />
         </div>
         <br /><br />
@@ -20,7 +20,7 @@
 <script type="text/javascript">
     var letgoApp = angular.module('letgoApp', []);
     letgoApp.controller('letgoCtrl', function($scope, $http, $window) {
-        $scope.welcomeMessage = "Welcome to letgo!"
+        $scope.welcomeMessage = ""
     });
 </script>
 </body>
