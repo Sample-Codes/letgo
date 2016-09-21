@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html ng-app="letgoApp">
+<head>
+    <meta charset="utf-8">
+    <title>letgo</title>
+    <link href="letgo.css" rel="stylesheet" type="text/css" />
+</head>
+<body ng-controller="letgoCtrl">
+   <h1><span ng-bind="welcomeMessage"></span></h1>
+   <div id="login-box">
+      <form ng-submit="login()">
+        <div id="login-box-field">
+            <input ng-model="userName" id="userName" name="userName" class="form-login" title="Username" value="" placeholder="Username" size="30" maxlength="2048" />
+        </div>
+        <br /><br />
+        <input class="button" type="submit" value="Submit" name="submit" id="submit" />
+      </form>
+   </div>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular.js"></script>
+<script type="text/javascript">
+    var letgoApp = angular.module('letgoApp', []);
+    letgoApp.controller('letgoCtrl', function($scope, $http, $window) {
+        $scope.welcomeMessage = "Welcome to letgo!"
+    });
+</script>
+</body>
+</html>
