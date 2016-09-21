@@ -203,6 +203,30 @@ app.post('/updateListing/', function (req, res) {
 
 });
 
+app.post('/deleteListing/', function (req, res) {
+
+    var user = {
+        email: req.body.email,
+        userId: req.body.userId
+    };
+
+    var listing = {
+        listId: req.body.listId,
+    };
+
+    var deletListing = db.deleteListingRecord(user.userId, listing.listId);
+
+    deleteListing.then((val) => {
+        res.send('Listing is deleted successfully!');
+    }).catch(
+        (err) => {
+            console.log(err);
+            res.send(err);
+        }
+    )
+
+})
+
 app.post('/deleteEntireWatchList/', function (req, res) {
 
     var user = {
