@@ -6,10 +6,8 @@ var fs = require('fs');
 var mime = require('mime');
 
 app.use(express.static('html'));
-app.use(express.static('js'));
 app.use(express.static('css'));
 app.use(express.static('img'));
-app.use(express.static('build'));
 app.use(cookieParser());
 
 var bodyParser = require('body-parser');
