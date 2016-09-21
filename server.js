@@ -14,9 +14,9 @@ var fs = require('fs-extra');
 app.use('/static', express.static(__dirname + '/public'));
 
 
-app.get('/login/:email', function (req, res) {
+app.get('/login/:UserName', function (req, res) {
     var login = {
-        email: req.params.email,
+        email: req.params.UserName,
     };
 
     var p = db.getUser(login.email);
@@ -273,17 +273,8 @@ app.post('/deleteWatchListListing/', function (req, res) {
 
 
 app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/letgo.html');
+    res.sendFile(__dirname + '/index.html');
 });
-
-app.get('/login', function (req, res) {
-    res.sendFile(__dirname + '/letgo.html');
-});
-
-app.get('/postIt', function (req, res) {
-    res.sendFile(__dirname + '/postIt.html');
-});
-
 
 
 app.listen(8080, function () {
