@@ -8,6 +8,9 @@ angular.
         when('/login', {
           template: '<login></login>'
         }).
+        when('/newUser', {
+          template: '<newUser></newUser>'
+        }).
         when('/forSale', {
           template: '<forSale></forSale>'
         }).

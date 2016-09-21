@@ -1,0 +1,23 @@
+    <div id="new-user">
+        <form ng-submit="newUser()" name="newUserForm">
+          Add New User
+        <div>
+            Email:<input ng-model="email" required type="email" 
+                   id="email" name="email" title="email" 
+                   value="" placeholder="email" size="30" maxlength="2048" />
+                   <span ng-show="loginForm.email.$error.required">Required!</span>
+                   <span ng-show="loginForm.email.$error.email" class="error">Not valid email!</span>
+             Name:<input ng-model="name"
+                   id="name" name="name" title="name" 
+                   value="" placeholder="name" size="30" maxlength="30"  required />
+                   <span ng-show="loginForm.name.$error.required">Required!</span>
+                   <br>
+                   <br>
+             Location:<input ng-model="name"
+                   id="name" name="name" title="name" 
+                   value="" placeholder="Username" size="30" maxlength="30"/>
+            </div>
+            <br /><br />
+            <input class="button" type="submit" value="Submit" name="submit" id="submit" />
+        </form>
+    </div>
