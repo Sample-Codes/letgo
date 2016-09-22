@@ -9,13 +9,13 @@ angular.
           template: '<login></login>'
         }).
         when('/newUser', {
-          template: '<newUser></newUser>'
+          template: '<new-user></new-user>'
         }).
         when('/forSale', {
-          template: '<forSale></forSale>'
+          template: '<for-sale></for-sale>'
         }).
         when('/forSale/:listId', {
-          template: '<itemDetail></itemDetail>'
+          template: '<item-detail></item-detail>'
         }).
         otherwise('/login');
     }
