@@ -184,18 +184,14 @@ function getUser(email)
     }).then(
         (row) => {
             // Process them.
-            var outputData = {};
-            var count = 0;
-            for (thisRow of row) {
-                var aUser = createUserFrom(thisRow);
-                outputData[count] = aUser;
-                console.log('User:  ' + aUser.userid);
-            }   count++;
-            return outputData;
+            if (row.length == 0) return null;
+            var aUser = createUserFrom(row[0]);
+            console.log('User:  ' + aUser.userid);
+            return aUser;
         },
         (err) => {
             console.log('Error getting user profile: ' + pk);
-            return {};
+            return null;
         }
         );
     return p;
