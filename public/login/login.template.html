@@ -4,9 +4,9 @@
 
   <img src="../static/img/letgo_logo.png" />
   <div id="login-box">
-      <form ng-submit="login()" name="loginForm">
+      <form ng-submit="$ctrl.redirect()"  name="loginForm">
       <div>
-          <input ng-model="userName" required type="email" 
+          <input ng-model="$ctrl.userName" required type="email" 
                 id="userName" name="userName" title="Username" 
                 value="" placeholder="Username" size="30" maxlength="2048" />
                 <span ng-show="loginForm.userName.$error.required">Required!</span>
