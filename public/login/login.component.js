@@ -10,12 +10,16 @@ angular.
     //         '<p>{{phone.snippet}}</p>' +
     //       '</li>' +
     //     '</ul>',
-    controller: function loginController($http) {
+    controller: function loginController($http, $location) {
       var self = this;
-            self.submit = function () {
-                console.log('User clicked submit with ', self.userName);
-                self.welcomeMessage = "Welcome, " + self.userName;
-            
-      };
+            self.redirect = function() {
+              console.log('User clicked submit with ', self.userName);
+              $location.url('/forSale')
+            }
+      //       self.submit = function () {
+      //           console.log('User clicked submit with ', self.userName);
+      //           self.welcomeMessage = "Welcome, " + self.userName;        
+      // };
     }
+
 });
