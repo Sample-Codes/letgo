@@ -45,6 +45,8 @@ app.get('/getUser/:userName', function (req, res) {
 
 app.post('/insertUser/', function (req, res) {
 
+    console.log('insert user body:' + req.body)
+
     var user = {
         email: req.body.email,
         name: req.body.name,
@@ -143,7 +145,7 @@ app.get('/getListings/', function (req, res) {
 
     listings.then(
         (val) => {
-            console.dir('first list: ' + val[5].listid);
+            console.log('first list: ' + val[0].listid);
             res.send(val);
         }
     ).catch(
@@ -169,11 +171,10 @@ app.get('/getMyListings/:userId', function (req, res) {
         postedBy: req.body.postedBy
     };
 
-    var listing = db.getMySellList(user.userId);
+    var listing = db.getSellList(user.userId);
 
     listing.then(
         (val) => {
-            console.dir(val);
             res.send(val);
         }
     ).catch(
@@ -186,16 +187,20 @@ app.get('/getMyListings/:userId', function (req, res) {
 
 app.get('/getWatchList/:userId', function (req, res) {
 
+console.log('getwatchlist: ' + req.params.userId); 
+
     var user = {
         email: req.body.email,
-        userId: req.param.userId
+        userId: req.params.userId
     };
+
+    console.log('getwatchlist2: ' + user.userId); 
 
     var watchList = db.getWatchList(user.userId);
 
     watchList.then(
         (val) => {
-            console.dir(val);
+            console.log('watch list first list: ' + val[0].listid);
             res.send(val);
         }
     ).catch(
@@ -362,12 +367,8 @@ app.post('/deleteUser/', function (req, res) {
 
 app.post('/deleteListing/', function (req, res) {
 
-    var user = {
-        email: req.body.email,
-        userId: req.body.userId
-    };
-
     var listing = {
+        userId: req.body.userId,
         listId: req.body.listId,
     };
 
@@ -392,9 +393,9 @@ app.post('/deleteEntireWatchList/', function (req, res) {
         userId: req.body.userId
     };
 
-    var clearWatchList = db.deleteEntireWatchList(user.userId);
+    var deleteEntireWatchList = db.deleteEntireWatchList(user.userId);
 
-    clearWatchList.then((val) => {
+    deleteEntireWatchList.then((val) => {
         res.send('Entire Watch List is deleted successfully!');
     }).catch(
         (err) => {
@@ -420,9 +421,9 @@ app.post('/deleteWatchListListing/', function (req, res) {
         watchId: req.body.watchId,
     };
 
-    var clearWatchListItem = db.removeFromWatchList(user.userId, watchlisting.watchId);
+    var deleteWatchListListing = db.deleteWatchListListing(user.userId, watchlisting.watchId);
 
-    clearWatchListItem.then((val) => {
+    deleteWatchListListing.then((val) => {
         res.send('Watch Listing is deleted successfully!');
     }).catch(
         (err) => {
