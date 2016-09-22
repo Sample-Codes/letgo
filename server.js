@@ -11,15 +11,17 @@ var multer = require('multer'),
 var fs = require('fs-extra');
 
 
+
 // app.use('/static', express.static(__dirname + '/public'));
 app.use(express.static(path.join(__dirname, 'public')));
+
 
 app.get('/login/:UserName', function (req, res) {
     var login = {
         email: req.params.UserName,
     };
 
-    var p = db.getUser(login.email);
+    var p = db.loginUser(login.email);
     p.then(
         (val) => {
 
@@ -46,7 +48,7 @@ app.post('/insertUser/', function (req, res) {
         location: req.body.location
     };
 
-    var p = db.insertUser(user.name, user.email, user.location);
+    var p = db.registerUser(user.name, user.email, user.location);
     p.then(
         (val) => {
             res.send(val.UserId);
@@ -75,19 +77,19 @@ app.post('/insertListing/', multer({dest: './public/photos/'}).single('photo'), 
         category: req.body.category,
         location: req.body.listinglocation,
         actualFileName: req.file.originalname,
-        fileName: req.file.filename,
+        photo: req.file.filename,
         filePath: req.file.path
     };
 
 
-    var insertListing = db.insertListing(user.userId, listing.actualFileName, listing.systemFileName);
+    var insertListing = db.postListing(user.userId, listing.description, listing.price, listing.category, listing.location, listing.photo);
 
 
     insertListing.then((val) => {
-        fs.rename(file.filePath + '/' + file.fileName, file.filePath + '/' + val.LastId, function (err) {
-        if (err) return console.error(err)
+        // fs.rename(file.filePath + '/' + file.fileName, file.filePath + '/' + val.LastId, function (err) {
+        // if (err) return console.error(err)
 
-        })
+        // })
         res.send('Listing for ' + user.userId + ' is added successfully!');
     }).catch(
         (err) => {
@@ -109,7 +111,7 @@ app.post('/insertWatchList/', function (req, res) {
         listId: req.body.listId,
     };
 
-    var insertWatchList = db.insertWatchList(user.userId, listing.listId);
+    var insertWatchList = db.addToWatchList(listing.listId, user.userId);
 
     insertWatchList.then((val) => {
         res.send('WatchList Id ' + val.LastId + ' for Listing' + listing.listId + ' is added successfully!');
@@ -152,6 +154,36 @@ app.get('/getListings/', function (req, res) {
     );
 })
 
+app.get('/getMyListings/:userId', function (req, res) {
+
+    var user = {
+        email: req.body.email,
+        userId: req.params.userId
+    };
+
+    var listing = {
+        description: req.body.description,
+        price: req.body.price,
+        category: req.body.category,
+        status: req.body.status,
+        postedBy: req.body.postedBy
+    };
+
+    var listing = db.getMySellList(user.userId);
+
+    listing.then(
+        (val) => {
+            console.dir(val);
+            res.send(val);
+        }
+    ).catch(
+        (err) => {
+            res.status(500);
+            res.send('Issue getting My Listings');
+        }
+    );
+})
+
 app.get('/getWatchList/:userId', function (req, res) {
 
     var user = {
@@ -159,7 +191,7 @@ app.get('/getWatchList/:userId', function (req, res) {
         userId: req.param.userId
     };
 
-    var watchList = db.getWatchList(user.userId);
+    var watchList = db.getMyWatchList(user.userId);
 
     watchList.then(
         (val) => {
@@ -187,7 +219,8 @@ app.post('/updateListing/', function (req, res) {
         price: req.body.price,
         category: req.body.category,
         location: req.body.listinglocation,
-        status: req.body.status
+        status: req.body.status,
+        photo: req.file.filename
     };
 
     var updateListing = db.updateListing(user.userId, listing.listId, listing.description, listing.price, listing.category, listing.location, listing.status);
@@ -203,6 +236,104 @@ app.post('/updateListing/', function (req, res) {
 
 });
 
+app.post('/updateListingDescription/', function (req, res) {
+
+    var user = {
+        email: req.body.email,
+        userId: req.body.userId
+    };
+
+    var listing = {
+        listId: req.body.listId,
+        description: req.body.description
+    };
+
+    var updateListing = db.updateListing(listing.listId, listing.description);
+    //var updateListing = db.updateListing(user.userId, listing.listId, listing.description);
+
+    updateListing.then((val) => {
+        res.send('Description for Listing Id ' + listing.listId + ' is updated successfully!');
+    }).catch(
+        (err) => {
+            console.log(err);
+            res.send(err);
+        }
+    )
+
+});
+
+app.post('/updateListingLocation/', function (req, res) {
+
+    var user = {
+        email: req.body.email,
+        userId: req.body.userId
+    };
+
+    var listing = {
+        listId: req.body.listId,
+        location: req.body.listinglocation
+    };
+
+    var updateListing = db.updateListing(listing.listId, listing.location);
+    //var updateListing = db.updateListing(user.userId, listing.listId, listing.description);
+
+    updateListing.then((val) => {
+        res.send('Location for Listing Id ' + listing.listId + ' is updated successfully!');
+    }).catch(
+        (err) => {
+            console.log(err);
+            res.send(err);
+        }
+    )
+
+});
+
+app.post('/updateListingPhoto/', function (req, res) {
+
+    var user = {
+        email: req.body.email,
+        userId: req.body.userId
+    };
+
+    var listing = {
+        listId: req.body.listId,
+        photo: req.file.filename
+    };
+
+    var updateListing = db.updateListing(listing.listId, listing.photo);
+    //var updateListing = db.updateListing(user.userId, listing.listId, listing.description);
+
+    updateListing.then((val) => {
+        res.send('Photo for Listing Id ' + listing.listId + ' is updated successfully!');
+    }).catch(
+        (err) => {
+            console.log(err);
+            res.send(err);
+        }
+    )
+
+});
+
+app.post('/deleteUser/', function (req, res) {
+
+    var user = {
+        email: req.body.userName,
+        userId: req.body.userId
+    };
+
+    var deletListing = db.deleteListingRecord(user.email);
+
+    deleteListing.then((val) => {
+        res.send('User is deleted successfully!');
+    }).catch(
+        (err) => {
+            console.log(err);
+            res.send(err);
+        }
+    )
+
+})
+
 app.post('/deleteListing/', function (req, res) {
 
     var user = {
@@ -214,7 +345,8 @@ app.post('/deleteListing/', function (req, res) {
         listId: req.body.listId,
     };
 
-    var deletListing = db.deleteListingRecord(user.userId, listing.listId);
+    var deletListing = db.removeListing(listing.listId);
+    //var deletListing = db.removeListing(user.userId, listing.listId);
 
     deleteListing.then((val) => {
         res.send('Listing is deleted successfully!');
@@ -258,10 +390,14 @@ app.post('/deleteWatchListListing/', function (req, res) {
         listId: req.body.listId,
     };
 
-    var clearWatchListItem = db.deleteWatchListRecord(user.userId, listing.listId);
+    var watchListing = {
+        watchId: req.body.watchId,
+    };
+
+    var clearWatchListItem = db.removeFromWatchList( watchlisting.watchId);
 
     clearWatchListItem.then((val) => {
-        res.send('Entire Watch List is deleted successfully!');
+        res.send('Watch Listing is deleted successfully!');
     }).catch(
         (err) => {
             console.log(err);
