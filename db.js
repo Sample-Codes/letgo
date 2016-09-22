@@ -47,7 +47,8 @@ var watchedListing = {
     watchid: '',
     userid: '',
     listid: '',
-    insertDt: ''
+    insertDt: '',
+    listing: ''
 };
 function createUserFrom(thisRow)
 {
@@ -79,6 +80,8 @@ function createWatchedListingFrom(thisRow)
     aWatchedListing.userid = thisRow.USERID;
     aWatchedListing.listid = thisRow.LISTID;
     aWatchedListing.insertDt = thisRow.INSERT_TS;
+    aWatchedListing.listing = createListingFrom(thisRow);
+    return aWatchedListing;
 }
 
 function initDB()
@@ -152,7 +155,7 @@ function deleteUser(userid)
     {
         db.serialize(function () 
         {
-                db.run("DELETE FROM users WHERE USERID=" + uid, 
+                db.run("DELETE FROM users WHERE USERID=" + userid, 
                 function (err) {
                     if (err) {
                         reject(err);
@@ -464,7 +467,7 @@ function buildWhereClause(aListing)
 }
 function clauseFor(value, column, qtFlag)
 {
-            console.log(value);
+    console.log(value);
 
     if ((value === undefined) || (value === null) || (value.length == 0))
         return null;
@@ -518,8 +521,6 @@ function getWatchList(userid)  // returns a list of listing
     var p = new Promise(function (resolve, reject) {
         db.serialize(() => {
             var command = 'SELECT * FROM watchlist, listing WHERE watchlist.LISTID = listing.LISTID and watchlist.USERID = ' + userid + ' ORDER BY watchlist.INSERT_TS';
-
-            console.log('About to run:  ' + command);
             db.all(command , (err, rows) => {
                 if (err) {
                     reject(err);
@@ -531,12 +532,13 @@ function getWatchList(userid)  // returns a list of listing
         (rows) => {
             // Process them.
             var outputData = {};
-
+            var count = 0;
+            console.log("Returned " + rows.length + " rows");
             for (thisRow of rows) {
-                var aListing = createListingFrom(thisRow);
+                var aListing = createWatchedListingFrom(thisRow);
 
-                outputData[aListing.listid] = aListing;
-                console.log('Listing#:  ' + aListing.listid);
+                outputData[count] = aListing;
+                count++;
             }
             return outputData;
         }
