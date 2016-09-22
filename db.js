@@ -24,7 +24,7 @@ exports.getWatchList=getWatchList; // userid
 exports.insertWatchList=insertWatchList; //userid, listid
 exports.deleteWatchListListing=deleteWatchListListing; //userid, watchid
 exports.deleteEntireWatchList=deleteEntireWatchList; //
-
+exports.buildWhereClause=buildWhereClause;
 // Define objects
 var user = {
     userid: '',
@@ -47,7 +47,8 @@ var watchedListing = {
     watchid: '',
     userid: '',
     listid: '',
-    insertDt: ''
+    insertDt: '',
+    listing: ''
 };
 function createUserFrom(thisRow)
 {
@@ -79,6 +80,8 @@ function createWatchedListingFrom(thisRow)
     aWatchedListing.userid = thisRow.USERID;
     aWatchedListing.listid = thisRow.LISTID;
     aWatchedListing.insertDt = thisRow.INSERT_TS;
+    aWatchedListing.listing = createListingFrom(thisRow);
+    return aWatchedListing;
 }
 
 function initDB()
@@ -152,7 +155,7 @@ function deleteUser(userid)
     {
         db.serialize(function () 
         {
-                db.run("DELETE FROM users WHERE USERID=" + uid, 
+                db.run("DELETE FROM users WHERE USERID=" + userid, 
                 function (err) {
                     if (err) {
                         reject(err);
@@ -181,18 +184,14 @@ function getUser(email)
     }).then(
         (row) => {
             // Process them.
-            var outputData = {};
-            var count = 0;
-            for (thisRow of row) {
-                var aUser = createUserFrom(thisRow);
-                outputData[count] = aUser;
-                console.log('User:  ' + aUser.userid);
-            }   count++;
-            return outputData;
+            if (row.length == 0) return null;
+            var aUser = createUserFrom(row[0]);
+            console.log('User:  ' + aUser.userid);
+            return aUser;
         },
         (err) => {
             console.log('Error getting user profile: ' + pk);
-            return {};
+            return null;
         }
         );
     return p;
@@ -397,6 +396,9 @@ function getListings(inListing)
         db.serialize(function () {
 
             var command = "SELECT * FROM listing";
+            if ((inListing != undefined) && (inListing != null))
+                command += buildWhereClause(inListing);
+            console.log(command);
             db.all(command, function (err, row) {
                 if (err) {
                     reject(err);
@@ -419,11 +421,62 @@ function getListings(inListing)
         },
         (err) => {
             console.log('Error getting all listings');
+            console.log(err);
             return {};
         }
         );
     return p;
   
+}
+function buildWhereClause(aListing)
+{
+    var WHERE = " WHERE ";
+    var clause = "";
+    var temp;
+    temp = clauseFor(aListing.listid, "LISTID", false);
+        if (temp != null) return WHERE + temp;
+    temp = clauseFor(aListing.userid, "USERID", false);
+        if (temp != null) return WHERE + temp;
+//    temp = clauseFor(aListing.description,"DESCRIPTION", true);  
+//    temp = clauseFor(aListing.price, "PRICE", false);  This should be a range 
+    var clauses = {};
+
+    clauses[0] = clauseFor(aListing.category, "CATEGORY", true);
+    clauses[1] = clauseFor(aListing.status, "STATUS", true);
+    clauses[2] = clauseFor(aListing.location, "LOCATION", true);
+//    var clause1 = clauseFor(aListing.insertDt, "INSERT_TS"
+    var cnt = 0;
+    var i = 0;
+    for (i in clauses )
+    {
+        console.log("I = " + i + "cnt = " + cnt);
+        if (clauses[i] != null)
+        {
+            if (cnt > 0)
+                clause = clause + " AND ";
+            clause = clause + clauses[i];
+            cnt++;
+        }
+    }
+    if (cnt == 0) return "";
+    return WHERE + clause;
+}
+function clauseFor(value, column, qtFlag)
+{
+    console.log(value);
+
+    if ((value === undefined) || (value === null) || (value.length == 0))
+        return null;
+    var clause = column + "=";
+    if (qtFlag)
+    {
+        return clause + asMyQuote(value);
+    }
+    else
+    {
+        console.log(value);
+        return clause + value;
+    }
 }
 function getSellList(userid)  // returns a list of listing
 {
@@ -464,8 +517,6 @@ function getWatchList(userid)  // returns a list of listing
     var p = new Promise(function (resolve, reject) {
         db.serialize(() => {
             var command = 'SELECT * FROM watchlist, listing WHERE watchlist.LISTID = listing.LISTID and watchlist.USERID = ' + userid + ' ORDER BY watchlist.INSERT_TS';
-
-            console.log('About to run:  ' + command);
             db.all(command , (err, rows) => {
                 if (err) {
                     reject(err);
@@ -477,12 +528,13 @@ function getWatchList(userid)  // returns a list of listing
         (rows) => {
             // Process them.
             var outputData = {};
-
+            var count = 0;
+            console.log("Returned " + rows.length + " rows");
             for (thisRow of rows) {
-                var aListing = createListingFrom(thisRow);
+                var aListing = createWatchedListingFrom(thisRow);
 
-                outputData[aListing.listid] = aListing;
-                console.log('Listing#:  ' + aListing.listid);
+                outputData[count] = aListing;
+                count++;
             }
             return outputData;
         }

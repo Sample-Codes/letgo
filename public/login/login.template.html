@@ -1,22 +1,21 @@
-
 <div>
-  <!--Body content-->
-
   <img src="../static/img/letgo_logo.png" />
-  <div id="login-box">
+  <div id="login-box" class="divBox">
       <form ng-submit="$ctrl.redirect()"  name="loginForm">
       <div>
           <input ng-model="$ctrl.userName" required type="email" 
-                id="userName" name="userName" title="Username" 
+                id="userName" class="textBox" name="userName" title="Username" 
                 value="" placeholder="Username" size="30" maxlength="2048" />
-                <span ng-show="loginForm.userName.$error.required">Required!</span>
-                <span ng-show="loginForm.userName.$error.email" class="error">Not valid email!</span>
+                <div class="errorBox">
+                    <span ng-show="loginForm.userName.$error.required">Required!</span>
+                    <span ng-show="loginForm.userName.$error.email" class="error">Not valid email!</span>
+                </div>
       </div>
-          <br /><br />
-          <input class="button" type="submit" value="Submit" name="submit" id="submit" />
+            <br /><br />
+            <a class="link" ng-click="$ctrl.register()">Register</a>
+            <input class="button" type="submit" value="Submit" name="submit" id="submit" />
       </form>
   </div>
   <h1><span ng-bind="welcomeMessage"></span></h1>
-
 </div>
 
