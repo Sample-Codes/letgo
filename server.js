@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({
 }));
 //app.use(app.router);
 
-app.get('/login/:userName', function (req, res) {
+app.get('/getUser/:userName', function (req, res) {
     console.log('Body: ' + req.body.userName)
     console.log('Params: ' + req.params.userName)
 
