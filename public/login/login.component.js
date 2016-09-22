@@ -2,7 +2,7 @@
 angular.
   module('login').
   component('login', {
-      templateUrl: 'login/login.template.html',
+      templateUrl: '/static/login/login.template.html',
     // template:
     //     '<ul>' +
     //       '<li ng-repeat="phone in $ctrl.phones">' +
@@ -15,7 +15,7 @@ angular.
             self.submit = function () {
                 console.log('User clicked submit with ', self.userName);
                 self.welcomeMessage = "Welcome, " + self.userName;
-            }
-      });
+            
+      };
     }
 });

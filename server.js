@@ -11,8 +11,8 @@ var multer = require('multer'),
 var fs = require('fs-extra');
 
 
-app.use('/static', express.static(__dirname + '/public'));
-
+// app.use('/static', express.static(__dirname + '/public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/login/:UserName', function (req, res) {
     var login = {

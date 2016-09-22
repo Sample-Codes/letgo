@@ -2,7 +2,7 @@
 angular.
   module('forSale').
   component('forSale', {
-      templateUrl: 'forSale/forSale.template.html',
+      templateUrl: '/static/forSale/forSale.template.html',
     // template:
     //     '<ul>' +
     //       '<li ng-repeat="phone in $ctrl.phones">' +
@@ -14,8 +14,8 @@ angular.
       var self = this;
       self.orderProp = 'insert_ts';
 
-      $http.get('phones/phones.json').then(function(response) {
-        self.phones = response.data;
+        $http.get('phones/phones.json').then(function(response) {
+          self.phones = response.data;
 
       });
     }

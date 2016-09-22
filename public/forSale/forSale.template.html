@@ -1,0 +1,26 @@
+<div id="wrapper">
+  <div id="sidebar">
+     <!--Sidebar content-->
+    <div id="profile">
+      User Name: {{name}}
+      Location: {{location}}
+    </div>
+    <div id="searchOptions">
+           Search: <input ng-model="$ctrl.query" />
+    </div>
+  </div>
+    <div id= "content">
+      <!--Body content-->
+
+      <div id="feed" ng-repeat="item in $ctrl.items | filter:$ctrl.query">
+        <a href="#/phones/{{item.id}}" class="thumb">
+                <img ng-src="{{item.imageUrl}}" alt="{{item.name}}" />
+            </a>
+         <span> Item: {{item.name}}</span>
+          <p>Description: {{item.snippet}}</p>
+        
+      </div>
+
+    </div>
+  </div>
+</div>
