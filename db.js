@@ -5,6 +5,7 @@ var sqlite3 = require('sqlite3').verbose(),
 var db = new TransactionDatabase(new sqlite3.Database('letgo.db'));
 
 // exports 
+exports.dropTables=dropTables;
 exports.clearTables=clearTables;
 exports.insertUser=insertUser;  // name, email, location
 exports.deleteUser=deleteUser;  // userid
@@ -76,8 +77,9 @@ function createListingFrom(thisRow)
 function createWatchedListingFrom(thisRow)
 {
     var aWatchedListing = Object.create(watchedListing);
+console.log(thisRow);
     aWatchedListing.watchid = thisRow.WATCHID;
-    aWatchedListing.userid = thisRow.USERID;
+    aWatchedListing.userid = thisRow.WUSERID;
     aWatchedListing.listid = thisRow.LISTID;
     aWatchedListing.insertDt = thisRow.INSERT_TS;
     aWatchedListing.listing = createListingFrom(thisRow);
@@ -121,6 +123,17 @@ function initDB()
     });
 
 }
+
+function dropTables(tables)
+{
+    for (idx in tables)
+
+    db.run("DROP " + tables[idx], function (err) { if (err) { } }); //x
+//    db.run("DROP watchList", function (err) { if (err) { } }); //x
+//    db.run("DROP listing", function (err) { if (err) { } }); //x
+ //   db.run("DROP users", function (err) { if (err) { } });
+
+}
 function clearTables()
 {
     db.run("DELETE from watchlist", function (err) { if (err) { } }); //x
@@ -149,6 +162,7 @@ function insertUser(name, email, location)
     });
     return p;
 }
+
 function deleteUser(userid)
 {
     var p = new Promise(function (resolve, reject) 
@@ -190,7 +204,7 @@ function getUser(email)
             return aUser;
         },
         (err) => {
-            console.log('Error getting user profile: ' + pk);
+            console.log('Error getting user profile: ' + email);
             return null;
         }
         );
@@ -512,11 +526,19 @@ function getSellList(userid)  // returns a list of listing
         );
     return p;
 }
+/*
+watchlist.WATCHID,watchlist.LISTID,watchlist.USERID,watchlist.INSERT_TS,        
+listing.LISTID,listing.USERID,listing.DESCRIPTION,listing.PRICE,listing.CATEGORY,listing.STATUS,listing.LOCATION,listing.IMGFILE,listing.INSERT_TS
+
+        */
 function getWatchList(userid)  // returns a list of listing
 {
     var p = new Promise(function (resolve, reject) {
         db.serialize(() => {
-            var command = 'SELECT * FROM watchlist, listing WHERE watchlist.LISTID = listing.LISTID and watchlist.USERID = ' + userid + ' ORDER BY watchlist.INSERT_TS';
+            var command = 'SELECT watchlist.WATCHID,watchlist.LISTID,watchlist.USERID AS WUSERID,watchlist.INSERT_TS, '    
+                    + 'listing.LISTID,listing.USERID,listing.DESCRIPTION,listing.PRICE,listing.CATEGORY,'
+                    + 'listing.STATUS,listing.LOCATION,listing.IMGFILE,listing.INSERT_TS' 
+            + ' FROM watchlist, listing WHERE watchlist.LISTID = listing.LISTID and watchlist.USERID = ' + userid + ' ORDER BY watchlist.INSERT_TS';
             db.all(command , (err, rows) => {
                 if (err) {
                     reject(err);
