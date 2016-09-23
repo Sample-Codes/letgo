@@ -8,9 +8,9 @@
                         value="" placeholder="email (as your Username)" size="40" maxlength="2048" />
                         <span ng-show="loginForm.email.$error.required">Required!</span>
                         <span ng-show="loginForm.email.$error.email" class="error">Not valid email!</span>
-                <input ng-model="$ctrl.name"
+                <input ng-model="$ctrl.name"  required type="text"
                         id="name"  class="textBox" name="name" title="name" 
-                        value="" placeholder="name" size="30" maxlength="40"  required />
+                        value="" placeholder="name" size="30" maxlength="40"  />
                         <span ng-show="loginForm.name.$error.required">Required!</span>
                         <br>
                         <br>

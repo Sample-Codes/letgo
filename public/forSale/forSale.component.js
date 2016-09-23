@@ -14,9 +14,9 @@ angular.
       var self = this;
       self.orderProp = 'insert_ts';
 
-        $http.get('phones/phones.json').then(function(response) {
-          self.phones = response.data;
+        // $http.get('phones/phones.json').then(function(response) {
+        //   self.phones = response.data;
 
-      });
+        // });
     }
 });
