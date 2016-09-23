@@ -1,0 +1,44 @@
+<div>
+    <h1>New Listing</h1>
+    <div id="new-listing" class="divBox">
+        <form ng-submit="$ctrl.redirect()" name="newListingForm">
+            <div>
+                User Id:<input ng-model="$ctrl.userId" required type="number" 
+                        id="userId"  class="textBox" name="userId" title="User Id">
+                        <span ng-show="newListingForm.userId.$error.required">Required!</span>
+                        <span ng-show="newListingForm.userId.$error.number" class="error">Not valid number!</span>
+                Description:<input ng-model="$ctrl.description"  required type="text"
+                        id="name"  class="textBox" name="description" title="description" 
+                        value="" placeholder="description" size="30" maxlength="40"  />
+                        <span ng-show="newListingForm.description.$error.required">Description is Required!</span>
+                        <br>
+                        <br>
+                Category:<input ng-model="$ctrl.category"  required type="text"
+                        id="category"  class="textBox" name="category" title="category" 
+                        value="" placeholder="category" size="30" maxlength="40"  />
+                        <span ng-show="newListingForm.category.$error.required">Category is Required!</span>
+                        <br>
+                        <br>
+                Price:<input ng-model="$ctrl.price"  required type="number"
+                        id="price"  class="textBox" name="location" title="price" 
+                        value="" placeholder="price" size="30" maxlength="40"  />
+                        <span ng-show="newListingForm.price.$error.required">Price is Required!</span>
+                        <br>
+                        <br> 
+                Photo:<input ng-model="$ctrl.photo"  required type="text"
+                        id="photo"  class="textBox" name="photo" title="photo" 
+                        value="" placeholder="photo" size="30" maxlength="40"  />
+                        <span ng-show="newListingForm.photo.$error.required">Photo is Required!</span>
+                        <br>
+                        <br>                   
+                Selling Location:<input ng-model="$ctrl.location"
+                        id="location" class="textBox" name="location" title="location" 
+                        value="" placeholder="Location" size="30" maxlength="40"/>
+            </div>
+            <br /><br /><br /><br /><br /><br />
+            <div class="spacer2"></div> 
+            <a class="link" ng-click="$ctrl.cancel()">Cancel</a>
+            <input class="button" type="submit" value="Submit" name="submit" id="submit" />
+        </form>
+    </div>
+</div>

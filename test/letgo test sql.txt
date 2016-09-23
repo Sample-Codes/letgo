@@ -1,0 +1,17 @@
+INSERT INTO users (NAME, EMAIL, LOCATION) VALUES ("testsqlname", "test@letgo.com", "test location")
+INSERT INTO users (NAME, EMAIL, LOCATION) VALUES ("name", "name@letgo.com", "test location2");
+INSERT INTO users (NAME, EMAIL, LOCATION) VALUES ("Brian", "Brian@letgo.com", "SSA");
+INSERT INTO users (NAME, EMAIL, LOCATION) VALUES ("John Fine", "John.Fine@letgo.com", "SSA");
+INSERT INTO users (NAME, EMAIL, LOCATION) VALUES ("John Melka", "John.Melka@letgo.com", "SSA");
+INSERT INTO users (NAME, EMAIL, LOCATION) VALUES ("Aaron", "Aaron@letgo.com", "SSA");
+
+INSERT INTO listing (USERID, DESCRIPTION, PRICE, CATEGORY, LOCATION, IMGFILE, STATUS) VALUES (1, "soccer ball", 25.00, "soccer", "Baltimore", "456", "POSTED")
+INSERT INTO listing (USERID, DESCRIPTION, PRICE, CATEGORY, LOCATION, IMGFILE, STATUS) VALUES (2, "soccer ball", 27.00, "soccer", "Baltimore", "789", "POSTED")
+INSERT INTO listing (USERID, DESCRIPTION, PRICE, CATEGORY, LOCATION, IMGFILE, STATUS) VALUES (2, "soccer ball", 27.00, "football", "London", "654", "POSTED")
+INSERT INTO listing (USERID, DESCRIPTION, PRICE, CATEGORY, LOCATION, IMGFILE, STATUS) VALUES (2, "football ball", 15.00, "football", "Baltimore", "777", "POSTED")
+
+INSERT INTO watchlist (LISTID, USERID) VALUES (1, 1)
+
+   		{
+
+

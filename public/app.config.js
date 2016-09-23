@@ -17,6 +17,9 @@ angular.
         when('/forSale/:listId', {
           template: '<item-detail></item-detail>'
         }).
+        when('/newListing', {
+          template: '<new-listing></new-listing>'
+        }).
         otherwise('/login');
     }
   ]);
