@@ -44,7 +44,6 @@ var listing = {
     insertDt: ''
 };
 var watchedListing = {
-    watchid: '',
     userid: '',
     listid: '',
     insertDt: '',
@@ -77,7 +76,6 @@ function createWatchedListingFrom(thisRow)
 {
     var aWatchedListing = Object.create(watchedListing);
 
-    aWatchedListing.watchid = thisRow.WATCHID;
     aWatchedListing.userid = thisRow.WUSERID;
     aWatchedListing.listid = thisRow.LISTID;
     aWatchedListing.insertDt = thisRow.INSERT_TS;
@@ -112,10 +110,10 @@ function initDB()
     db.serialize(function () {
         console.log("create watchlist table");
         db.run("CREATE TABLE IF NOT EXISTS watchlist \
-        (WATCHID INTEGER PRIMARY KEY NOT NULL, \
-        LISTID INT NOT NULL, \
+        (LISTID INT NOT NULL, \
         USERID INT NOT NULL, \
         INSERT_TS DATETIME DEFAULT CURRENT_TIMESTAMP , \
+        CONSTRAINT WATCHID PRIMARY KEY (LISTID,USERID), \
         FOREIGN KEY (LISTID) REFERENCES listing(LISTID), \
         FOREIGN KEY (USERID) REFERENCES users(USERID))",
          function (err) { if (err) { console.log(err); } });
@@ -169,9 +167,9 @@ function deleteUser(userid)
              transaction.commit(function(err) {
                 if (err)
                 {
-                    return console.log("Sad panda :-( commit() failed.", err);
+                    return console.log("Delete user failed.", err);
                 }
-                console.log("Happy panda :-) commit() was successful.");
+                console.log("Delete user was successful.");
             });
         });
         
@@ -179,53 +177,8 @@ function deleteUser(userid)
     });
     return p;
 }
-function cascadeDeleteUser(userid)
-{
-    var p = new Promise(function (resolve, reject) 
-    {
-        db.serialize(function () 
-        {
-                db.run("DELETE FROM users WHERE USERID=" + userid, 
-                function (err) {
-                    if (err) {
-                        reject(err);
-                    }
-                    resolve();
-                });
-        });
-    });
-    return p;
-}
-function cascadeDeleteListings(userid)
-{
-    var p = new Promise(function (resolve, reject) {
-       db.serialize(function () {
-            db.run("DELETE FROM listing WHERE USERID=" + useri, function (err) {
-                if (err) {
-                    reject(err);
-                }
-                resolve();
-            });
-         });
-    });
-    return p;
-}
-function cascadeDeleteWatchList(userid)
-{
-    var p = new Promise(function (resolve, reject) {
-       db.serialize(function () {
 
-            db.run("DELETE FROM watchlist WHERE USERID=" + userid,
-                function (err){
-                    if (err) {
-                       reject(err);
-                     }
-                });
-            resolve();
-        });
-    });
-    return p;   
-}
+
 
 function getUser(email)
 {
@@ -379,15 +332,23 @@ function updateListingStatus(userid,listid,status)
 function deleteListing(userid,listid)
 {
     var p = new Promise(function (resolve, reject) {
-       db.serialize(function () {
-            var command = "DELETE FROM listing WHERE LISTID=" + listid + " AND USERID=" + userid;
-            db.run(command, function (err) {
-                if (err) {
-                    reject(err);
+        db.beginTransaction(function(err, transaction) 
+        {
+             transaction.run("DELETE FROM watchlist WHERE USERID=" + userid+ " AND LISTID=" + listid, 
+                function (err) { if (err) {transaction.rollback(); reject(err); } resolve(); });
+             transaction.run("DELETE FROM listing WHERE USERID=" + userid+ " AND LISTID=" + listid, 
+                function (err) { if (err) { transaction.rollback();  reject(err); } resolve(); });
+
+             transaction.commit(function(err) {
+                if (err)
+                {
+                    return console.log("Delete failed.", err);
                 }
-                resolve();
+                console.log("Delete Listing was successful.");
             });
-         });
+        });
+        
+        // or transaction.rollback() 
     });
     return p;
 }
@@ -550,7 +511,7 @@ function getWatchList(userid)  // returns a list of listing
 {
     var p = new Promise(function (resolve, reject) {
         db.serialize(() => {
-            var command = 'SELECT watchlist.WATCHID,watchlist.LISTID,watchlist.USERID AS WUSERID,watchlist.INSERT_TS, '    
+            var command = 'SELECT watchlist.LISTID,watchlist.USERID AS WUSERID,watchlist.INSERT_TS, '    
                     + 'listing.LISTID,listing.USERID,listing.DESCRIPTION,listing.PRICE,listing.CATEGORY,'
                     + 'listing.STATUS,listing.LOCATION,listing.IMGFILE,listing.INSERT_TS' 
             + ' FROM watchlist, listing WHERE watchlist.LISTID = listing.LISTID and watchlist.USERID = ' + userid + ' ORDER BY watchlist.INSERT_TS';
