@@ -20,7 +20,6 @@ var listing = {
     insertDt: ''
 };
 var watchedListing = {
-    watchid: '',
     userid: '',
     listid: '',
     insertDt: '',
@@ -40,11 +39,14 @@ var maxItems = 6;
 function loadTables()
 {
     db.clearTables();
+ /********************************************************************
+ *  This section inserts 10 users
+ *********************************************************************/
     for (var i = 0; i < maxUsers; i++)
     {
         var newUser = Object.create(user);
         newUser.name = 'User'+i;
-        newUser.email = 'user_email'+i + 'gmail.com';
+        newUser.email = 'user_email'+i + '@gmail.com';
         newUser.location = locs[i%3];
         userList[i] = newUser;
     } 
@@ -55,7 +57,11 @@ function loadTables()
             printUser(userList[i]);
         }, (err) => {console.log("Insert error")});
     }
-    var nextIdx = 0;
+
+ /********************************************************************
+ *  This section inserts 6 listings for each user for a total of 60 listings
+ *********************************************************************/
+   var nextIdx = 0;
     for (var i = 0; i < maxUsers; i++)
     {
         var uid = i+1;
@@ -81,17 +87,31 @@ function loadTables()
             printoutListing(listing[i]);
         }, (err) => {console.log("Insert error")});
     }
+ /********************************************************************
+ *  This section inserts 1 to 10 watched listings for each user
+ *  
+ *********************************************************************/
     var nextwid = 0;
     for (var i = 0; i <maxUsers; i++)
     {
         var uid = i+1;
         for (var x = 0; x < uid; x++)
         {
-            var lidx = (Math.floor((Math.random())*100) % 60) + 1;
+            var lidx = (Math.floor((Math.random())*100) % 60) + 1;   // Randomlly generate a listing key
 
-            (db.insertWatchList(uid, lidx)).then((pk) =>{
-
-            }, (err) => { console.log("error inserting watch list")});
+            (db.insertWatchList(uid, lidx)).then( (pk) => {
+          
+                }, (err) => {
+                    var errStr = "PDB-" + err;
+                    if (errStr.search("UNIQUE constraint failed:") >= 0)
+                    {
+                        console.log("Duplicate Entry ");
+                    }
+                    else
+                    {
+                        console.log("error inserting watch list")
+                    }
+            });
         }
         
     }
