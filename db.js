@@ -77,7 +77,7 @@ function createListingFrom(thisRow)
 function createWatchedListingFrom(thisRow)
 {
     var aWatchedListing = Object.create(watchedListing);
-
+console.log(thisRow);
     aWatchedListing.watchid = thisRow.WATCHID;
     aWatchedListing.userid = thisRow.WUSERID;
     aWatchedListing.listid = thisRow.LISTID;
@@ -535,8 +535,8 @@ function getWatchList(userid)  // returns a list of listing
 {
     var p = new Promise(function (resolve, reject) {
         db.serialize(() => {
-            var command = 'SELECT watchlist.WATCHID,watchlist.LISTID,watchlist.USERID,watchlist.INSERT_TS, '    
-                    + 'listing.LISTID,listing.USERID AS WUSERID,listing.DESCRIPTION,listing.PRICE,listing.CATEGORY,'
+            var command = 'SELECT watchlist.WATCHID,watchlist.LISTID,watchlist.USERID AS WUSERID,watchlist.INSERT_TS, '    
+                    + 'listing.LISTID,listing.USERID,listing.DESCRIPTION,listing.PRICE,listing.CATEGORY,'
                     + 'listing.STATUS,listing.LOCATION,listing.IMGFILE,listing.INSERT_TS' 
             + ' FROM watchlist, listing WHERE watchlist.LISTID = listing.LISTID and watchlist.USERID = ' + userid + ' ORDER BY watchlist.INSERT_TS';
             db.all(command , (err, rows) => {
