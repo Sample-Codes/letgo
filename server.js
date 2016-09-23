@@ -11,9 +11,8 @@ var multer = require('multer'),
 var fs = require('fs-extra');
 
 
-
-app.use(express.static(path.join(__dirname, 'public')));
-//app.use(express.static(path.join(__dirname, '/public')));
+app.use('/static', express.static(__dirname + '/public'));
+//app.use(express.static(path.join(__dirname, 'public')));
 //app.use(express.static(__dirname+"/public"));
 
 app.use(bodyParser.json());
