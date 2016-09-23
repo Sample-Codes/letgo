@@ -14,6 +14,9 @@ angular.
         when('/forSale/:username', {
           template: '<for-sale></for-sale>'
         }).
+        when('/newListing', {
+          template: '<new-listing></new-listing>'
+        }).
         otherwise('/login');
     }
   ]);

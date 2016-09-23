@@ -54,9 +54,9 @@ app.post('/insertUser/', function (req, res) {
 
     var p = db.insertUser(user.name, user.email, user.location);
     p.then(
-        (val) => {
-            res.send('User Added');
-            //res.send(val);
+        (userid) => {
+            //res.send('User Added');
+            res.send({userid});
         }
     ).catch(
         (err) => {
@@ -68,8 +68,13 @@ app.post('/insertUser/', function (req, res) {
 
 app.post('/insertListing/', multer({dest: './public/photos/'}).single('photo'), function (req, res) {
 
-	console.log('Body: ' + req.body); 
-	console.log('File: ' + req.file);
+	console.log('Body userid: ' + req.body.userId); 
+	console.log('Body description: ' + req.body.description); 
+	console.log('Body category: ' + req.body.category); 
+    console.log('Body price: ' + req.body.price); 
+	console.log('Body photo: ' + req.body.photo); 
+	console.log('Body location: ' + req.body.location);     
+	//console.log('File: ' + req.file);
 
     var listing = {
         email: req.body.email,
@@ -78,18 +83,19 @@ app.post('/insertListing/', multer({dest: './public/photos/'}).single('photo'), 
         price: req.body.price,
         category: req.body.category,
         location: req.body.location,
-        photo: req.file.filename
-        //photo: req.body.photo
+        //photo: req.file.filename
+        photo: req.body.photo
     };
 
     var insertListing = db.insertListing(listing.userId, listing.description, listing.price, listing.category, listing.location, listing.photo);
 
-    insertListing.then((val) => {
+    insertListing.then((listid) => {
         // fs.rename(file.filePath + '/' + file.fileName, file.filePath + '/' + val.LastId, function (err) {
         // if (err) return console.error(err)
 
         // })
-        res.send('Listing for ' + listing.userId + ' is added successfully!');
+        //res.send('Listing for ' + listing.userId + ' is added successfully!');
+        res.send({listid});
     }).catch(
         (err) => {
             console.log(err);
@@ -199,6 +205,27 @@ console.log('getwatchlist: ' + req.params.userId);
     watchList.then(
         (val) => {
             console.log('watch list first list: ' + val[0].listid);
+            res.send(val);
+        }
+    ).catch(
+        (err) => {
+            res.status(500);
+            res.send('Issue getting WatchList');
+        }
+    );
+})
+
+app.get('/getWatchersForListing/:listId', function (req, res) {
+
+    var listing = {
+        listId: req.params.listId
+    };
+
+    var watchersForListing = db.getWatchersForListing(listing.listId);
+
+    watchersForListing.then(
+        (val) => {
+            console.log('watcher list first list: ' + val[0].listid);
             res.send(val);
         }
     ).catch(

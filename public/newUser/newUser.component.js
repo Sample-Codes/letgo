@@ -2,29 +2,27 @@
 angular.
   module('newUser').
   component('newUser', {
+      //** template
       templateUrl: '/static/newUser/newUser.template.html',
-
-    controller: function newUserController($scope, $http, $location) {
+      //** controller
+      controller: function newUserController($scope, $http, $location) {
       var self = this;
+        //** click submit 
         self.redirect = function() {
-          console.log('User clicked submit with ', self.name, self.email, self.location);
-
-        $http.post('/insertUser', $scope.$ctrl)
-          .success(function(url, data, config) {
-            console.log($scope.form);
-            console.log('url: ', self.url);
-            console.log('data: ', self.data);
-            console.log('config: ', self.config);
-            console.log("$http.post('/insertUser') triggered.");
-            $location.url('/forSale');
-          })
-          .error(function(res) {
-            console.log("error: " + res);
-          });
-
+          $http.post('/insertUser', $scope.$ctrl)
+            .success(function(url, data, config) {
+              console.log($scope.form);
+              reloadBG();   //** reload background image *optional*
+              $location.url('/forSale');
+            })
+            .error(function(res) {
+              console.log("error: " + res);
+            });
         }
+        //** click cancel
         self.cancel = function() {
           console.log('User cancelled registration form. Return to login page');
+          reloadBG();   //** reload background image *optional*
           $location.url('/login')
         }
     }

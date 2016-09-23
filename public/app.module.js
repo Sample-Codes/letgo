@@ -3,6 +3,6 @@ angular.module('letgoApp', [
   'login',
   'forSale',
   'newUser',
+  'newListing',
   'itemDetail',
-  
 ]);

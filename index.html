@@ -14,21 +14,29 @@
   <script src="/static/forSale/forSale.module.js"></script>
   <script src="/static/forSale/forSale.component.js"></script>
 
-    <script src="/static/login/login.module.js"></script>
+  <script src="/static/login/login.module.js"></script>
   <script src="/static/login/login.component.js"></script>
 
-      <script src="/static/newUser/newUser.module.js"></script>
+  <script src="/static/newUser/newUser.module.js"></script>
   <script src="/static/newUser/newUser.component.js"></script>
+
+  <script src="/static/newListing/newListing.module.js"></script>
+  <script src="/static/newListing/newListing.component.js"></script>
 
   <script src="/static/itemDetail/itemDetail.module.js"></script>
   <script src="/static/itemDetail/itemDetail.component.js"></script>
   
   <!--<script src="app.js"></script>-->
 </head>
-<body>
+<body onload="reloadBG()">
 
   <div ng-view></div>
 
-
+<script type="text/javascript">
+  function reloadBG() {
+    var imgNbr = Math.floor(Math.random() * 4) + 1;
+    document.body.style.backgroundImage = "url('/static/img/bg"+imgNbr+".jpg')";
+  }
+</script>
 </body>
 </html>
