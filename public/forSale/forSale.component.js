@@ -14,8 +14,8 @@ angular.
       var self = this;
       self.orderProp = 'insert_ts';
 
-        $http.get('phones/phones.json').then(function(response) {
-          self.phones = response.data;
+        $http.get('../getListings').then(function(response) {
+          self.listings = response.data;
 
       });
     }

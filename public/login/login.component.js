@@ -16,10 +16,9 @@ angular.
               console.log('User clicked submit with ', self.userName);
               $location.url('/forSale')
             }
-      //       self.submit = function () {
-      //           console.log('User clicked submit with ', self.userName);
-      //           self.welcomeMessage = "Welcome, " + self.userName;        
-      // };
+            self.register = function() {
+              $location.url('/newUser')
+            }            
     }
 
 });
