@@ -10,7 +10,7 @@ angular.
     //         '<p>{{phone.snippet}}</p>' +
     //       '</li>' +
     //     '</ul>',
-    controller: function forSaleController($http, $routeParams) {
+    controller: function forSaleController($http, $routeParams, $location) {
       var self = this;
       self.orderProp = 'insert_ts';
       self.username = decodeURIComponent($routeParams.username);
