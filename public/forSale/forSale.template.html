@@ -12,12 +12,12 @@
     <div id= "content">
       <!--Body content-->
 
-      <div id="feed" ng-repeat="item in $ctrl.items | filter:$ctrl.query">
-        <a href="#/phones/{{item.id}}" class="thumb">
-                <img ng-src="{{item.imageUrl}}" alt="{{item.name}}" />
+      <div id="feed" ng-repeat="listing in $ctrl.listings">
+        <a href="#/itemDetail/{{linsting.listid}}" class="thumb">
+                <img ng-src="{{listing.imageFile}}" alt="{{listing.description}}" />
             </a>
-         <span> Item: {{item.name}}</span>
-          <p>Description: {{item.snippet}}</p>
+         <span> Item: {{listing.category}}</span>
+          <p>Description: {{listing.description}}</p>
         
       </div>
 

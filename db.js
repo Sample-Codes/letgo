@@ -5,7 +5,6 @@ var sqlite3 = require('sqlite3').verbose(),
 var db = new TransactionDatabase(new sqlite3.Database('letgo.db'));
 
 // exports 
-exports.dropTables=dropTables;
 exports.clearTables=clearTables;
 exports.insertUser=insertUser;  // name, email, location
 exports.deleteUser=deleteUser;  // userid
@@ -23,9 +22,9 @@ exports.deleteListing=deleteListing; //userid, listid
 exports.getSellList=getSellList; //userid
 exports.getWatchList=getWatchList; // userid
 exports.insertWatchList=insertWatchList; //userid, listid
-exports.deleteWatchListListing=deleteWatchListListing; //userid, watchid
+exports.deleteWatchList=deleteWatchList; //userid, listid
 exports.deleteEntireWatchList=deleteEntireWatchList; //
-exports.buildWhereClause=buildWhereClause;
+exports.getWatchersForListing=getWatchersForListing;
 // Define objects
 var user = {
     userid: '',
@@ -45,7 +44,6 @@ var listing = {
     insertDt: ''
 };
 var watchedListing = {
-    watchid: '',
     userid: '',
     listid: '',
     insertDt: '',
@@ -77,8 +75,7 @@ function createListingFrom(thisRow)
 function createWatchedListingFrom(thisRow)
 {
     var aWatchedListing = Object.create(watchedListing);
-console.log(thisRow);
-    aWatchedListing.watchid = thisRow.WATCHID;
+
     aWatchedListing.userid = thisRow.WUSERID;
     aWatchedListing.listid = thisRow.LISTID;
     aWatchedListing.insertDt = thisRow.INSERT_TS;
@@ -113,10 +110,10 @@ function initDB()
     db.serialize(function () {
         console.log("create watchlist table");
         db.run("CREATE TABLE IF NOT EXISTS watchlist \
-        (WATCHID INTEGER PRIMARY KEY NOT NULL, \
-        LISTID INT NOT NULL, \
+        (LISTID INT NOT NULL, \
         USERID INT NOT NULL, \
         INSERT_TS DATETIME DEFAULT CURRENT_TIMESTAMP , \
+        CONSTRAINT WATCHID PRIMARY KEY (LISTID,USERID), \
         FOREIGN KEY (LISTID) REFERENCES listing(LISTID), \
         FOREIGN KEY (USERID) REFERENCES users(USERID))",
          function (err) { if (err) { console.log(err); } });
@@ -124,16 +121,7 @@ function initDB()
 
 }
 
-function dropTables(tables)
-{
-    for (idx in tables)
 
-    db.run("DROP " + tables[idx], function (err) { if (err) { } }); //x
-//    db.run("DROP watchList", function (err) { if (err) { } }); //x
-//    db.run("DROP listing", function (err) { if (err) { } }); //x
- //   db.run("DROP users", function (err) { if (err) { } });
-
-}
 function clearTables()
 {
     db.run("DELETE from watchlist", function (err) { if (err) { } }); //x
@@ -156,7 +144,7 @@ function insertUser(name, email, location)
                     { console.log(err);
                         reject(err);
                     } 
-                    resolve();
+                    resolve(this.lastID);
                 });
         });
     });
@@ -167,19 +155,31 @@ function deleteUser(userid)
 {
     var p = new Promise(function (resolve, reject) 
     {
-        db.serialize(function () 
+        db.beginTransaction(function(err, transaction) 
         {
-                db.run("DELETE FROM users WHERE USERID=" + userid, 
-                function (err) {
-                    if (err) {
-                        reject(err);
-                    }
-                    resolve();
-                });
+             transaction.run("DELETE FROM users WHERE USERID=" + userid, 
+                function (err) { if (err) { transaction.rollback(); reject(err); } resolve(); });
+             transaction.run("DELETE FROM watchlist WHERE USERID=" + userid,
+                function (err) { if (err) {transaction.rollback(); reject(err); } resolve(); });
+             transaction.run("DELETE FROM listing WHERE USERID=" + userid, 
+                function (err) { if (err) { transaction.rollback();  reject(err); } resolve(); });
+
+             transaction.commit(function(err) {
+                if (err)
+                {
+                    return console.log("Delete user failed.", err);
+                }
+                console.log("Delete user was successful.");
+            });
         });
+        
+        // or transaction.rollback() 
     });
     return p;
 }
+
+
+
 function getUser(email)
 {
    var p;
@@ -222,7 +222,7 @@ function insertListing(userid, description, price, category, location, photo)
                     { console.log(err);
                         reject(err);
                     } 
-                    resolve();
+                    resolve(this.lastID);
                 });
         });
     });
@@ -241,18 +241,14 @@ function updateListing(userid, listid, description, price, category,status, loca
              + ", IMGFILE=" + asMyQuote(photo)
              + " WHERE LISTID=" + listid
              + " AND USERID=" + userid;
-            var stmt = db.prepare(command);
-            stmt.run();
-            if (err) {
-                reject(err);
-            }
-            stmt.finalize();
-            if (err) {
-                reject(err);
-            }
-            resolve();
-        });
-    });
+            db.run(command, function (err) {
+                if (err) {
+                    reject(err);
+                }
+                resolve();
+            });
+             });
+   });
     return p;
 }
 function updateListingPrice(userid,listid, price)
@@ -260,17 +256,13 @@ function updateListingPrice(userid,listid, price)
     var p = new Promise(function (resolve, reject) {
         db.serialize(function () {
             var command = "UPDATE listing SET PRICE=" + price + " WHERE LISTID=" + listid + " AND USERID=" + userid;
-            var stmt = db.prepare(command);
-            stmt.run();
-            if (err) {
-                reject(err);
-            }
-            stmt.finalize();
-            if (err) {
-                reject(err);
-            }
-            resolve();
-        });
+            db.run(command, function (err) {
+                if (err) {
+                    reject(err);
+                }
+                resolve();
+            });
+            });
     });
     return p;
 }
@@ -280,17 +272,13 @@ function updateListingDescription(userid,listid, description)
         db.serialize(function () {
             var qdescript = asMyQuote(description);
             var command = "UPDATE listing SET DESCRIPTION=" + qdescript + " WHERE LISTID=" + listid + " AND USERID=" + userid;
-            var stmt = db.prepare(command);
-            stmt.run();
-            if (err) {
-                reject(err);
-            }
-            stmt.finalize();
-            if (err) {
-                reject(err);
-            }
-            resolve();
-        });
+            db.run(command, function (err) {
+                if (err) {
+                    reject(err);
+                }
+                resolve();
+            });
+            });
     });
     return p;
 }
@@ -300,16 +288,12 @@ function updateListingLocation(userid,listid, location)
         db.serialize(function () {
             var qValue = asMyQuote(location);
             var command = "UPDATE listing SET LOCATION=" + qValue + " WHERE LISTID=" + listid + " AND USERID=" + userid;
-            var stmt = db.prepare(command);
-            stmt.run();
-            if (err) {
-                reject(err);
-            }
-            stmt.finalize();
-            if (err) {
-                reject(err);
-            }
-            resolve();
+            db.run(command, function (err) {
+                if (err) {
+                    reject(err);
+                }
+                resolve();
+            });
         });
     });
     return p;
@@ -320,15 +304,12 @@ function updateListingPhoto(userid,listid,photo)
         db.serialize(function () {
             var command = "UPDATE listing SET IMGFILE=" + asMyQuote(photo) + " WHERE LISTID=" + listid + " AND USERID=" + userid;
             var stmt = db.prepare(command);
-            stmt.run();
-            if (err) {
-                reject(err);
-            }
-            stmt.finalize();
-            if (err) {
-                reject(err);
-            }
-            resolve();
+            db.run(command, function (err) {
+                if (err) {
+                    reject(err);
+                }
+                resolve();
+            });
         });
     });
     return p;
@@ -338,16 +319,12 @@ function updateListingStatus(userid,listid,status)
     var p = new Promise(function (resolve, reject) {
         db.serialize(function () {
             var command = "UPDATE listing SET STATUS=" + asMyQuote(status) + " WHERE LISTID=" + listid + " AND USERID=" + userid;
-            var stmt = db.prepare(command);
-            stmt.run();
-            if (err) {
-                reject(err);
-            }
-            stmt.finalize();
-            if (err) {
-                reject(err);
-            }
-            resolve();
+            db.run(command, function (err) {
+                if (err) {
+                    reject(err);
+                }
+                resolve();
+            });
         });
     });
     return p;
@@ -355,22 +332,29 @@ function updateListingStatus(userid,listid,status)
 function deleteListing(userid,listid)
 {
     var p = new Promise(function (resolve, reject) {
-       db.serialize(function () {
-            var command = "DELETE FROM listing WHERE LISTID=" + listid + " AND USERID=" + userid;
-            db.run(command, function (err) {
-                if (err) {
-                    reject(err);
-                }
-                resolve();
+        db.beginTransaction(function(err, transaction) 
+        {
+             transaction.run("DELETE FROM watchlist WHERE USERID=" + userid+ " AND LISTID=" + listid, 
+                function (err) { if (err) {transaction.rollback(); reject(err); } resolve(); });
+             transaction.run("DELETE FROM listing WHERE USERID=" + userid+ " AND LISTID=" + listid, 
+                function (err) { if (err) { transaction.rollback();  reject(err); } resolve(); });
 
+             transaction.commit(function(err) {
+                if (err)
+                {
+                    return console.log("Delete failed.", err);
+                }
+                console.log("Delete Listing was successful.");
             });
-         });
+        });
+        
+        // or transaction.rollback() 
     });
     return p;
 }
 function getAllListings()
 {
-      var p;
+    var p;
     p = new Promise(function (resolve, reject) {
         db.serialize(function () {
 
@@ -451,14 +435,11 @@ function buildWhereClause(aListing)
         if (temp != null) return WHERE + temp;
     temp = clauseFor(aListing.userid, "USERID", false);
         if (temp != null) return WHERE + temp;
-//    temp = clauseFor(aListing.description,"DESCRIPTION", true);  
-//    temp = clauseFor(aListing.price, "PRICE", false);  This should be a range 
     var clauses = {};
 
     clauses[0] = clauseFor(aListing.category, "CATEGORY", true);
     clauses[1] = clauseFor(aListing.status, "STATUS", true);
     clauses[2] = clauseFor(aListing.location, "LOCATION", true);
-//    var clause1 = clauseFor(aListing.insertDt, "INSERT_TS"
     var cnt = 0;
     var i = 0;
     for (i in clauses )
@@ -526,16 +507,11 @@ function getSellList(userid)  // returns a list of listing
         );
     return p;
 }
-/*
-watchlist.WATCHID,watchlist.LISTID,watchlist.USERID,watchlist.INSERT_TS,        
-listing.LISTID,listing.USERID,listing.DESCRIPTION,listing.PRICE,listing.CATEGORY,listing.STATUS,listing.LOCATION,listing.IMGFILE,listing.INSERT_TS
-
-        */
 function getWatchList(userid)  // returns a list of listing
 {
     var p = new Promise(function (resolve, reject) {
         db.serialize(() => {
-            var command = 'SELECT watchlist.WATCHID,watchlist.LISTID,watchlist.USERID AS WUSERID,watchlist.INSERT_TS, '    
+            var command = 'SELECT watchlist.LISTID,watchlist.USERID AS WUSERID,watchlist.INSERT_TS, '    
                     + 'listing.LISTID,listing.USERID,listing.DESCRIPTION,listing.PRICE,listing.CATEGORY,'
                     + 'listing.STATUS,listing.LOCATION,listing.IMGFILE,listing.INSERT_TS' 
             + ' FROM watchlist, listing WHERE watchlist.LISTID = listing.LISTID and watchlist.USERID = ' + userid + ' ORDER BY watchlist.INSERT_TS';
@@ -564,6 +540,40 @@ function getWatchList(userid)  // returns a list of listing
 
     return p;    
 }
+function getWatchersForListing(listid)
+{
+        var p = new Promise(function (resolve, reject) {
+        db.serialize(() => {
+            var command = 'SELECT watchlist.LISTID,watchlist.USERID,watchlist.INSERT_TS, '    
+                    + 'users.USERID, users.NAME, users.EMAIL, users.LOCATION'
+                    + ' FROM watchlist, users'
+                    + ' WHERE watchlist.LISTID = ' + listid + ' AND watchlist.USERID = users.USERID'  
+                    + ' ORDER BY watchlist.INSERT_TS';
+        console.log(command);
+            db.all(command , (err, rows) => {
+                if (err) {
+                    reject(err);
+                }
+                resolve(rows);
+            });
+        });
+    }).then(
+        (rows) => {
+            // Process them.
+            var outputData = {};
+            var count = 0;
+            console.log("Returned " + rows.length + " rows");
+            for (thisRow of rows) {
+                var aListing = createUserFrom(thisRow);
+
+                outputData[count] = aListing;
+                count++;
+            }
+            return outputData;
+        }, (err) => {console.log(err);}
+    );
+    return p;    
+}
 function insertWatchList(userid, listid)
 {
    var p = new Promise(function (resolve, reject) {
@@ -576,27 +586,24 @@ function insertWatchList(userid, listid)
                     { console.log(err);
                         reject(err);
                     } 
-                    resolve();
+                    resolve(this.lastID);
                 });
         });
     });
     return p;
 }
-function deleteWatchListListing(userid,watchid)
+function deleteWatchList(userid,listid)
 {
     var p = new Promise(function (resolve, reject) {
        db.serialize(function () {
 
-            var command = "DELETE FROM watchlist WHERE WATCHID=" + watchid + " AND USERID=" + userid;
-            var stmt = db.prepare(command);
-            stmt.run();
-            if (err) {
-                reject(err);
-            }
-            stmt.finalize();
-            if (err) {
-                reject(err);
-            }
+            var command = "DELETE FROM watchlist WHERE LISTID=" + listid + " AND USERID=" + userid;
+            db.run(command,
+                function (err){
+                    if (err) {
+                       reject(err);
+                     }
+                });
             resolve();
         });
     });
@@ -608,15 +615,12 @@ function deleteEntireWatchList(userid)
        db.serialize(function () {
 
             var command = "DELETE FROM watchlist WHERE USERID=" + userid;
-            var stmt = db.prepare(command);
-            stmt.run();
-            if (err) {
-                reject(err);
-            }
-            stmt.finalize();
-            if (err) {
-                reject(err);
-            }
+            db.run(command,
+                function (err){
+                    if (err) {
+                       reject(err);
+                     }
+                });
             resolve();
         });
     });
