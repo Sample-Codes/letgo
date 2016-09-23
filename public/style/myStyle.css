@@ -6,11 +6,25 @@
     height: 50px;
 }
 html { 
-  background: url(../img/bg3.jpg) no-repeat center center fixed; 
+  /*background: url(../img/bg3.jpg) no-repeat center center fixed; */
+  background-color: black;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
+  margin: 0px;
+  height: auto;
+}
+
+body {
+  background-color : black;
+  background-size : cover;
+  background-repeat : no-repeat;
+  position : center;
+  background-attachment : fixed;
+  background-clip : content-box;
+  margin: 0px;
+  height: auto;
 }
 
 h1 {
@@ -77,6 +91,12 @@ h1.register {
     padding: 10px 20px;
     display: inline-block;
     margin: 4px 2px;
+}
+
+.logpage {
+  position: relative;
+  left: 65px;
+  top: 10px;
 }
 
 #wrapper {

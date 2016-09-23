@@ -7,7 +7,7 @@
                 id="userName" class="textBox" name="userName" title="Username" 
                 value="" placeholder="Username" size="30" maxlength="2048" />
                 <div class="errorBox">
-                    <span ng-show="loginForm.userName.$error.required">Required!</span>
+                    <!--<span ng-show="loginForm.userName.$error.required">Required!</span>-->
                     <span ng-show="loginForm.userName.$error.email" class="error">Not valid email!</span>
                 </div>
       </div>
@@ -16,6 +16,7 @@
             <input class="button" type="submit" value="Submit" name="submit" id="submit" />
       </form>
   </div>
-  <h1><span ng-bind="welcomeMessage"></span></h1>
+  <!--<h1><span ng-bind="welcomeMessage"></span></h1>-->
+  <h1><span ng-bind="$ctrl.errorMessage" ng-show="$ctrl.errorMessage" class="error logpage"></span></h1>
 </div>
 
