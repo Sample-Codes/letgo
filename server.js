@@ -42,7 +42,9 @@ app.get('/getUser/:userName', function (req, res) {
 
 app.post('/insertUser/', function (req, res) {
 
-    console.log('insert user body:' + req.body)
+    console.log('insert user body email:' + req.body.email)
+    console.log('insert user body name:' + req.body.name)
+    console.log('insert user body:' + req.body.location)
 
     var user = {
         email: req.body.email,
@@ -53,9 +55,8 @@ app.post('/insertUser/', function (req, res) {
     var p = db.insertUser(user.name, user.email, user.location);
     p.then(
         (val) => {
-            console.log(val)
             res.send('User Added');
-            //res.send(val.UserId);
+            //res.send(val);
         }
     ).catch(
         (err) => {

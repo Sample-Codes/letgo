@@ -4,22 +4,28 @@ angular.
   component('newUser', {
       templateUrl: '/static/newUser/newUser.template.html',
 
-    controller: function newUserController($http, $location) {
+    controller: function newUserController($scope, $http, $location) {
       var self = this;
-            self.redirect = function() {
-              console.log('User clicked submit with ', self.name, self.email, self.location);
-              //insertUser(self.name, self.email, self.location);
-              $http.put('/insertUser').then(function(response) {
-                var userId = response.data;
-              });
-              $location.url('/forSale')
-            }
-            self.cancel = function() {
-              console.log('User cancelled registration form. Return to login page');
-              $location.url('/login')
-            }
+        self.redirect = function() {
+          console.log('User clicked submit with ', self.name, self.email, self.location);
 
-     
+        $http.post('/insertUser', $scope.$ctrl)
+          .success(function(url, data, config) {
+            console.log($scope.form);
+            console.log('url: ', self.url);
+            console.log('data: ', self.data);
+            console.log('config: ', self.config);
+            console.log("$http.post('/insertUser') triggered.");
+            $location.url('/forSale');
+          })
+          .error(function(res) {
+            console.log("error: " + res);
+          });
 
+        }
+        self.cancel = function() {
+          console.log('User cancelled registration form. Return to login page');
+          $location.url('/login')
+        }
     }
 });
