@@ -82,36 +82,38 @@ h1.register {
 }
 
 #wrapper {
-  margin-left: 200px;
+  margin-left: 0px;
 }
 #content {
   float: right;
-  width: 100%;
+  width: 70%;
   height: 100%;
-  background-color: grey;
-  opacity: 0.2;
+  background-color: white;
+  opacity: 0.7;
+  margin-left: 5px;
 
 }
 #sidebar {
   float: left;
-  width: 350px;
-  margin-left: -350px;
-  height: 400px;
+  width: 25%;
+ height: 100%;
   background-color: whitesmoke;
-  border-right: 2px dotted red;
-  opacity: 0.5;
+  border: 2px solid red;
+  opacity: 0.7;
+  overflow: hidden;
 }
 #cleared {
   clear: both;
 }
 
 #searchOptions{
-  border-top: 2px dotted red;
+  border-top: 5px dotted red;
   padding: 5px;
 }
 
 #profile{
   padding: 5px;
+  height: 20%
 }
 
 .link {

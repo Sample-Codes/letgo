@@ -2,7 +2,7 @@
 angular.
   module('login').
   component('login', {
-      templateUrl: '/static/login/login.template.html',
+    templateUrl: '/static/login/login.template.html',
     // template:
     //     '<ul>' +
     //       '<li ng-repeat="phone in $ctrl.phones">' +
@@ -12,13 +12,15 @@ angular.
     //     '</ul>',
     controller: function loginController($http, $location) {
       var self = this;
-            self.redirect = function() {
-              console.log('User clicked submit with ', self.userName);
-              $location.url('/forSale')
-            }
-            self.register = function() {
-              $location.url('/newUser')
-            }            
+      self.redirect = function () {
+        console.log('User clicked submit with ', self.userName);
+        var email = encodeURIComponent(self.userName);
+
+        $location.url('/forSale/' + email);
+      }
+      self.register = function () {
+        $location.url('/newUser')
+      }
     }
 
-});
+  });

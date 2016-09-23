@@ -11,11 +11,8 @@ angular.
         when('/newUser', {
           template: '<new-user></new-user>'
         }).
-        when('/forSale', {
+        when('/forSale/:username', {
           template: '<for-sale></for-sale>'
-        }).
-        when('/forSale/:listId', {
-          template: '<item-detail></item-detail>'
         }).
         otherwise('/login');
     }
