@@ -24,7 +24,7 @@ exports.getWatchList=getWatchList; // userid
 exports.insertWatchList=insertWatchList; //userid, listid
 exports.deleteWatchList=deleteWatchList; //userid, listid
 exports.deleteEntireWatchList=deleteEntireWatchList; //
-exports.buildWhereClause=buildWhereClause;
+exports.getWatchersForListing=getWatchersForListing;
 // Define objects
 var user = {
     userid: '',
@@ -538,6 +538,40 @@ function getWatchList(userid)  // returns a list of listing
         }
     );
 
+    return p;    
+}
+function getWatchersForListing(listid)
+{
+        var p = new Promise(function (resolve, reject) {
+        db.serialize(() => {
+            var command = 'SELECT watchlist.LISTID,watchlist.USERID,watchlist.INSERT_TS, '    
+                    + 'users.USERID, users.NAME, users.EMAIL, users.LOCATION'
+                    + ' FROM watchlist, users'
+                    + ' WHERE watchlist.LISTID = ' + listid + ' AND watchlist.USERID = users.USERID'  
+                    + ' ORDER BY watchlist.INSERT_TS';
+        console.log(command);
+            db.all(command , (err, rows) => {
+                if (err) {
+                    reject(err);
+                }
+                resolve(rows);
+            });
+        });
+    }).then(
+        (rows) => {
+            // Process them.
+            var outputData = {};
+            var count = 0;
+            console.log("Returned " + rows.length + " rows");
+            for (thisRow of rows) {
+                var aListing = createUserFrom(thisRow);
+
+                outputData[count] = aListing;
+                count++;
+            }
+            return outputData;
+        }, (err) => {console.log(err);}
+    );
     return p;    
 }
 function insertWatchList(userid, listid)
