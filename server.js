@@ -10,15 +10,12 @@ var multer = require('multer'),
 
 var fs = require('fs-extra');
 
-app.use('/static', express.static(__dirname + '/public'));  //This works!
-//app.use(express.static(path.join(__dirname, 'public')));
-//app.use(express.static(__dirname+"/public"));
+app.use('/static', express.static(__dirname + '/public'));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
-//app.use(app.router);
 
 app.get('/getUser/:userName', function (req, res) {
     console.log('Body: ' + req.body.userName)
@@ -389,7 +386,6 @@ app.post('/deleteListing/', function (req, res) {
 app.post('/deleteEntireWatchList/', function (req, res) {
 
     var user = {
-        email: req.body.email,
         userId: req.body.userId
     };
 
@@ -406,24 +402,17 @@ app.post('/deleteEntireWatchList/', function (req, res) {
 
 });
 
-app.post('/deleteWatchListListing/', function (req, res) {
+app.post('/deleteWatchList/', function (req, res) {
 
-    var user = {
-        email: req.body.email,
+    var watchlist = {
+        watchId: req.body.watchId,
+        listId: req.body.listId,
         userId: req.body.userId
     };
 
-    var listing = {
-        listId: req.body.listId,
-    };
+    var deleteWatchList = db.deleteWatchList(watchlist.userId, watchlist.listId);
 
-    var watchListing = {
-        watchId: req.body.watchId,
-    };
-
-    var deleteWatchListListing = db.deleteWatchListListing(user.userId, watchlisting.watchId);
-
-    deleteWatchListListing.then((val) => {
+    deleteWatchList.then((val) => {
         res.send('Watch Listing is deleted successfully!');
     }).catch(
         (err) => {
@@ -432,7 +421,7 @@ app.post('/deleteWatchListListing/', function (req, res) {
         }
     )
 
-})
+});
 
 
 app.get('/', function (req, res) {
