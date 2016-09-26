@@ -3,26 +3,26 @@
   "version": "1.0.0",
   "main": "server.js",
   "dependencies": {
+    "angular": "1.5.x",
+    "angular-mocks": "1.5.x",
+    "angular-route": "1.5.x",
     "assert": "^1.4.1",
     "body-parser": "^1.15.2",
+    "bootstrap": "3.3.x",
     "chai": "^3.5.0",
     "chai-as-promised": "^5.3.0",
+    "cookie-parser": "^1.4.3",
     "express": "^4.14.0",
     "fs-extra": "^0.30.0",
     "mocha": "^3.0.2",
     "multer": "^1.2.0",
     "sqlite3": "^3.1.4",
-    "sqlite3-transactions": "0.0.5",
-    "angular": "1.5.x",
-    "angular-mocks": "1.5.x",
-    "angular-route": "1.5.x",
-    "bootstrap": "3.3.x"
-
+    "sqlite3-transactions": "0.0.5"
   },
   "scripts": {
     "test": "mocha",
     "start": "node server.js"
-  },  
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jfine24/letgo.git"
