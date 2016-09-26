@@ -15,14 +15,13 @@
       </div>
     </form>
     <div id="searchOptions">
-           Search: <input ng-model="$ctrl.query" />
-           <a class="link" ng-click="$ctrl.signout()">Sign Out</a>
+         Search: <input ng-model="query" type="text" class="textBox"/>
     </div>
   </div>
     <div id= "content">
       <!--Body content-->
 
-      <div id="feed" ng-repeat="listing in $ctrl.listings">
+      <div id="feed" ng-repeat="listing in $ctrl.listings | toArray:true | filter:query">
         <a href="#/itemDetail/{{listing.listid}}" class="thumb">
                 <img ng-src="{{listing.imageFile}}" alt="{{listing.description}}" />
             </a>
