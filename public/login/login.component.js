@@ -27,6 +27,10 @@ angular.
                 $cookies.put('location', res.data.location);
                 reloadBG();           //** reload background image *optional*
                 $location.url('/forSale');
+
+                // var email = encodeURIComponent(self.userName);
+                // $location.url('/forSale/' + email);
+
             }, function(res){         //** Function handles error
               console.log("Invalid username, try again!");
               self.errorMessage = "Invalid username, try again!";

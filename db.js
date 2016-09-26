@@ -412,7 +412,6 @@ function getListings(inListing)
             for (thisRow of rows) {
                 var aListing = createListingFrom(thisRow);
                 outputData[count] = aListing;
-                console.log('Listing#:  ' + aListing.listid);
                 count++;
             }
             return outputData;
@@ -580,14 +579,7 @@ function insertWatchList(userid, listid)
        db.serialize(function () {
             var values = listid + ', ' + userid;
             var insertCommand = "INSERT INTO watchlist (LISTID, USERID) VALUES (" + values + ")"
-            db.run(insertCommand, 
-                function (err) { 
-                    if (err) 
-                    { console.log(err);
-                        reject(err);
-                    } 
-                    resolve(this.lastID);
-                });
+            db.run(insertCommand, function (err) { if (err) { reject(err);}  resolve(this.lastID);});
         });
     });
     return p;
@@ -626,4 +618,46 @@ function deleteEntireWatchList(userid)
     });
     return p;   
 }
+function getListingsLike(inListing)
+{
+      var p;
+    p = new Promise(function (resolve, reject) {
+        db.serialize(function () {
+
+            var command = "SELECT * FROM listing";
+            if ((inListing != undefined) && (inListing != null))
+                command += buildWhereClause(inListing);
+            console.log(command);
+            db.all(command, function (err, row) {
+                if (err) {
+                    reject(err);
+                }
+                resolve(row);
+            });
+        });
+    }).then(
+        (rows) => {
+            // Process them.
+            var outputData = {};
+            var count = 0;
+            for (thisRow of rows) {
+                var aListing = createListingFrom(thisRow);
+                outputData[count] = aListing;
+                console.log('Listing#:  ' + aListing.listid);
+                count++;
+            }
+            return outputData;
+        },
+        (err) => {
+            console.log('Error getting all listings');
+            console.log(err);
+            return {};
+        }
+        );
+    return p;
+  
+}
+
+
+
 initDB(db);
