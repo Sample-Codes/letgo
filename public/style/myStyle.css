@@ -7,17 +7,6 @@
     margin: 10px;
 }
 
-html { 
-  /*background: url(../img/bg3.jpg) no-repeat center center fixed; */
-  background-color: black;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-  margin: 0px;
-  height: auto;
-}
-
 body {
   background-color : black;
   background-size : cover;
@@ -106,7 +95,7 @@ h1.register {
 }
 #content {
   float: right;
-  width: 70%;
+  width: 68%;
   height: 100%;
   background-color: white;
   opacity: 0.7;
@@ -116,7 +105,7 @@ h1.register {
 }
 #sidebar {
   float: left;
-  width: 25%;
+  width: 30%;
  height: 100%;
   background-color: whitesmoke;
   border: 2px solid red;
@@ -150,4 +139,8 @@ h1.register {
 
 .link:hover {
   text-decoration: underline;
+}
+
+#vcanvas {
+  margin-top:135px;
 }
