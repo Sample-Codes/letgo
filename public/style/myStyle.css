@@ -143,19 +143,19 @@ label.smValue  {
 
 #searchOptions{
   border-top: 5px dotted red;
-  padding: 5px;
+  padding: 10px 5px;
 }
 
 #profile{
   padding: 5px;
-  height: 20%
+  height: 15%
 }
 
 .smLink {
   color: #3F3F46;
   text-decoration: none;
   font-family: Verdana, sans-serif;
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
 }
 

@@ -1,16 +1,11 @@
 <div id="wrapper">
   <div id="sidebar">
-    <!--Sidebar content 
-      <a class="linkForSale" ng-click="$ctrl.signout()">Sign Out</a>
-    -->
-    <input class="button" type="button" value="Sign Out" name="signout" id="signout" ng-click="$ctrl.signout()" />
-    <br /><br /><br /><br />
     <form ng-submit="$ctrl.redirect()"  name="newListingForm"> 
       <div id="profile">
-        <label class="smLabel">User Name: </label><label class="smValue" ng-bind='$ctrl.username'></label>
+        <label class="smLabel">User Name: </label><label class="smValue" ng-bind='$ctrl.username'></label><a class="smLink" href="" ng-click="$ctrl.signout()">&nbsp;(Sign Out)</a>
         <br>
         <label class="smLabel">Location: </label><label class="smValue" ng-bind='$ctrl.location'></label>
-        <br>
+        <br><br>
         <input class="button" type="submit" value="Add New Listing" name="New Listing" id="submit" />
       </div>
     </form>
@@ -19,19 +14,19 @@
         <tr>
           <td>
             <label class="smLabel">Search: </label>
+          </td>
+        </tr>        
+        <tr>
+          <td>
             <input ng-model="query" type="text" class="textBox"/>
           </td>
-          <br>
-          <br>
         </tr>
         <tr>
-          <th> 
-            <label class="smLabel">Sort by</label>
-            <a class="smLink" href="" ng-click="sortField = 'price'">Price</a> 
-          </th>
+          <td> 
+            <label class="smLabel">Sort by</label> <a class="smLink" href="" ng-click="sortField = 'price'">Price</a> 
+          </td>
         </tr>
       </table>    
-
     </div>
     <div id="vcanvas">
       <iframe style="position: inherit; height: 37%; width: 100%;" src="https://www.youtube.com/embed/s0sbTLCLpgY" frameborder="0" allowfullscreen></iframe>
