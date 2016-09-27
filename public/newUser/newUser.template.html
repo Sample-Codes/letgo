@@ -3,20 +3,23 @@
     <div id="new-user" class="divBox">
         <form ng-submit="$ctrl.redirect()" name="newUserForm">
             <div>
+                <label class='lgLabel'>Email (as your Username)</label>
                 <input ng-model="$ctrl.email" required type="email" 
                         id="email"  class="textBox" name="email" title="email" 
-                        value="" placeholder="email (as your Username)" size="40" maxlength="2048" />
+                        value="" placeholder="" size="40" maxlength="2048" />
                         <span ng-show="loginForm.email.$error.required">Required!</span>
                         <span ng-show="loginForm.email.$error.email" class="error">Not valid email!</span>
+                <label class='lgLabel'>Name</label>
                 <input ng-model="$ctrl.name"  required type="text"
                         id="name"  class="textBox" name="name" title="name" 
-                        value="" placeholder="name" size="30" maxlength="40"  />
+                        value="" placeholder="" size="30" maxlength="40"  />
                         <span ng-show="loginForm.name.$error.required">Required!</span>
                         <br>
                         <br>
+                <label class='lgLabel'>Location</label>
                 <input ng-model="$ctrl.location"
                         id="location" class="textBox" name="location" title="location" 
-                        value="" placeholder="Location" size="30" maxlength="40"/>
+                        value="" placeholder="" size="30" maxlength="40"/>
             </div>
             <br /><br /><br /><br /><br /><br />
             <div class="spacer2"></div> 

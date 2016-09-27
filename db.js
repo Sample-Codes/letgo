@@ -2,11 +2,15 @@ var fs = require('fs');
 var sqlite3 = require('sqlite3').verbose(),
     TransactionDatabase = require("sqlite3-transactions").TransactionDatabase;
 
-var db = new TransactionDatabase(new sqlite3.Database('letgo.db'));
+var db = new TransactionDatabase(new sqlite3.Database('./letgo.db'));
 
 // exports 
 exports.clearTables=clearTables;
 exports.insertUser=insertUser;  // name, email, location
+exports.updateUser=updateUser;  // userid
+exports.updateUserName=updateUserName;  // userid
+exports.updateUserEmail=updateUserEmail;  // userid
+exports.updateUserLocation=updateUserLocation;  // userid
 exports.deleteUser=deleteUser;  // userid
 exports.getUser=getUser;        // email
 exports.insertListing=insertListing;  // userid, description, price, category, location, photo
@@ -40,7 +44,7 @@ var listing = {
     category: '',
     status: '',
     location: '',
-    imageFile: '',
+    imageFile: '', 
     insertDt: ''
 };
 var watchedListing = {
@@ -130,14 +134,26 @@ function clearTables()
 
 }
 function asMyQuote(input) {
+    if (input === null)
+        return null;
+    if (input === undefined)
+        return null;
+    
     return '\'' + input + '\'';
 }
 function insertUser(name, email, location)
 {
     var p = new Promise(function (resolve, reject) {
+ /*       if ((email === null) || (email === undefined))
+        {
+            reject(new Error('Missing required email'));
+            return p;
+        }
+        */
         db.serialize(function () {
             var values = asMyQuote(name) + ', ' + asMyQuote(email) + ', ' + asMyQuote(location);
             var insertCommand = "INSERT INTO users (NAME, EMAIL, LOCATION) VALUES (" + values + ")"
+            console.log(insertCommand);
             db.run(insertCommand, 
                 function (err) { 
                     if (err) 
@@ -150,6 +166,82 @@ function insertUser(name, email, location)
     });
     return p;
 }
+function updateUser(userid, name, email, location)
+{
+    var p = new Promise(function (resolve, reject) {
+        db.serialize(function () {
+             var updateCommand = "UPDATE users SET "
+                + "NAME=" + asMyQuote(name) 
+                + ", EMAIL=" + asMyQuote(email)
+                + ", LOCATION=" + asMyQuote(location) 
+                + " WHERE USERID=" + userid;
+            console.log(updateCommand);
+            db.run(updateCommand, 
+                function (err) { 
+                    if (err) 
+                    { console.log(err);
+                        reject(err);
+                    } 
+                    resolve();
+                });
+        });
+    });
+    return p;
+}
+function updateUserName(userid, name)
+{
+    var p = new Promise(function (resolve, reject) {
+        db.serialize(function () {
+            var updateCommand = "UPDATE users SET NAME=" + asMyQuote(name) + " WHERE USERID=" + userid;
+            console.log(updateCommand);
+            db.run(updateCommand, 
+                function (err) { 
+                    if (err) 
+                    { console.log(err);
+                        reject(err);
+                    } 
+                    resolve();
+                });
+        });
+    });
+    return p;
+}
+function updateUserEmail(userid, email)
+{
+    var p = new Promise(function (resolve, reject) {
+        db.serialize(function () {
+            var updateCommand = "UPDATE users SET EMAIL=" + asMyQuote(email) + " WHERE USERID=" + userid;
+            console.log(updateCommand);
+            db.run(updateCommand, 
+                function (err) { 
+                    if (err) 
+                    { console.log(err);
+                        reject(err);
+                    } 
+                    resolve();
+                });
+        });
+    });
+    return p;
+}
+function updateUserLocation(userid, location)
+{
+    var p = new Promise(function (resolve, reject) {
+        db.serialize(function () {
+            var updateCommand = "UPDATE users SET LOCATION=" + asMyQuote(location)  + " WHERE USERID=" + userid;
+            console.log(updateCommand);
+            db.run(updateCommand, 
+                function (err) { 
+                    if (err) 
+                    { console.log(err);
+                        reject(err);
+                    } 
+                    resolve();
+                });
+        });
+    });
+    return p;
+}
 
 function deleteUser(userid)
 {
@@ -157,10 +249,13 @@ function deleteUser(userid)
     {
         db.beginTransaction(function(err, transaction) 
         {
+            console.log("DELETE FROM users WHERE USERID=" + userid);
              transaction.run("DELETE FROM users WHERE USERID=" + userid, 
                 function (err) { if (err) { transaction.rollback(); reject(err); } resolve(); });
+            console.log("DELETE FROM watchlist WHERE USERID=" + userid);
              transaction.run("DELETE FROM watchlist WHERE USERID=" + userid,
                 function (err) { if (err) {transaction.rollback(); reject(err); } resolve(); });
+            console.log("DELETE FROM listing WHERE USERID=" + userid);
              transaction.run("DELETE FROM listing WHERE USERID=" + userid, 
                 function (err) { if (err) { transaction.rollback();  reject(err); } resolve(); });
 
@@ -177,8 +272,6 @@ function deleteUser(userid)
     });
     return p;
 }
-
-
 
 function getUser(email)
 {
@@ -241,6 +334,7 @@ function updateListing(userid, listid, description, price, category,status, loca
              + ", IMGFILE=" + asMyQuote(photo)
              + " WHERE LISTID=" + listid
              + " AND USERID=" + userid;
+            console.log(command);
             db.run(command, function (err) {
                 if (err) {
                     reject(err);
@@ -256,6 +350,7 @@ function updateListingPrice(userid,listid, price)
     var p = new Promise(function (resolve, reject) {
         db.serialize(function () {
             var command = "UPDATE listing SET PRICE=" + price + " WHERE LISTID=" + listid + " AND USERID=" + userid;
+            console.log(command);
             db.run(command, function (err) {
                 if (err) {
                     reject(err);
@@ -272,6 +367,7 @@ function updateListingDescription(userid,listid, description)
         db.serialize(function () {
             var qdescript = asMyQuote(description);
             var command = "UPDATE listing SET DESCRIPTION=" + qdescript + " WHERE LISTID=" + listid + " AND USERID=" + userid;
+            console.log(command);
             db.run(command, function (err) {
                 if (err) {
                     reject(err);
@@ -288,6 +384,7 @@ function updateListingLocation(userid,listid, location)
         db.serialize(function () {
             var qValue = asMyQuote(location);
             var command = "UPDATE listing SET LOCATION=" + qValue + " WHERE LISTID=" + listid + " AND USERID=" + userid;
+            console.log(command);
             db.run(command, function (err) {
                 if (err) {
                     reject(err);
@@ -303,7 +400,7 @@ function updateListingPhoto(userid,listid,photo)
     var p = new Promise(function (resolve, reject) {
         db.serialize(function () {
             var command = "UPDATE listing SET IMGFILE=" + asMyQuote(photo) + " WHERE LISTID=" + listid + " AND USERID=" + userid;
-            var stmt = db.prepare(command);
+            console.log(command);
             db.run(command, function (err) {
                 if (err) {
                     reject(err);
@@ -319,6 +416,7 @@ function updateListingStatus(userid,listid,status)
     var p = new Promise(function (resolve, reject) {
         db.serialize(function () {
             var command = "UPDATE listing SET STATUS=" + asMyQuote(status) + " WHERE LISTID=" + listid + " AND USERID=" + userid;
+            console.log(command);
             db.run(command, function (err) {
                 if (err) {
                     reject(err);
@@ -334,9 +432,13 @@ function deleteListing(userid,listid)
     var p = new Promise(function (resolve, reject) {
         db.beginTransaction(function(err, transaction) 
         {
-             transaction.run("DELETE FROM watchlist WHERE USERID=" + userid+ " AND LISTID=" + listid, 
+             var command = "DELETE FROM watchlist WHERE USERID=" + userid+ " AND LISTID=" + listid;
+             console.log(command);
+             transaction.run(command, 
                 function (err) { if (err) {transaction.rollback(); reject(err); } resolve(); });
-             transaction.run("DELETE FROM listing WHERE USERID=" + userid+ " AND LISTID=" + listid, 
+             command = "DELETE FROM listing WHERE USERID=" + userid+ " AND LISTID=" + listid;
+             console.log(command);
+             transaction.run(command, 
                 function (err) { if (err) { transaction.rollback();  reject(err); } resolve(); });
 
              transaction.commit(function(err) {
@@ -359,6 +461,7 @@ function getAllListings()
         db.serialize(function () {
 
             var command = "SELECT * FROM listing";
+            console.log(command);
             db.all(command, function (err, row) {
                 if (err) {
                     reject(err);
@@ -381,7 +484,7 @@ function getAllListings()
         },
         (err) => {
             console.log('Error getting all listings');
-            return {};
+            return [];
         }
         );
     return p;
@@ -407,7 +510,7 @@ function getListings(inListing)
     }).then(
         (rows) => {
             // Process them.
-            var outputData = {};
+            var outputData = [];
             var count = 0;
             for (thisRow of rows) {
                 var aListing = createListingFrom(thisRow);
@@ -419,7 +522,7 @@ function getListings(inListing)
         (err) => {
             console.log('Error getting all listings');
             console.log(err);
-            return {};
+            return [];
         }
         );
     return p;
@@ -434,7 +537,7 @@ function buildWhereClause(aListing)
         if (temp != null) return WHERE + temp;
     temp = clauseFor(aListing.userid, "USERID", false);
         if (temp != null) return WHERE + temp;
-    var clauses = {};
+    var clauses = [];
 
     clauses[0] = clauseFor(aListing.category, "CATEGORY", true);
     clauses[1] = clauseFor(aListing.status, "STATUS", true);
@@ -479,6 +582,7 @@ function getSellList(userid)  // returns a list of listing
         db.serialize(function () {
 
             var command = "SELECT * FROM listing WHERE USERID = " + userid;
+            console.log(command);
             db.all(command, function (err, row) {
                 if (err) {
                     reject(err);
@@ -489,7 +593,7 @@ function getSellList(userid)  // returns a list of listing
     }).then(
         (rows) => {
             // Process them.
-            var outputData = {};
+            var outputData = [];
 
             for (thisRow of rows) {
                 var aListing = createListingFrom(thisRow);
@@ -501,7 +605,7 @@ function getSellList(userid)  // returns a list of listing
         },
         (err) => {
             console.log('Error getting my listing');
-            return {};
+            return [];
         }
         );
     return p;
@@ -514,6 +618,7 @@ function getWatchList(userid)  // returns a list of listing
                     + 'listing.LISTID,listing.USERID,listing.DESCRIPTION,listing.PRICE,listing.CATEGORY,'
                     + 'listing.STATUS,listing.LOCATION,listing.IMGFILE,listing.INSERT_TS' 
             + ' FROM watchlist, listing WHERE watchlist.LISTID = listing.LISTID and watchlist.USERID = ' + userid + ' ORDER BY watchlist.INSERT_TS';
+             console.log(command);
             db.all(command , (err, rows) => {
                 if (err) {
                     reject(err);
@@ -559,7 +664,7 @@ function getWatchersForListing(listid)
     }).then(
         (rows) => {
             // Process them.
-            var outputData = {};
+            var outputData = [];
             var count = 0;
             console.log("Returned " + rows.length + " rows");
             for (thisRow of rows) {
@@ -579,6 +684,7 @@ function insertWatchList(userid, listid)
        db.serialize(function () {
             var values = listid + ', ' + userid;
             var insertCommand = "INSERT INTO watchlist (LISTID, USERID) VALUES (" + values + ")"
+             console.log(insertCommand);
             db.run(insertCommand, function (err) { if (err) { reject(err);}  resolve(this.lastID);});
         });
     });
@@ -590,6 +696,7 @@ function deleteWatchList(userid,listid)
        db.serialize(function () {
 
             var command = "DELETE FROM watchlist WHERE LISTID=" + listid + " AND USERID=" + userid;
+             console.log(command);
             db.run(command,
                 function (err){
                     if (err) {
@@ -607,6 +714,7 @@ function deleteEntireWatchList(userid)
        db.serialize(function () {
 
             var command = "DELETE FROM watchlist WHERE USERID=" + userid;
+             console.log(command);
             db.run(command,
                 function (err){
                     if (err) {
@@ -638,7 +746,7 @@ function getListingsLike(inListing)
     }).then(
         (rows) => {
             // Process them.
-            var outputData = {};
+            var outputData = [];
             var count = 0;
             for (thisRow of rows) {
                 var aListing = createListingFrom(thisRow);
@@ -651,7 +759,7 @@ function getListingsLike(inListing)
         (err) => {
             console.log('Error getting all listings');
             console.log(err);
-            return {};
+            return [];
         }
         );
     return p;
