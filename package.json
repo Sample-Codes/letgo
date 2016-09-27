@@ -6,6 +6,7 @@
     "angular": "1.5.x",
     "angular-mocks": "1.5.x",
     "angular-route": "1.5.x",
+    "angular-toarrayfilter": "^1.0.1",
     "assert": "^1.4.1",
     "body-parser": "^1.15.2",
     "bootstrap": "3.3.x",

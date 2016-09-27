@@ -1,6 +1,6 @@
 // Register `forSale` component, along with its associated controller and template
 angular.
-  module('forSale', ['ngCookies']).
+  module('forSale').
   component('forSale', {
       templateUrl: '/static/forSale/forSale.template.html',
       controller: function forSaleController($scope, $http, $location, $cookies) {
@@ -31,6 +31,7 @@ angular.
       
         $http.get('/getListings').then(function (response) {
           self.listings = response.data;
+          self.listings.liked = false;
         });
 
         //** click submit
@@ -47,7 +48,6 @@ angular.
           reloadBG();   //** reload background image *optional*
           $location.url('/login');
         }    
->>>>>>> d68efba92a9c1d60feaf1d778176d8c7dbfe6a77
     }
 
   });

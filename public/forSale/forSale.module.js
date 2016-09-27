@@ -4,10 +4,10 @@ angular.module('forSale', [
     'angular-toArrayFilter'
 ]).directive('backImg', function(){
     return function(scope, element, attrs){
-        var url = attrs.backImg;
+        var img = attrs.backImg;
         element.css({
-            'background-image': 'url(' + url +')',
+            'background-image': '/static/photos/'+ img +')',
             'background-size' : 'cover'
         });
     };
-})
+});
