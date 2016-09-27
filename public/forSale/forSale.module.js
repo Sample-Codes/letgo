@@ -1,5 +1,6 @@
 angular.module('forSale', [
     'ngRoute',
+    'ngCookies',
     'angular-toArrayFilter'
 ]).directive('backImg', function(){
     return function(scope, element, attrs){

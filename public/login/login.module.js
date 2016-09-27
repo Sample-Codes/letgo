@@ -1,3 +1,4 @@
 angular.module('login', [
-    'ngRoute'
+    'ngRoute',
+    'ngCookies'
 ]);

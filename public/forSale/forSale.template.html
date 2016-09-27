@@ -1,11 +1,15 @@
 <div id="wrapper">
   <div id="sidebar">
-     <!--Sidebar content-->
+    <!--Sidebar content 
+      <a class="linkForSale" ng-click="$ctrl.signout()">Sign Out</a>
+    -->
+    <input class="button" type="button" value="Sign Out" name="signout" id="signout" ng-click="$ctrl.signout()" />
+    <br /><br /><br /><br />
     <form ng-submit="$ctrl.redirect()"  name="newListingForm"> 
       <div id="profile">
         User Name: {{$ctrl.username}}
         <br>
-        Location: {{location}}
+        Location: {{$ctrl.location}}
         <br>
         <input class="button" type="submit" value="Add New Listing" name="New Listing" id="submit" />
       </div>
@@ -13,15 +17,24 @@
     <div id="searchOptions">
       <table>
         <tr>
-          Search: <input ng-model="query" type="text" class="textBox"/>
+          <td>
+            Search: <input ng-model="query" type="text" class="textBox"/>
+          </td>
           <br>
           <br>
         </tr>
         <tr>
-          <th> Sort by <a href="" ng-click="sortField = 'price'">Price</a> </th>
+          <th> 
+            Sort by <a href="" ng-click="sortField = 'price'">Price</a> 
+          </th>
         </tr>
       </table>    
+
     </div>
+    <div id="vcanvas">
+      <iframe style="position: inherit; height: 37%; width: 100%;" src="https://www.youtube.com/embed/s0sbTLCLpgY" frameborder="0" allowfullscreen></iframe>
+    </div>
+
   </div>
     <div id= "content">
       <!--Body content-->
