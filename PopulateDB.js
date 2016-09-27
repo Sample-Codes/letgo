@@ -30,8 +30,8 @@ var items = ['Picture Frame','TV','Car','Speed Boat','Guitar','DVDs'];
 var prices = [5.0,45.00,750.00,650.00,100.00,2.00];
 var usedNew = ['New ', 'Used ', 'Damaged ','Parts '];
 var colors = ['White ', 'Black ', 'Red ','Blue '];
-var userList = {};
-var listings = {};
+var userList = [];
+var listings = [];
 
 var maxUsers = 10;
 var maxItems = 6;
@@ -75,14 +75,17 @@ function loadTables()
         newList.category = items[x];
         newList.status = 'POSTED';
         newList.location = loc;
-        newList.imageFile = 'image.jpg';
+        var img = (nextIdx + 1) +'image.jpg';
+        console.log(img);
+        newList.imageFile = img;
+        printoutListing(newList);
         listing[nextIdx] = newList;
         nextIdx++;
         }
     }
     for (var i = 0; i < nextIdx; i++)
     {
-        (db.insertListing(listing[i].userid, listing[i].description, listing[i].price, listing[i].category, listing[i].location, listing[i].photo)).then((pk) => {
+        (db.insertListing(listing[i].userid, listing[i].description, listing[i].price, listing[i].category, listing[i].location, listing[i].imageFile)).then((pk) => {
             listing[i].listid = pk;
             printoutListing(listing[i]);
         }, (err) => {console.log("Insert error")});
