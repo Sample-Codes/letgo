@@ -11,16 +11,26 @@
       </div>
     </form>
     <div id="searchOptions">
-           Search: <input ng-model="query" type="text" class="textBox"/>
+      <table>
+        <tr>
+          Search: <input ng-model="query" type="text" class="textBox"/>
+          <br>
+          <br>
+        </tr>
+        <tr>
+          <th> Sort by <a href="" ng-click="sortField = 'price'">Price</a> </th>
+        </tr>
+      </table>    
     </div>
   </div>
     <div id= "content">
       <!--Body content-->
 
-      <div id="feed" ng-repeat="listing in $ctrl.listings | toArray:true | filter:query">
-        <a href="#/itemDetail/{{listing.listid}}" class="thumb">
+      <div id="feed" ng-repeat="listing in $ctrl.listings | toArray:true | filter:query | orderBy:sortField" back-img="{{listing.imageFile}}">
+        <!--<a href="#/itemDetail/{{listing.listid}}" class="thumb">
                 <img ng-src="{{listing.imageFile}}" alt="{{listing.description}}" />
-            </a>
+            </a>-->
+            <a ng-click="$ctrl.likeMe()"><img id="likeBtn" ng-src="{{$ctrl.likeBtnImgUrl}}"  /></a>
          <span> Item: {{listing.category}}</span>
           <p>Description: {{listing.description}}</p>
         

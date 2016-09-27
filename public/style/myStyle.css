@@ -151,3 +151,8 @@ h1.register {
 .link:hover {
   text-decoration: underline;
 }
+
+#likeBtn{
+  height: 50px;
+  width: 50px;
+}

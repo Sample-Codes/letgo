@@ -18,6 +18,7 @@ angular.
 
       $http.get('/getListings').then(function (response) {
         self.listings = response.data;
+        // self.listings.something = true;
 
       });
 
@@ -26,5 +27,16 @@ angular.
         $location.url('/newListing/');
       }
 
+      self.likeBtnImgUrl = '/static/img/heartNolike.png';
+      self.likeMe = function () {
+        if (self.likeBtnImgUrl === '/static/img/heartNolike.png') {
+            self.likeBtnImgUrl = '/static/img/heartLike.png';
+        } else {
+            self.likeBtnImgUrl = '/static/img/heartNolike.png';
+        }
+      }
+
+      
     }
+
   });
