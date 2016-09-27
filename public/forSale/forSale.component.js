@@ -3,7 +3,6 @@ angular.
   module('forSale', ['ngCookies']).
   component('forSale', {
       templateUrl: '/static/forSale/forSale.template.html',
-
       controller: function forSaleController($scope, $http, $location, $cookies) {
         var self = this;
         self.orderProp = 'insert_ts';
@@ -20,6 +19,16 @@ angular.
           $location.url('/login');
         }
 
+      self.likeBtnImgUrl = '/static/img/heartNolike.png';
+      self.likeMe = function () {
+        if (self.likeBtnImgUrl === '/static/img/heartNolike.png') {
+            self.likeBtnImgUrl = '/static/img/heartLike.png';
+        } else {
+            self.likeBtnImgUrl = '/static/img/heartNolike.png';
+        }
+      }
+
+      
         $http.get('/getListings').then(function (response) {
           self.listings = response.data;
         });
@@ -39,4 +48,4 @@ angular.
           $location.url('/login');
         }    
     }
-  });
+ });
