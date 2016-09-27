@@ -242,7 +242,7 @@ app.get('/getWatchersForListing/:listId', function (req, res) {
     );
 })
 
-app.post('/updateListing/', function (req, res) {
+app.post('/updateListing/', multer({dest: './public/photos/'}).single('file'), function (req, res) {
 
     var user = {
         email: req.body.email,
