@@ -66,13 +66,19 @@ app.post('/insertUser/', function (req, res) {
     )
 });
 
-app.post('/insertListing/', multer({dest: './public/photos/'}).single('photo'), function (req, res) {
+app.post('/insertListing/', multer({dest: './public/photos/'}).single('file'), function (req, res) {
+
+    console.log('Req')
+    console.dir(req)
+    console.log('file')
+    console.dir(req.file)
 
 	console.log('Body userid: ' + req.body.userId); 
 	console.log('Body description: ' + req.body.description); 
 	console.log('Body category: ' + req.body.category); 
     console.log('Body price: ' + req.body.price); 
-	console.log('Body photo: ' + req.body.photo); 
+	//console.log('Body photo: ' + req.body.photo); 
+    console.log('File photo: ' + req.file.filename); 
 	console.log('Body location: ' + req.body.location);     
 	//console.log('File: ' + req.file);
 
@@ -83,8 +89,8 @@ app.post('/insertListing/', multer({dest: './public/photos/'}).single('photo'), 
         price: req.body.price,
         category: req.body.category,
         location: req.body.location,
-        //photo: req.file.filename
-        photo: req.body.photo
+        photo: req.file.filename
+        //photo: req.body.photo
     };
 
     var insertListing = db.insertListing(listing.userId, listing.description, listing.price, listing.category, listing.location, listing.photo);

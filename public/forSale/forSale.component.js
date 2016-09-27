@@ -49,5 +49,4 @@ angular.
           $location.url('/login');
         }    
     }
-
-  });
+ });
