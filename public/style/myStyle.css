@@ -1,10 +1,12 @@
 
 #feed{
-    background: white;
-    border: 2px solid darkred;
+   border: 2px solid darkred;
     padding: 10px;
-    height: 100px;
+    height: 500px;
+    width: 500px;
     margin: 10px;
+    font: 20px;
+    color: white;
 }
 
 body {

@@ -2,51 +2,79 @@
 angular.
   module('forSale').
   component('forSale', {
-      templateUrl: '/static/forSale/forSale.template.html',
-      controller: function forSaleController($scope, $http, $location, $cookies) {
-        var self = this;
-        self.orderProp = 'insert_ts';
-        //self.username = decodeURIComponent($routeParams.username);
-        //console.log("params: " + self.username);
+    templateUrl: '/static/forSale/forSale.template.html',
+    controller: function forSaleController($scope, $http, $location, $cookies) {
+      var self = this;
+      self.orderProp = 'insert_ts';
+      //self.username = decodeURIComponent($routeParams.username);
+      //console.log("params: " + self.username);
 
-        var cUserid = $cookies.get('userid');
-        var cUsername = $cookies.get('name');
-        var cLocation = $cookies.get('location');
-        self.username = cUsername;
-        self.location = cLocation;
+      var cUserid = $cookies.get('userid');
+      var cUsername = $cookies.get('name');
+      var cLocation = $cookies.get('location');
+      self.username = cUsername;
+      self.location = cLocation;
+      self.watching = 0;
 
-        if (cUserid == undefined) {
-          $location.url('/login');
-        }
-
-      self.likeBtnImgUrl = '/static/img/heartNolike.png';
-      self.likeMe = function () {
-        if (self.likeBtnImgUrl === '/static/img/heartNolike.png') {
-            self.likeBtnImgUrl = '/static/img/heartLike.png';
-        } else {
-            self.likeBtnImgUrl = '/static/img/heartNolike.png';
-        }
+      if (cUserid == undefined) {
+        $location.url('/login');
       }
 
-      
-        $http.get('/getListings').then(function (response) {
-          self.listings = response.data;
-          self.listings.liked = false;
-        });
-
-        //** click submit
-        self.redirect = function () {
-          $location.url('/newListing/');
+      //set/remove from watchlist
+      self.likeMe = function (listing) {
+        listing.liked = !listing.liked;
+        
+        if(listing.liked){
+           $http.post('/insertWatchList/').then(function (response) {
+             ++self.watching;
+          });
+        }else{
+           $http.post('/deleteWatchList/').then(function (response) {
+             --self.watching;
+          });
         }
+         
+      }
 
-        //** click Sign Out
-        self.signout = function() {
-          $cookies.remove('userid');
-          $cookies.remove('email');
-          $cookies.remove('name');
-          $cookies.remove('location');
-          reloadBG();   //** reload background image *optional*
-          $location.url('/login');
-        }    
+      self.watchlist = function(){
+        $http.get('/getWatchList/'+ cUserid).then(function (response) {
+          self.listings = response.data;
+          for (var i = 0; i < self.listings.length; i++) {
+            self.listings[i].liked = true;
+          }
+        });
+      }
+
+      //get all the listings
+      $http.get('/getListings').then(function (response) {
+        self.listings = response.data;
+        for (var i = 0; i < self.listings.length; i++) {
+          self.listings[i].liked = false;
+        }
+      });
+
+      //** click submit
+      self.redirect = function () {
+        $location.url('/newListing/');
+      }
+
+      //** click Sign Out
+      self.signout = function () {
+        $cookies.remove('userid');
+        $cookies.remove('email');
+        $cookies.remove('name');
+        $cookies.remove('location');
+        reloadBG();   //** reload background image *optional*
+        $location.url('/login');
+      }
     }
- });
+  }).directive('backImg', function () {
+    return function (scope, element, attrs) {
+      var img = attrs.backImg;
+      console.log("image file: " + img);
+      element.css({
+        'background-image': 'url('+img+')',
+        'background-size': 'cover'
+      });
+    };
+  });
