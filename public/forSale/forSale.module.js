@@ -1,3 +1,5 @@
 angular.module('forSale', [
-    'ngRoute'
+    'ngRoute',
+    'ngCookies',
+    'angular-toArrayFilter'
 ]);

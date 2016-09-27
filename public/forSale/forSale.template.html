@@ -1,23 +1,27 @@
 <div id="wrapper">
   <div id="sidebar">
-     <!--Sidebar content-->
+    <!--Sidebar content 
+      <a class="linkForSale" ng-click="$ctrl.signout()">Sign Out</a>
+    -->
+    <input class="button" type="button" value="Sign Out" name="signout" id="signout" ng-click="$ctrl.signout()" />
+    <br /><br /><br /><br />
     <form ng-submit="$ctrl.redirect()"  name="newListingForm"> 
       <div id="profile">
         User Name: {{$ctrl.username}}
         <br>
-        Location: {{location}}
-
+        Location: {{$ctrl.location}}
+        <br>
         <input class="button" type="submit" value="Add New Listing" name="New Listing" id="submit" />
       </div>
     </form>
     <div id="searchOptions">
-           Search: <input ng-model="$ctrl.query" />
+         Search: <input ng-model="query" type="text" class="textBox"/>
     </div>
   </div>
     <div id= "content">
       <!--Body content-->
 
-      <div id="feed" ng-repeat="listing in $ctrl.listings">
+      <div id="feed" ng-repeat="listing in $ctrl.listings | toArray:true | filter:query">
         <a href="#/itemDetail/{{listing.listid}}" class="thumb">
                 <img ng-src="{{listing.imageFile}}" alt="{{listing.description}}" />
             </a>
