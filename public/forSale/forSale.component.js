@@ -31,6 +31,7 @@ angular.
       
         $http.get('/getListings').then(function (response) {
           self.listings = response.data;
+          self.listings.liked = false;
         });
 
         //** click submit
@@ -48,5 +49,4 @@ angular.
           $location.url('/login');
         }    
     }
-
-  });
+ });

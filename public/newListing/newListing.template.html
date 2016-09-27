@@ -1,6 +1,6 @@
 <div>
     <h1>New Listing</h1>
-    <div id="new-listing" class="divBox">
+    <div id="new-listing" class="divBox">>
         <form ng-submit="$ctrl.redirect()" name="newListingForm">
             <div>
                 <label class='lgLabel'>Description</label>
@@ -35,6 +35,12 @@
                 <input ng-model="$ctrl.location"
                         id="location" class="textBox" name="location" title="location" 
                         value="" placeholder="" size="30" maxlength="40"/>
+                        <br>
+                        <br> 
+                <label class='lgLabel'>Photo</label>
+                <input type = "file" file-model = "$ctrl.myFile" class="textBox"/> {{$ctrl.myFile.name}}
+                <br>
+                <br>                   
             </div>
             <br /><br /><br /><br /><br /><br />
             <div class="spacer2"></div> 
