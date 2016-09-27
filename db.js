@@ -369,7 +369,7 @@ function getAllListings()
     }).then(
         (rows) => {
             // Process them.
-            var outputData = {};
+            var outputData = [];
             var count = 0;
             for (thisRow of rows) {
                 var aListing = createListingFrom(thisRow);
@@ -524,7 +524,7 @@ function getWatchList(userid)  // returns a list of listing
     }).then(
         (rows) => {
             // Process them.
-            var outputData = {};
+            var outputData = [];
             var count = 0;
             console.log("Returned " + rows.length + " rows");
             for (thisRow of rows) {
