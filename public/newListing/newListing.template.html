@@ -17,17 +17,15 @@
                         <span ng-show="newListingForm.category.$error.required">Category is Required!</span>
                         <br>
                         <br>
-                <label class='lgLabel'>Price</label>
-                <input ng-model="$ctrl.price"  required type="number"
+                <label class='lgLabel'>Price  (currency: {{$ctrl.price | currency}})</label>
+                <input ng-model="$ctrl.price"  required type="text" ng-max="999.99"
                         id="price"  class="textBox" name="location" title="price" 
-                        value="" placeholder="" size="30" maxlength="40"  />
+                        value="" placeholder="" size="7" maxlength="6"  />
                         <span ng-show="newListingForm.price.$error.required">Price is Required!</span>
                         <br>
                         <br> 
-                <label class='lgLabel'>Photo</label>
-                <input ng-model="$ctrl.photo"  required type="text"
-                        id="photo"  class="textBox" name="photo" title="photo" 
-                        value="" placeholder="" size="30" maxlength="40"  />
+                <label class='lgLabel'>Photo (filename: {{$ctrl.myFile.name}}) </label>
+                <input type = "file" file-model = "$ctrl.myFile" class="textBox"/>
                         <span ng-show="newListingForm.photo.$error.required">Photo is Required!</span>
                         <br>
                         <br>                   
@@ -36,11 +34,7 @@
                         id="location" class="textBox" name="location" title="location" 
                         value="" placeholder="" size="30" maxlength="40"/>
                         <br>
-                        <br> 
-                <label class='lgLabel'>Photo</label>
-                <input type = "file" file-model = "$ctrl.myFile" class="textBox"/> {{$ctrl.myFile.name}}
-                <br>
-                <br>                   
+                        <br>                   
             </div>
             <br /><br /><br /><br /><br /><br />
             <div class="spacer2"></div> 

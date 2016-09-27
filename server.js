@@ -137,20 +137,6 @@ app.post('/insertWatchList/', function (req, res) {
 
 app.get('/getListings/', function (req, res) {
 
-    var user = {
-        email: req.body.email,
-        userId: req.body.userId
-    };
-
-    var listing = {
-        description: req.body.description,
-        price: req.body.price,
-        category: req.body.category,
-        location: req.body.listinglocation,
-        status: req.body.status,
-        postedBy: req.body.postedBy
-    };
-
     var listings = db.getAllListings();
 
     listings.then(

@@ -1,5 +1,6 @@
 <div id="wrapper">
   <div id="sidebar">
+
     <form ng-submit="$ctrl.redirect()"  name="newListingForm"> 
       <div id="profile">
         <label class="smLabel">User Name: </label><label class="smValue" ng-bind='$ctrl.username'>&nbsp;</label>
@@ -7,6 +8,7 @@
         <br>
         <label class="smLabel">Location: </label><label class="smValue" ng-bind='$ctrl.location'></label>
         <br><br>
+        <br>  <a ng-click="$ctrl.watchlist()">Watch List: </a> {{$ctrl.watching}}
         <input class="button" type="submit" value="Add New Listing" name="New Listing" id="submit" />
       </div>
     </form>
@@ -14,6 +16,7 @@
       <table>
         <tr>
           <td>
+
             <label class="smLabel">Search: </label>
           </td>
         </tr>        
@@ -23,7 +26,7 @@
           </td>
         </tr>
         <tr>
-          <td> 
+         <td> 
             <label class="smLabel">Sort by:
               <select ng-model="sortField">
                 <option value="price">Price</option>
@@ -44,23 +47,25 @@
       </table>    
     </div>
     <div id="vcanvas">
-      <iframe style="position: inherit; height: 37%; width: 100%;" src="https://www.youtube.com/embed/s0sbTLCLpgY" frameborder="0" allowfullscreen></iframe>
+      <iframe style="position: inherit; height: 37%; width: 100%;" src="https://www.youtube.com/embed/s0sbTLCLpgY" frameborder="0"
+        allowfullscreen></iframe>
     </div>
 
   </div>
-    <div id= "content">
-      <!--Body content-->
+  <div id="content">
+    <!--Body content-->
 
-      <div id="feed" ng-repeat="listing in $ctrl.listings | toArray:true | filter:query | orderBy:sortField:direction" back-img="{{listing.imageFile}}">
-        <!--<a href="#/itemDetail/{{listing.listid}}" class="thumb">
-                <img ng-src="{{listing.imageFile}}" alt="{{listing.description}}" />
-            </a>-->
-            <a ng-click="$ctrl.likeMe()"><img id="likeBtn" ng-src="{{$ctrl.likeBtnImgUrl}}"  /></a>
-         <span> Item: {{listing.category}}</span>
-          <p>Description: {{listing.description}}</p>
-        
-      </div>
+    <div id="feed" ng-repeat="listing in $ctrl.listings | filter:query | orderBy:sortField" back-img="/static/photos/{{listing.imageFile}}">
+     
+      <a ng-click="$ctrl.likeMe(listing)"><img id="likeBtn" ng-src="/static/img/{{listing.liked ? 'heartLike.png' : 'heartNoLike.png' }} " /></a>
+      <br><br><br><br><br>
+      <span> Item: {{listing.category}}</span>
+      <span> Price: {{listing.price}}</span>
+      <span> Seller: {{listing.username}}</span>
+      <p>Description: {{listing.description}}</p>
 
     </div>
+
   </div>
+</div>
 </div>
