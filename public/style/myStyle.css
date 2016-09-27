@@ -31,6 +31,30 @@ h1.register {
     font-size: 63px;
 }
 
+label.lgLabel
+{
+    color: #ccc;
+    text-decoration: none;
+    font-family: Verdana, sans-serif;
+    font-size: 24px;
+    width: 335px;
+    padding: 6px 15px 6px 65px;
+    margin-bottom: 15px;
+ }
+label.smLabel  {
+    color: #3F3F46;
+    font-weight: bold;
+    font-family: Verdana, sans-serif;
+    font-size: 15px;
+}
+
+label.smValue  {
+    color: #3F3F46;
+    text-decoration: none;
+    font-family: Verdana, sans-serif;
+    font-size: 15px;
+}
+
 .textBox
 {
     background-color: #333;
@@ -44,6 +68,7 @@ h1.register {
     transition:500ms all ease;
     float:right;
 }
+
 .textBox:hover
 {
     width:360px;
@@ -125,6 +150,19 @@ h1.register {
   padding: 5px;
   height: 20%
 }
+
+.smLink {
+  color: #3F3F46;
+  text-decoration: none;
+  font-family: Verdana, sans-serif;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.smLink:hover {
+  text-decoration: underline;
+}
+
 
 .link {
   color: aliceblue;

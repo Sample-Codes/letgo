@@ -7,9 +7,9 @@
     <br /><br /><br /><br />
     <form ng-submit="$ctrl.redirect()"  name="newListingForm"> 
       <div id="profile">
-        User Name: {{$ctrl.username}}
+        <label class="smLabel">User Name: </label><label class="smValue" ng-bind='$ctrl.username'></label>
         <br>
-        Location: {{$ctrl.location}}
+        <label class="smLabel">Location: </label><label class="smValue" ng-bind='$ctrl.location'></label>
         <br>
         <input class="button" type="submit" value="Add New Listing" name="New Listing" id="submit" />
       </div>
@@ -18,14 +18,16 @@
       <table>
         <tr>
           <td>
-            Search: <input ng-model="query" type="text" class="textBox"/>
+            <label class="smLabel">Search: </label>
+            <input ng-model="query" type="text" class="textBox"/>
           </td>
           <br>
           <br>
         </tr>
         <tr>
           <th> 
-            Sort by <a href="" ng-click="sortField = 'price'">Price</a> 
+            <label class="smLabel">Sort by</label>
+            <a class="smLink" href="" ng-click="sortField = 'price'">Price</a> 
           </th>
         </tr>
       </table>    

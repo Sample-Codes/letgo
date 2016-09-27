@@ -1,6 +1,6 @@
 // Register `login` component, along with its associated controller and template
 angular.
-  module('login', ['ngCookies']).
+  module('login').
   component('login', {  
       //** template
       templateUrl: '/static/login/login.template.html',

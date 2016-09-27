@@ -5,9 +5,10 @@
   <div id="login-box" class="divBox">
       <form ng-submit="$ctrl.redirect()"  name="loginForm">
       <div>
+          <label class='lgLabel'>Username</label>
           <input ng-model="$ctrl.userName" required type="email" 
                 id="userName" class="textBox" name="userName" title="Username" 
-                value="" placeholder="Username" size="30" maxlength="2048" />
+                value="" placeholder="" size="30" maxlength="2048" />
                 <div class="errorBox">
                     <!--<span ng-show="loginForm.userName.$error.required">Required!</span>-->
                     <span ng-show="loginForm.userName.$error.email" class="error">Not valid email!</span>
