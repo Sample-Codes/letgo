@@ -1,22 +1,17 @@
 // Register `forSale` component, along with its associated controller and template
 angular.
-  module('newListing')
-  .component('newListing', {
-    templateUrl: '/static/newListing/newListing.template.html',
+  module('updateListing')
+  .component('updateListing', {
+    templateUrl: '/static/updateListing/updateListing.template.html',
 
-    controller: function newListingController($scope, $http, $location, $cookies) {
+    controller: function updateListingController($scope, $http, $location, $cookies, $routeParams) {
       var self = this;
 
-      self.reset = function () {
-        self.description = "";
-        self.category = "";
-        self.price = 5;
-        self.location = "";
-      };
-      self.reset();
+      self.listid = $routeParams.listid;
+       console.log("listid from route params: " + self.listid);
 
       self.cUserid = $cookies.get('userid');
-      console.log("Userid from cookies jar: "+ self.cUserid);
+      console.log("Userid from cookies jar: " + self.cUserid);
 
       self.redirect = function () {
         console.log('User clicked submit');
@@ -30,14 +25,16 @@ angular.
         // console.dir(self.myFile)
 
         var fd = new FormData();
-        fd.append('file', self.myFile);
         fd.append('userId', self.cUserid);
+        fd.append('listId', self.listid);
+
+        fd.append('file', self.myFile);
         fd.append('description', self.description);
         fd.append('category', self.category);
         fd.append('price', self.price);
         fd.append('location', self.location);
 
-        $http.post('/insertListing', fd, {
+        $http.post('/updateListing', fd, {
            transformRequest: angular.identity,
            headers: { 'Content-Type': undefined }
          }
