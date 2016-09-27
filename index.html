@@ -35,12 +35,12 @@
 <body onload="reloadBG()">
 
   <div ng-view></div>
-
-<script type="text/javascript">
-  function reloadBG() {
-    var imgNbr = Math.floor(Math.random() * 4) + 1;
-    document.body.style.backgroundImage = "url('/static/img/bg"+imgNbr+".jpg')";
-  }
-</script>
+  
+  <script type="text/javascript">
+    function reloadBG() {
+      var imgNbr = Math.floor(Math.random() * 4) + 1;
+      document.body.style.backgroundImage = "url('/static/img/bg"+imgNbr+".jpg')";
+    }
+  </script>
 </body>
 </html>
