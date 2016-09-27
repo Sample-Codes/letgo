@@ -23,7 +23,22 @@
         </tr>
         <tr>
           <td> 
-            <label class="smLabel">Sort by</label> <a class="smLink" href="" ng-click="sortField = 'price'">Price</a> 
+            <label class="smLabel">Sort by:
+              <select ng-model="sortField">
+                <option value="price">Price</option>
+                <option value="category">Category</option>
+                <option value="item">Item</option>
+              </select>
+            </label>
+            <label class="smLabel">
+              <input type="radio" ng-model="direction" name="direction" checked>
+              ascending
+            </label>
+            <label class="smLabel">
+              <input type="radio" ng-model="direction" name="direction" value="reverse">
+              descending
+            </label>
+                    <!--<label class="smLabel">Sort by</label> <a class="smLink" href="" ng-click="sortField = 'price'">Price</a> -->
           </td>
         </tr>
       </table>    
@@ -36,7 +51,7 @@
     <div id= "content">
       <!--Body content-->
 
-      <div id="feed" ng-repeat="listing in $ctrl.listings | toArray:true | filter:query | orderBy:sortField" back-img="{{listing.imageFile}}">
+      <div id="feed" ng-repeat="listing in $ctrl.listings | toArray:true | filter:query | orderBy:sortField:direction" back-img="{{listing.imageFile}}">
         <!--<a href="#/itemDetail/{{listing.listid}}" class="thumb">
                 <img ng-src="{{listing.imageFile}}" alt="{{listing.description}}" />
             </a>-->
