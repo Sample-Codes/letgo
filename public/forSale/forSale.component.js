@@ -70,11 +70,23 @@ angular.
     }
   }).directive('backImg', function () {
     return function (scope, element, attrs) {
-      var img = attrs.backImg;
+        var img = attrs.backImg;
+        var tImg = new Image();
+        var tHeight, sH;
+
+        tImg.onload = function() {
+          tHeight = (Number(this.height)*300)/Number(this.width);  //calculate proportional height
+          sH = tHeight.toString()+'px';
+          element.css({
+            'background-image': 'url('+img+')',
+            'background-repeat': 'no-repeat',
+            'background-size': 'contain',
+            'max-width':'100%',
+            'width':'300px',
+            'height':sH,
+          });      
+      }
+      tImg.src = img;
       console.log("image file: " + img);
-      element.css({
-        'background-image': 'url('+img+')',
-        'background-size': 'cover'
-      });
     };
   });

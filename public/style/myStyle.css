@@ -1,13 +1,26 @@
 
-#feed{
-   border: 2px solid darkred;
+p {
+    line-height: 0px;
+    text-decoration: none;
+    font-family: Verdana, sans-serif;
+}
+
+#feed {
+    width: 300px;
+    float: left;
+    border: 2px solid darkred;
     padding: 10px;
-    height: 500px;
-    width: 500px;
     margin: 10px;
     font: 20px;
-    color: white;
+    color: black;
+    background-color: white;
+    display: flex;
+    flex-flow: column wrap;
 }
+
+#feed p { font-weight: bold;}
+#feed p+p { font-weight: normal;}
+#feed p+p+p { font-weight: normal;}
 
 body {
   background-color : black;
@@ -124,19 +137,15 @@ label.smValue  {
   float: right;
   width: 68%;
   height: 100%;
-  background-color: white;
-  opacity: 0.7;
   margin-left: 5px;
-  overflow-y: auto;
-  border: 2px solid red;
 }
 #sidebar {
   float: left;
   width: 30%;
- height: 100%;
+  height: 100%;
   background-color: whitesmoke;
   border: 2px solid red;
-  opacity: 0.5;
+  opacity: 1;
   overflow: hidden;
 }
 #cleared {

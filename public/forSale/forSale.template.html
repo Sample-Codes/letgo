@@ -8,7 +8,8 @@
         <br>
         <label class="smLabel">Location: </label><label class="smValue" ng-bind='$ctrl.location'></label>
         <br><br>
-        <br>  <a ng-click="$ctrl.watchlist()">Watch List: </a> {{$ctrl.watching}}
+        <br>  
+        <a class="smLink" ng-click="$ctrl.watchlist()">Watch List:</a> {{$ctrl.watching}}
         <input class="button" type="submit" value="Add New Listing" name="New Listing" id="submit" />
       </div>
     </form>
@@ -54,18 +55,18 @@
   </div>
   <div id="content">
     <!--Body content-->
+    <main>
+      <section id="feed" ng-repeat="listing in $ctrl.listings | filter:query | orderBy:sortField" >
+        <img back-img="/static/photos/{{listing.imageFile}}"  width="300">
 
-    <div id="feed" ng-repeat="listing in $ctrl.listings | filter:query | orderBy:sortField" back-img="/static/photos/{{listing.imageFile}}">
-     
-      <a ng-click="$ctrl.likeMe(listing)"><img id="likeBtn" ng-src="/static/img/{{listing.liked ? 'heartLike.png' : 'heartNoLike.png' }} " /></a>
-      <br><br><br><br><br>
-      <span> Item: {{listing.category}}</span>
-      <span> Price: {{listing.price}}</span>
-      <span> Seller: {{listing.username}}</span>
-      <p>Description: {{listing.description}}</p>
+        <a ng-click="$ctrl.likeMe(listing)"><img id="likeBtn" ng-src="/static/img/{{listing.liked ? 'heartLike.png' : 'heartNoLike.png' }} " /></a>
+        <p>Item: {{listing.category}}</p>
+        <p>Price: $ {{listing.price}}.00</p>
+        <p>Seller: {{listing.username}}</p>
+        <p>Description: {{listing.description}}</p>
 
-    </div>
-
+      </section>
+    </main>
   </div>
 </div>
 </div>
