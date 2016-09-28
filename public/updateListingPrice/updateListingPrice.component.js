@@ -30,10 +30,10 @@ angular.
         console.log(self);
 
         var fd = new FormData();
-        fd.append('userId', self.userid);
+        fd.append('listId', self.listid);
         fd.append('price', self.price);
 
-        $http.post('/insertListing', fd)
+        $http.post('/updateListingPrice', fd)
           .success(function (res, url, data, config) {
             console.log('res')
             console.dir(res)
