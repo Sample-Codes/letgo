@@ -1,33 +1,32 @@
 <div>
-    <h1>New Listing</h1>
-    <div id="new-listing" class="divBox">>
-        <form ng-submit="$ctrl.redirect()" name="newListingForm">
+    <h1>Update Listing</h1>
+    <div id="update-listing" class="divBox">>
+        <form ng-submit="$ctrl.redirect()" name="updateListingForm">
             <div>
                 <label class='lgLabel'>Description</label>
                 <input ng-model="$ctrl.description"  required type="text"
                         id="name"  class="textBox" name="description" title="description" 
                         value="" placeholder="" size="30" maxlength="40"  />
-                        <span ng-show="newListingForm.description.$error.required">Description is Required!</span>
+                        <span ng-show="updateListingForm.description.$error.required">Description is Required!</span>
                         <br>
                         <br>
                 <label class='lgLabel'>Category</label>
                 <input ng-model="$ctrl.category"  required type="text"
                         id="category"  class="textBox" name="category" title="category" 
                         value="" placeholder="" size="30" maxlength="40"  />
-                        <span ng-show="newListingForm.category.$error.required">Category is Required!</span>
+                        <span ng-show="updateListingForm.category.$error.required">Category is Required!</span>
                         <br>
                         <br>
                 <label class='lgLabel'>Price  (currency: {{$ctrl.price | currency}})</label>
-                <input ng-model="$ctrl.price"  required type="text"
-                        id="price"  class="textBox" name="price" title="price" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/"
+                <input ng-model="$ctrl.price"  required type="text" ng-max="999.99"
+                        id="price"  class="textBox" name="location" title="price" 
                         value="" placeholder="" size="7" maxlength="6"  />
-                        <span ng-show="newListingForm.price.$error.required">Price is Required!</span>
-                        <span ng-show="!newListingForm.price.$valid" class="error">Price is Invalid!</span>
+                        <span ng-show="updateListingForm.price.$error.required">Price is Required!</span>
                         <br>
                         <br> 
                 <label class='lgLabel'>Photo (filename: {{$ctrl.myFile.name}}) </label>
-                <input type = "file" name="photo" file-model = "$ctrl.myFile" class="textBox"/>
-                        <span ng-show="newListingForm.photo.$error.required">Photo is Required!</span>
+                <input type = "file" file-model = "$ctrl.myFile" class="textBox"/>
+                        <span ng-show="updateListingForm.photo.$error.required">Photo is Required!</span>
                         <br>
                         <br>                   
                 <label class='lgLabel'>Selling Location</label>
@@ -37,13 +36,10 @@
                         <br>
                         <br>                   
             </div>
-            <br/>
-            <button class="button" ng-click="$ctrl.reset()">Clear</button><br>
             <br /><br /><br /><br /><br /><br />
             <div class="spacer2"></div> 
             <a class="link" ng-click="$ctrl.cancel()">Cancel</a>
-
-            <input class="button" type="submit" value="Submit" name="submit" id="submit" /><br>
+            <input class="button" type="submit" value="Submit" name="submit" id="submit" />
         </form>
     </div>
 </div>

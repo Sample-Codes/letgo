@@ -20,6 +20,9 @@ angular.
         when('/newListing', {
           template: '<new-listing></new-listing>'
         }).
+        when('/updateListing/:listid', {
+          template: '<update-listing></update-listing>'
+        }).
         otherwise('/login');
     }
   ]);
