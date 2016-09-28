@@ -10,7 +10,17 @@ angular.module('newListing')
                     scope.$apply(function () {
                         console.log('bind apply here')
                         modelSetter(scope, element[0].files[0]);
+                        console.log(scope);
                     });
+                    var file = scope.$ctrl.myFile;
+                    var reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = function (e) {
+                        scope.$ctrl.ImageSrc = e.target.result;
+                        console.log(scope);
+                        scope.$apply();
+                    }
+
                 });
             }
         };

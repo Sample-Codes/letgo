@@ -89,6 +89,21 @@ label.smValue  {
     width:360px;
 }
 
+.textArea
+{
+    background-color: #333;
+    color: #ccc;
+    font-size: 24px;
+    height: 200px;
+    width: 335px;
+    padding: 6px 15px 6px 35px;
+    margin-bottom: 15px;
+    border-radius: 20px;
+    box-shadow: 0 1px 0 #ccc inset;
+    transition:500ms all ease;
+    float:right;
+}
+
 .button, linkForSale {
     background-color: #333;
     border: 3px #ccc solid;
@@ -197,4 +212,12 @@ label.smValue  {
 }
 #vcanvas {
   margin-top:135px;
+}
+div.smValue  {
+    color: #ccc;
+    text-decoration: none;
+    font-family: Verdana, sans-serif;
+     font-size: 15px;
+     padding: 6px 15px 6px 65px;
+    margin-bottom: 15px;
 }
