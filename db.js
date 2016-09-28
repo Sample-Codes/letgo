@@ -176,6 +176,7 @@ function asMyQuote(input) {
     
     return '\'' + input + '\'';
 }
+/*
 function insertUser(name, email, location)
 {
     var p = new Promise(function (resolve, reject) {
@@ -195,12 +196,14 @@ function insertUser(name, email, location)
     });
     return p;
 }
-
+*/
 // FUTURE 
-/*function insertUser(name, password, email, location)
+function insertUser(name, email, location, password)
 {
     var p = new Promise(function (resolve, reject) {
         db.serialize(function () {
+            if ((password === undefined) || (password === null))
+            password = 'passsword';
             var values = asMyQuote(name) + ', ' + asMyQuote(password) + ', ' + asMyQuote(email) + ', ' + asMyQuote(location);
             var insertCommand = "INSERT INTO users (NAME, PASSWORD, EMAIL, LOCATION) VALUES (" + values + ")"
             console.log(insertCommand);
@@ -215,7 +218,7 @@ function insertUser(name, email, location)
         });
     });
     return p;
-}*/
+}
 function updateUser(userid, name, email, location)
 {
     var p = new Promise(function (resolve, reject) {
@@ -435,12 +438,7 @@ function updateListing(userid, listid, description, price, category,status, loca
     var p = new Promise(function (resolve, reject) {
         db.serialize(function () {
             var command = "UPDATE listing SET" 
-             + " DESCRIPTION=" + asMyQuote(description)
-             + ", PRICE=" + price 
-             + ", CATEGORY=" + asMyQuote(category)
-             + ", STATUS=" + asMyQuote(status)
-             + ", LOCATION=" + asMyQuote(location)
-             + ", IMGFILE=" + asMyQuote(photo)
+             + createUpdateList(description, price, category,status, location, photo);
              + " WHERE LISTID=" + listid
              + " AND USERID=" + userid;
             console.log(command);
@@ -453,6 +451,51 @@ function updateListing(userid, listid, description, price, category,status, loca
              });
    });
     return p;
+}
+function createUpdateList(description, price, category,status, location, photo)
+{
+    var count = 0;
+    var output = '';
+
+    if ((description != undefined) && ( description != null))
+    {
+        if (count > 0)
+            output += ',';
+        output += " DESCRIPTION=" +asMyQuote(description);
+        count++;
+    }
+    if ((category != undefined) && ( category != null))
+    {
+        if (count > 0)
+            output += ',';
+        output += " CATEGORY=" +asMyQuote(category);
+        count++;
+    }
+    if ((status != undefined) && ( status != null))
+    {
+        if (count > 0)
+            output += ',';
+        output += " STATUS=" +asMyQuote(status);
+        count++;
+    }
+    if ((location != undefined) && ( location != null))
+    {
+        if (count > 0)
+            output += ',';
+        output += " LOCATION=" +asMyQuote(location);
+        count++;
+    }
+    if ((photo != undefined) && ( photo != null))
+    {
+        if (count > 0)
+            output += ',';
+        output += " IMGFILE=" +asMyQuote(photo);
+        count++;
+    }
+    if (count >0)
+        output += ',';
+    output += " PRICE=" + price;
+    return output;
 }
 function updateListingPrice(userid,listid, price)
 {   

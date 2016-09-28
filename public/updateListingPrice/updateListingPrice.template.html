@@ -1,8 +1,9 @@
 <div>
     <h1>Update Listing Price</h1>            
-    <div id="update-listingprice" class="divBox">
+    <div id="update-price" class="divBox">
         <form ng-submit="$ctrl.redirect()" name="updateListingPriceForm">
             <div>
+                <br>
                 <label class='lgLabel'>Price  (currency: {{$ctrl.price | currency}})</label>
                 <input ng-model="$ctrl.price"  required type="text"
                         id="price"  class="textBox" name="price" title="price" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/"
@@ -11,11 +12,6 @@
                         <span ng-show="!updateListingPriceForm.price.$valid" class="error">Price is Invalid!</span>
                         <br>
                         <br> 
-                <label class='lgLabel'>Selling Location</label>
-                <input ng-model="$ctrl.location"
-                        id="location" class="textBox" name="location" title="location" 
-                        value="" placeholder="" size="30" maxlength="40"/>   
-                <br>
                 <br /><br /><br />
             <a class="link" ng-click="$ctrl.cancel()">Cancel</a><br>
                 <button class="button" ng-click="$ctrl.reset()" title="Reset Form">Reset Form</button>             

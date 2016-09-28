@@ -40,19 +40,55 @@ app.get('/getUser/:userName', function (req, res) {
     )
 });
 
+app.get('/getLogin/:userName/:password', function (req, res) {
+    console.log('Body: ' + req.body.userName)
+    console.log('userName: ' + req.params.userName)
+    console.log('password: ' + req.params.password)
+
+    var login = {
+        email: req.params.userName,
+        password: req.params.password
+    };
+
+    var p = db.getUser(login.email, login.password);
+    p.then(
+        (val) => {
+            console.dir(val)
+            console.log('User Id: ' + val.userid)
+            console.log('User Name: ' + val.userName)
+            console.log('Password: ' + val.password)
+
+            if (login.email === val.email & login.password === val.password){
+            res.send(val);
+            }
+            else {
+            res.send('Invalid Login');    
+            }
+        }
+    ).catch(
+        (err) => {
+            res.status(500);
+            console.log(err);
+            res.send(err);
+        }
+    )
+});
+
 app.post('/insertUser/', function (req, res) {
 
     console.log('insert user body email:' + req.body.email)
+    console.log('insert user body password:' + req.body.password)
     console.log('insert user body name:' + req.body.name)
     console.log('insert user body:' + req.body.location)
 
     var user = {
         email: req.body.email,
+        password: req.body.password,
         name: req.body.name,
         location: req.body.location
     };
 
-    var p = db.insertUser(user.name, user.email, user.location);
+    var p = db.insertUser(user.name, user.email, user.location, user.password);
     p.then(
         (userid) => {
             //res.send('User Added');

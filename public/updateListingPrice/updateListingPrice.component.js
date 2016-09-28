@@ -4,23 +4,35 @@ angular.
   .component('updateListingPrice', {
     templateUrl: '/static/updateListingPrice/updateListingPrice.template.html',
 
-    controller: function newLisupdateListingPriceController($scope, $http, $location, $cookies, $routeParams) {
+    controller: function updateListingPriceController($scope, $http, $location, $cookies) {
       var self = this;
 
-      self.listid = $routeParams.listid;
-      self.listprice = $routeParams.listingprice;
-      console.log("listid from route params: " + self.listid);
-      console.log("listprice from route params: " + self.listid);
+      //self.listing = $routeParams.listing;
+      //
+      //self.listprice = $routeParams.listingprice;
+      //console.log('listing from scope:')
+      //console.dir($scope)
+      //self.listid = $scope.selectListing.listid;price;
+      //console.dir(self.listing);
+      
+      //console.log("listprice from route params: " + self.listid);
 
       var cUserid = $cookies.get('userid');
       var cUsername = $cookies.get('name');
       var cLocation = $cookies.get('location');
+      var cListId = $cookies.get('listid');
+      var cPrice = $cookies.get('price');
       self.userid = cUserid;
       self.username = cUsername;
       self.mylocation = cLocation;
+      self.listid = cListId;
+      self.listprice = cPrice;
+
+      console.log("listid : " + self.listid);
 
       self.reset = function () {
         self.price = self.listprice;
+        //self.price = 10;
       };
       self.reset();
 
