@@ -20,6 +20,9 @@ angular.
         when('/newListing', {
           template: '<new-listing></new-listing>'
         }).
+        when('/updateListingPrice/:listid:listingprice', {
+          template: '<update-listingprice></update-listingprice>'
+        }).
         when('/updateListing/:listid', {
           template: '<update-listing></update-listing>'
         }).

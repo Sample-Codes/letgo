@@ -4,5 +4,6 @@ angular.module('letgoApp', [
   'forSale',
   'newUser',
   'newListing',
+  'updateListingPrice',
   'itemDetail',
 ]);
