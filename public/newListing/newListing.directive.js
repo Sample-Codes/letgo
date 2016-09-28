@@ -14,13 +14,20 @@ angular.module('newListing')
                     });
                     var file = scope.$ctrl.myFile;
                     var reader = new FileReader();
+                    //var tImg = new Image();
+                    //var tHeight=scope.$ctrl.sH;
                     reader.readAsDataURL(file);
                     reader.onload = function (e) {
                         scope.$ctrl.ImageSrc = e.target.result;
+                        //tImg.src = scope.$ctrl.ImageSrc; 
+                        //scope.$ctrl.sH = Math.ceil(tHeight);                       
                         console.log(scope);
                         scope.$apply();
                     }
-
+                    //tImg.onload = function() {
+                        //tHeight = (Number(this.height)*300)/Number(this.width);  //calculate proportional height
+                        //console.log(tHeight);
+                    //}
                 });
             }
         };

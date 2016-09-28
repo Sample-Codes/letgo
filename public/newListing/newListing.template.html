@@ -1,8 +1,8 @@
 <div>
     <h1>New Listing</h1>            
-    <div id="new-listing" class="divBox">
+    <div id="new-listing">
         <form ng-submit="$ctrl.redirect()" name="newListingForm">
-            <div>
+            <div id="entry-listing">
                 <label class='lgLabel'>Photo</label>
                 <input type = "file" name="photo" file-model = "$ctrl.myFile" class="textBox" required/>
                         <span ng-show="newListingForm.photo.$error.required">Photo is Required!</span>
@@ -36,25 +36,25 @@
                         value="" placeholder="" size="30" maxlength="40"/>   
                 <br>
                 <br /><br /><br />
-            <a class="link" ng-click="$ctrl.cancel()">Cancel</a><br>
+                <a class="link" ng-click="$ctrl.cancel()">Cancel</a><br>
                 <button class="button" ng-click="$ctrl.reset()" title="Clear Form">Clear Form</button>             
-        </div>
-         <div>
-            <br /><br /><br /><br />
-            <label class='lgLabel'><u>Preview</u></label>
-            <div class='smValue'>
-            Photo: {{$ctrl.myFile.name}}<br>
-            <img width= 250 height=350 ng-src="{{$ctrl.ImageSrc}}"/><br>
-
-            Category: {{$ctrl.category}} <br><br>    
-            Description: {{$ctrl.description}} <br><br>      
-            Price: {{$ctrl.price | currency}} <br><br>
-            Selling Location: {{$ctrl.location}}
-            </div> 
-
-            <br /><br />
-            <input class="button" type="submit" value="Submit New Posting" name="submit" id="submit" title="Submit New Posting"/><br>
-        </div>
+            </div>
+            <div id="preview-listing">
+                <div id="preview-box">
+                        <label class='lgLabel darkgray'><u>Preview</u></label><br><br>
+                        <label class='smValue'> Photo: {{$ctrl.myFile.name}}</label><br><br>
+                        <div id="frame">
+                          <img width= 250 height=NaN ng-src="{{$ctrl.ImageSrc}}"/><br>
+                        </div>
+                        <label class='smValue'> Category: {{$ctrl.category}}</label> <br><br>    
+                        <label class='smValue'> Description: {{$ctrl.description}}</label> <br><br>      
+                        <label class='smValue'> Price: {{$ctrl.price | currency}}</label> <br><br>
+                        <label class='smValue'> Selling Location: {{$ctrl.location}}</label>
+                        <br /><br />
+                        <input class="button fixedNewPost" type="submit" value="Submit New Posting" name="submit" id="submit" title="Submit New Posting"/><br>
+                </div> 
+            </div>
+            
         </form>
     </div>
 </div>

@@ -1,8 +1,9 @@
 
 p {
-    line-height: 0px;
+    line-height: normal;
     text-decoration: none;
     font-family: Verdana, sans-serif;
+    margin: 2px;
 }
 
 #feed {
@@ -220,4 +221,42 @@ div.smValue  {
      font-size: 15px;
      padding: 6px 15px 6px 65px;
     margin-bottom: 15px;
+}
+
+#preview-box {
+  height: 675px;
+  width: 252px;
+  background-color: wheat;
+  opacity: .9;
+  padding: 20px;
+}
+
+#preview-listing {
+  width: 600px;
+  float: right;
+  position: fixed;
+  left: 600px;
+}
+
+#entry-listing {
+  width: 425px;
+  float: left;
+}
+
+.darkgray {
+  color: #333 !important;
+}
+
+#frame {
+  width: 250px;
+  min-height: 125px;
+  max-height: 420px;
+  height: auto;
+  border: 1px solid;
+}
+
+.fixedNewPost {
+    position: fixed;
+    left: 640px;
+    top: 730px;
 }
