@@ -140,6 +140,7 @@ label.smValue  {
   margin-left: 5px;
 }
 #sidebar {
+  position:fixed;
   float: left;
   width: 30%;
   height: 100%;
