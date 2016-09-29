@@ -58,7 +58,7 @@ angular.
       //** click item to get more details
       self.itemdetail = function(listing) {
         console.log(listing);
-        $location.url('/itemDetail');
+        $location.url('/itemDetail').search({id: listing.listid, loc: listing.location});
       }
 
       //** click submit

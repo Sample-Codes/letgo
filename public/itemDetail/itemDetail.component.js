@@ -6,9 +6,22 @@ angular.
     controller: function itemDetailController($scope, $http, $location, $cookies) {
       var self = this;
 
-      var cLocation = $cookies.get('location');
+      self.listid = $location.$$search.id;
+      self.city = $location.$$search.loc;
 
-      self.city = cLocation;
-      console.log(self);
+      //** click go back to forSale
+      self.goback = function () {
+        $location.url('/forSale');
+      }
+
+      //** click chat
+      self.ask = function() {
+        document.getElementById("chat").style.display = "block";
+      }
+      
+      //** click chat
+      self.closechat = function() {
+        document.getElementById("chat").style.display = "none";
+      }      
     }
   });
