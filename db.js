@@ -186,7 +186,7 @@ function insertUser(name, email, location, password)
     var p = new Promise(function (resolve, reject) {
         db.serialize(function () {
             if ((password === undefined) || (password === null))
-            password = 'passsword';
+            password = 'password';
             var values = asMyQuote(name) + ', ' + asMyQuote(password) + ', ' + asMyQuote(email) + ', ' + asMyQuote(location);
             var insertCommand = "INSERT INTO users (NAME, PASSWORD, EMAIL, LOCATION) VALUES (" + values + ")"
             console.log(insertCommand);
