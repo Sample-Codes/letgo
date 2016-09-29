@@ -6,6 +6,7 @@ var db = new TransactionDatabase(new sqlite3.Database('./letgo.db'));
 
 // exports 
 exports.clearTables=clearTables;
+exports.getUser=getUser;        // email
 exports.insertUser=insertUser;  // name, email, location
 exports.updateUser=updateUser;  // userid
 exports.updateUserName=updateUserName;  // userid
@@ -13,28 +14,25 @@ exports.updateUserPassword=updateUserPassword;  // userid
 exports.updateUserEmail=updateUserEmail;  // userid
 exports.updateUserLocation=updateUserLocation;  // userid
 exports.deleteUser=deleteUser;  // userid
-exports.getUser=getUser;        // email
+
 exports.insertListing=insertListing;  // userid, description, price, category, location, photo
+exports.getAllListings=getAllListings;   // NONE
+exports.getSellList=getSellList; //userid
+exports.getListings=getListings;  //  Listing object
 exports.updateListing=updateListing;  //userid, listid, description, price, category, status, location, photo
 exports.updateListingPrice=updateListingPrice; //userid, listid,price
 exports.updateListingDescription=updateListingDescription; //userid, listid,description
 exports.updateListingLocation=updateListingLocation;//userid, listid, location
 exports.updateListingPhoto=updateListingPhoto; //userid, listid,photo
-exports.addListingPhoto=addListingPhoto; //userid, listid,photo
-exports.deleteListingPhoto=deleteListingPhoto; //userid, listid,photo
-exports.deleteListingPhotos=deleteListingPhotos;
-exports.deleteUserPhotos=deleteUserPhotos;
-exports.getListingPhotos=getListingPhotos; //listid,photo
 exports.updateListingStatus=updateListingStatus;//userid, listid,status
-exports.getAllListings=getAllListings;   // NONE
-exports.getListings=getListings;  //  Listing object
 exports.deleteListing=deleteListing; //userid, listid
-exports.getSellList=getSellList; //userid
+
 exports.getWatchList=getWatchList; // userid
 exports.insertWatchList=insertWatchList; //userid, listid
 exports.deleteWatchList=deleteWatchList; //userid, listid
 exports.deleteEntireWatchList=deleteEntireWatchList; //
 exports.getWatchersForListing=getWatchersForListing;
+
 // Define objects
 var user = {
     userid: '',
@@ -61,20 +59,6 @@ var watchedListing = {
     listid: '',
     insertDt: '',
     listing: ''
-};
-var imageFile = {
-  imageid: '',
-  userid: '',
-  listid: '',
-  imageName: ''
-};
-function createImageFile(thisRow)
-{
-    var anImage = Object.create(imageFile);
-    anImage.imageid = thisRow.IMAGEID;
-    anImage.userid = thisRow.USERID;
-    anImage.listid = thisRow.LISTID;
-    anImage.imageName = thisRow.IMAGENAME;
 };
 
 function createUserFrom(thisRow)
@@ -150,17 +134,6 @@ function initDB()
         FOREIGN KEY (USERID) REFERENCES users(USERID))",
          function (err) { if (err) { console.log(err); } });
     });
-    db.serialize(function () {
-        console.log("create imageFiles table");
-        db.run("CREATE TABLE IF NOT EXISTS imageFiles \
-        (IMAGEID INTEGER PRIMARY KEY, \
-        LISTID INT NOT NULL, \
-        USERID INT NOT NULL, \
-        IMAGENAME TEXT NOT NULL, \
-        FOREIGN KEY (LISTID) REFERENCES listing(LISTID), \
-        FOREIGN KEY (USERID) REFERENCES users(USERID))",
-         function (err) { if (err) { console.log(err); } });
-    });
 }
 
 
@@ -169,7 +142,6 @@ function clearTables()
     db.run("DELETE from watchlist", function (err) { if (err) { } }); //x
     db.run("DELETE from listing", function (err) { if (err) { } }); //x
     db.run("DELETE from users", function (err) { if (err) { } });
-    db.run("DELETE from imageFiles", function (err) { if (err) { } });
 
 }
 function asMyQuote(input) {
@@ -305,9 +277,10 @@ function deleteUser(userid)
         db.beginTransaction(function(err, transaction) 
         {
 
-            console.log("DELETE FROM watchlist WHERE USERID=" + userid);
+             console.log("DELETE FROM watchlist WHERE USERID=" + userid);
              transaction.run("DELETE FROM watchlist WHERE USERID=" + userid,
                 function (err) { if (err) {transaction.rollback(); reject(err); }});
+
             (getSellList(userid)).then ((listings) => {
                 for (var i in listings)
                 {
@@ -318,10 +291,7 @@ function deleteUser(userid)
             }, (error)=>{
                 transaction.rollback(); reject(err);
             });
- //           console.log("DELETE FROM listing WHERE USERID=" + userid);
- //            transaction.run("DELETE FROM listing WHERE USERID=" + userid, 
- //               function (err) { if (err) { transaction.rollback();  reject(err); } resolve(); });
-            console.log("DELETE FROM users WHERE USERID=" + userid);
+             console.log("DELETE FROM users WHERE USERID=" + userid);
              transaction.run("DELETE FROM users WHERE USERID=" + userid, 
                 function (err) { if (err) { transaction.rollback(); reject(err); } });
 
@@ -395,7 +365,7 @@ function updateListing(userid, listid, description, price, category,status, loca
     var p = new Promise(function (resolve, reject) {
         db.serialize(function () {
             var command = "UPDATE listing SET" 
-             + createUpdateList(description, price, category,status, location, photo);
+             + createUpdateList(description, price, category,status, location, photo)
              + " WHERE LISTID=" + listid
              + " AND USERID=" + userid;
             console.log(command);
@@ -449,9 +419,12 @@ function createUpdateList(description, price, category,status, location, photo)
         output += " IMGFILE=" +asMyQuote(photo);
         count++;
     }
-    if (count >0)
-        output += ',';
-    output += " PRICE=" + price;
+    if ((price != undefined) && ( price != null))
+    {
+       if (count >0)
+         output += ',';
+       output += " PRICE=" + price;
+    }
     return output;
 }
 function updateListingPrice(userid,listid, price)
@@ -475,7 +448,9 @@ function updateListingDescription(userid,listid, description)
     var p = new Promise(function (resolve, reject) {
         db.serialize(function () {
             var qdescript = asMyQuote(description);
-            var command = "UPDATE listing SET DESCRIPTION=" + qdescript + " WHERE LISTID=" + listid + " AND USERID=" + userid;
+            var command = "UPDATE listing SET DESCRIPTION=" 
+                + qdescript + " WHERE LISTID=" + listid 
+                + " AND USERID=" + userid;
             console.log(command);
             db.run(command, function (err) {
                 if (err) {
@@ -520,102 +495,6 @@ function updateListingPhoto(userid,listid,photo)
     });
     return p;
 }
-function addListingPhoto(userid,listid,photo)
-{
-    var p = new Promise(function (resolve, reject) {
-        db.serialize(function () {
-
-            var values = userid + ', ' + userid + ', ' + asMyQuote(photo);
-            var insertCommand = "INSERT INTO imageFiles (LISTID, USERID, IMAGENAME) VALUES (" + values + ")"
-            console.log(insertCommand);
-            db.run(insertCommand, function (err) {
-                if (err) {
-                    reject(err);
-                }
-                resolve(this.lastID);
-            });
-        });
-    });
-    return p;
-}
-function deleteListingPhoto(userid, imageid)
-{
-    var p = new Promise(function (resolve, reject) {
-        db.serialize(function () {
-            var command = "DELETE imageFiles where IMAGEID=" + imageid + " AND USERID=" + userid;
-            db.run(command, function (err) {
-                if (err) {
-                    reject(err);
-                }
-                resolve(imageid);
-            });
-        });
-    });
-    return p;
-} 
-function deleteListingPhotos(userid, listid)
-{
-    var p = new Promise(function (resolve, reject) {
-        db.serialize(function () {
-            var command = "DELETE imageFiles where LISTID=" + listid + " AND USERID=" + userid;
-            db.run(command, function (err) {
-                if (err) {
-                    reject(err);
-                }
-                resolve(imageid);
-            });
-        });
-    });
-    return p;
-} 
-function deleteUserPhotos(userid)
-{
-    var p = new Promise(function (resolve, reject) {
-        db.serialize(function () {
-            var command = "DELETE imageFiles where USERID=" + userid;
-            db.run(command, function (err) {
-                if (err) {
-                    reject(err);
-                }
-                resolve(imageid);
-            });
-        });
-    });
-    return p;
-} 
-function getListingPhotos(listid)
-{
-   var p;
-    p = new Promise(function (resolve, reject) {
-        db.serialize(function () {
-            var command = "SELECT * FROM imageFiles WHERE LISTID = " +listid;
-            console.log(command);
-            db.all(command, function (err, rows) {
-                if (err) {
-                    reject(err);
-                }
-                resolve(rows);
-            });
-        });
-    }).then(
-        (rows) => {
-            // Process them.
-            var output = [];
-            var count = 0;
-            for (var i in rows)
-            {
-                output[count] =createImageFile(rows[i]);
-                count++;
-            }
-            return output;
-        },
-        (err) => {
-            console.log('Error getting images for: ' + listid);
-            return [];
-        }
-        );
-    return p;
-}
 function updateListingStatus(userid,listid,status)
 {
     var p = new Promise(function (resolve, reject) {
@@ -637,12 +516,7 @@ function deleteListing(userid,listid)
     var p = new Promise(function (resolve, reject) {
         db.beginTransaction(function(err, transaction) 
         {
-            (deleteListingPhotos(userid, listi)).then( ()=>{},(err)=>{transaction.rollback(); reject(err); });
              var command = "DELETE FROM watchlist WHERE LISTID=" + listid;
-             console.log(command);
-             transaction.run(command, 
-                function (err) { if (err) {transaction.rollback(); reject(err); } resolve(); });
-             var command = "DELETE FROM imageFiles WHERE LISTID=" + listid;
              console.log(command);
              transaction.run(command, 
                 function (err) { if (err) {transaction.rollback(); reject(err); } resolve(); });
