@@ -23,6 +23,9 @@ angular.
         when('/updateListingPrice/:listid:listingprice', {
           template: '<update-listingprice></update-listingprice>'
         }).
+        when('/itemDetail', {
+          template: '<item-detail></item-detail>'
+        }).
         when('/updateListing/:listid', {
           template: '<update-listing></update-listing>'
         }).

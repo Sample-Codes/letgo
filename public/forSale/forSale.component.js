@@ -5,6 +5,7 @@ angular.
     templateUrl: '/static/forSale/forSale.template.html',
     controller: function forSaleController($scope, $http, $location, $cookies) {
       var self = this;
+      console.log(this);
       self.orderProp = 'insert_ts';
       //self.username = decodeURIComponent($routeParams.username);
       //console.log("params: " + self.username);
@@ -48,10 +49,17 @@ angular.
       //get all the listings
       $http.get('/getListings').then(function (response) {
         self.listings = response.data;
+        console.log("--> "+self.listings);
         for (var i = 0; i < self.listings.length; i++) {
           self.listings[i].liked = false;
         }
       });
+
+      //** click item to get more details
+      self.itemdetail = function(listing) {
+        console.log(listing);
+        $location.url('/itemDetail');
+      }
 
       //** click submit
       self.redirect = function () {

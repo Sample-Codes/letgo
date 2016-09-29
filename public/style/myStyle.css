@@ -260,3 +260,8 @@ div.smValue  {
     left: 640px;
     top: 730px;
 }
+
+#location_map {
+  width: 800px;
+  height: 400px;
+}
