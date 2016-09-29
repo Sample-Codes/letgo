@@ -6,4 +6,5 @@ angular.module('letgoApp', [
   'newListing',
   'updateListingPrice',
   'itemDetail',
+  'servicesMod'
 ]);

@@ -1,0 +1,50 @@
+<div>
+    <div id="headDetails">
+        <a id="backIcon" ng-click="$ctrl.goback()"><img class="icon_pos" src="../static/img/back.png" /></a>
+        <label class="lgLabel">$78.00 (List ID# {{$ctrl.listid}})</label>
+        <div id="buttonDetails">
+            <input class="button" type="button" value="Ask a Question" name="ask" id="ask" ng-click="$ctrl.ask()" />
+            <input class="button" type="button" value="Make an Offer" name="offer" id="offer" ng-click="$ctrl.ask()" />
+        </div>
+    </div>
+    <br /><br /><br />
+    <div id="wrapperDetails">
+        <figure>
+            <div id="photo">
+                <img src="/static/photos/90817fc53fb2b433c78eac1a23866700" />
+            </div>
+            <figcaption>
+            <p id="description">You can have this crazy man! All you need to do is paying me $78.00 and this nut guy will move in your house!</p>
+            </figcaption>
+        </figure>
+        <div id="location_map">
+            <label class="smLabel">{{$ctrl.city}}</label>
+            <map center="{{$ctrl.city}}" zoom="14" />
+        </div>
+    </div>
+    <div id="chat">
+        <a id="backIcon"><img class="sm_back" src="../static/img/back.png" ng-click="$ctrl.closechat()" /></a>
+        <div id="chathead">
+            <img class="avatar" src="../static/img/avatar.png" />
+            <label class="xlgLabel">Billy</label>
+        </div>
+        <div id="chatbox">
+            <p><b>You:</b> Hello! I have a question about your bike.  How old is it? Is it good?</p>
+            <p><b>Billy:</b> I thought you have one question?</p>
+            <p><b>You:</b> Uh oh... apparently you are not nice seller.  How old is it?</p>
+            <p><b>Billy:</b> 4</p>            
+            <p><b>You:</b> months or years?</p>            
+            <p><b>Billy:</b> days</p>                        
+            <p><b>You:</b> Cool! I would like to buy it! Can we meet at Columbia Mall tonight?</p>
+            <p><b>Billy:</b> Tonight ?@$!? urh well ok but do not bring your goons. I have gun. Meet me there at 7:30pm</p>
+            <p><b>You:</b> Geez! You moron! Forget it. Bye!</p>
+            <p><b>Billy:</b> likewise</p>
+        </div>
+        <div id="typebox">
+            <p><b>You:</b> what @#$%^&*!!?!?!</p>            
+        </div>
+         <a id="sendIcon"><img class="sm_send" src="../static/img/send.png" /></a>
+    </div>
+</div>
+
+ 

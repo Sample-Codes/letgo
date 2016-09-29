@@ -17,6 +17,7 @@
     "fs-extra": "^0.30.0",
     "mocha": "^3.0.2",
     "multer": "^1.2.0",
+    "ngmap": "^1.17.7",
     "sqlite3": "^3.1.4",
     "sqlite3-transactions": "0.0.5"
   },

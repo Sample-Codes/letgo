@@ -3,8 +3,9 @@ angular.
   module('forSale').
   component('forSale', {
     templateUrl: '/static/forSale/forSale.template.html',
-    controller: function forSaleController($scope, $http, $location, $cookies) {
+    controller: function forSaleController($scope, $http, $location, $cookies, ListingService) {
       var self = this;
+      console.log(this);
       self.orderProp = 'insert_ts';
       //self.username = decodeURIComponent($routeParams.username);
       //console.log("params: " + self.username);
@@ -67,8 +68,8 @@ angular.
       }
 
       //get all the listings
-      $http.get('/getListings').then(function (response) {
-        self.listings = response.data;
+      ListingService.allList().then(function(dataResponse) {
+        self.listings = dataResponse.data;
         console.log('listing count' + self.listings.length)
 
         if (self.listings.length > 0) {
@@ -84,12 +85,17 @@ angular.
                 if (self.listings[i].listid === mylistings[my].listid) {
                   self.listings[i].liked = true;
                 }
-                //self.listings[i].liked = true;
               }
             }
           });
         }
       });
+      
+      //** click item to get more details
+      self.itemdetail = function(listing) {
+        console.log(listing);
+        $location.url('/itemDetail').search({id: listing.listid, loc: listing.location});
+      }
 
       //** click submit
       self.redirect = function () {

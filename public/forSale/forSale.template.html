@@ -56,8 +56,8 @@
   <div id="content">
     <!--Body content-->
     <main>
-      <section id="feed" ng-repeat="listing in $ctrl.listings | filter:query | orderBy:sortField" >
-        <img back-img="/static/photos/{{listing.imageFile}}"  width="300">
+      <section id="feed" ng-repeat="listing in $ctrl.listings | filter:query | orderBy:sortField:direction"  >
+        <img back-img="/static/photos/{{listing.imageFile}}" ng-click="$ctrl.itemdetail(listing)" width="300">
 
         <a ng-click="$ctrl.likeMe(listing)"><img id="likeBtn" ng-src="/static/img/{{listing.liked ? 'heartLike.png' : 'heartNoLike.png' }} " /></a>
         <p>Item: {{listing.category}}</p>

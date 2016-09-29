@@ -40,6 +40,25 @@ app.get('/getUser/:userName', function (req, res) {
     )
 });
 
+app.get('/getPhotos/:listid', function(req, res) {
+    console.log('listid: ' + req.params.listid);
+
+    var listid = req.params.listid;
+    var p = db.getListingPhotos(listid);
+    p.then(
+        (val) => {
+            console.log('Photos: ', val);
+            res.send(val);
+        }
+    ).catch(
+        (err) => {
+            res.status(500);
+            console.log(err);
+            res.send(err);
+        }
+    )
+});
+
 app.get('/getLogin/:userName/:password', function (req, res) {
     console.log('Body: ' + req.body.userName)
     console.log('userName: ' + req.params.userName)
