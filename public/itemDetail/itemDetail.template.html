@@ -1,7 +1,7 @@
 <div>
     <div id="headDetails">
         <a id="backIcon" ng-click="$ctrl.goback()"><img class="icon_pos" src="../static/img/back.png" /></a>
-        <label class="lgLabel">$78.00 (List ID# {{$ctrl.listid}})</label>
+        <label class="lgLabel">{{$ctrl.listing.price | currency}}</label>
         <div id="buttonDetails">
             <input class="button" type="button" value="Ask a Question" name="ask" id="ask" ng-click="$ctrl.ask()" />
             <input class="button" type="button" value="Make an Offer" name="offer" id="offer" ng-click="$ctrl.ask()" />
@@ -9,17 +9,32 @@
     </div>
     <br /><br /><br />
     <div id="wrapperDetails">
+                    <!--// category:"soccer"
+                    // description:"soccer ball"
+                    // imageFile:"456"
+                    // insertDt:"2016-09-23 14:08:48"
+                    // listid:1
+                    // location:"Baltimore"
+                    // price:25
+                    // status:"POSTED"
+                    // userEmail:"test@letgo.com"
+                    // userName:"testsqlname"
+                    // userid:1        -->
         <figure>
             <div id="photo">
-                <img src="/static/photos/90817fc53fb2b433c78eac1a23866700" />
+                <img src="/static/photos/{{$ctrl.listing.imageFile}}" />
             </div>
             <figcaption>
-            <p id="description">You can have this crazy man! All you need to do is paying me $78.00 and this nut guy will move in your house!</p>
+            <p id="description">{{$ctrl.listing.description}}</p>
+            <p id="description">Posted on: {{$ctrl.listing.insertDt}}</p>
+            <p id="description">Email: {{$ctrl.listing.userEmail}}</p>
+            <p id="description">Owner: {{$ctrl.listing.userName}}</p>
+            <p id="description">Location: {{$ctrl.listing.location}}</p>
             </figcaption>
         </figure>
         <div id="location_map">
-            <label class="smLabel">{{$ctrl.city}}</label>
-            <map center="{{$ctrl.city}}" zoom="14" />
+            <label class="smLabel" ng-bind="$ctrl.listing.location"></label>
+            <map center="{{$ctrl.listing.location}}" zoom="14" />
         </div>
     </div>
     <div id="chat">

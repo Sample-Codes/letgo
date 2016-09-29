@@ -325,6 +325,9 @@ div.smValue  {
 #photo {
   text-align: center;
 }
+#photo > img {
+  max-width: 790px;
+}
 #description {
   text-align: left;
   padding: 3px;

@@ -35,7 +35,7 @@ angular.module('servicesMod', [
 
     this.singleItem = function(listId, listings){
         for (i in listings){
-            if(listings[i].listid === listId){
+            if(listings[i].listid == listId){
                 singleListing = listings[i];
                 console.log("single item: " + singleListing);
                 return singleListing;
