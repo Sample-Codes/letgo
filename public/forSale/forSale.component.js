@@ -5,6 +5,7 @@ angular.
     templateUrl: '/static/forSale/forSale.template.html',
     controller: function forSaleController($scope, $http, $location, $cookies) {
       var self = this;
+      console.log(this);
       self.orderProp = 'insert_ts';
       //self.username = decodeURIComponent($routeParams.username);
       //console.log("params: " + self.username);
@@ -14,6 +15,7 @@ angular.
       var cLocation = $cookies.get('location');
       self.username = cUsername;
       self.location = cLocation;
+      self.userId = cUserid;
       self.watching = 0;
 
       if (cUserid == undefined) {
@@ -22,16 +24,36 @@ angular.
 
       //set/remove from watchlist
       self.likeMe = function (listing) {
+
+        console.dir(listing)
         listing.liked = !listing.liked;
-        
+
+        console.dir(listing)
+        self.listId = listing.listid;
+
         if(listing.liked){
-           $http.post('/insertWatchList/').then(function (response) {
-             ++self.watching;
+          listing.liked = true;
+
+        console.log('listId' + self.listId)
+        console.log('userId' + self.userId)
+
+          
+        $http.post('/insertWatchList/' + self.userId + '/' + self.listId)
+          .success(function (response) {
+            ++self.watching;
+          })
+          .error(function (res) {
+            console.log("error: " + res);
           });
         }else{
-           $http.post('/deleteWatchList/').then(function (response) {
-             --self.watching;
-          });
+          listing.liked = false;
+          $http.post('/deleteWatchList/' + self.userId + '/' + self.listId)
+            .success(function (response) {
+              --self.watching;
+            })
+            .error(function (res) {
+              console.log("error: " + res);
+            });
         }
          
       }
@@ -48,10 +70,17 @@ angular.
       //get all the listings
       $http.get('/getListings').then(function (response) {
         self.listings = response.data;
+        console.log("--> "+self.listings);
         for (var i = 0; i < self.listings.length; i++) {
           self.listings[i].liked = false;
         }
       });
+
+      //** click item to get more details
+      self.itemdetail = function(listing) {
+        console.log(listing);
+        $location.url('/itemDetail').search({id: listing.listid, loc: listing.location});
+      }
 
       //** click submit
       self.redirect = function () {
@@ -67,6 +96,8 @@ angular.
         reloadBG();   //** reload background image *optional*
         $location.url('/login');
       }
+
+      
     }
   }).directive('backImg', function () {
     return function (scope, element, attrs) {

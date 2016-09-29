@@ -1,3 +1,5 @@
 angular.module('itemDetail', [
-  'ngRoute'
+  'ngRoute',
+  'ngCookies',
+  'ngMap'
 ]);
