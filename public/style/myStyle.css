@@ -231,8 +231,9 @@ label.smValue  {
 }
 
 #likeBtn{
-  height: 50px;
-  width: 50px;
+    padding: 8px;
+    height: 24px;
+    width: 24px;
 }
 #vcanvas {
   margin-top:135px;
