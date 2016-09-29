@@ -336,12 +336,16 @@ div.smValue  {
   font-weight: 500;
 }
 
-#buttonDetails {
+#buttonDetails, #buttonDetailsUpdate {
     width: 847px;
     position: absolute;
     left: 45px;
     top: 20px;
 }
+#buttonDetailsUpdate {
+    display: none;
+}
+
 
 #chat, #chatbox, typebox {
   color: #333;
