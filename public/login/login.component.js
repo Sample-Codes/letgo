@@ -7,7 +7,7 @@ angular.
       //** controller
       controller: function loginController($scope, $http, $location, $cookies) {
         var self = this;
-
+        $scope.data;
         //** check if userid is in cookie, redirect to /forSale page, otherwise, continue on /login page.
         var cUserid = $cookies.get('userid');
         console.log("Userid from cookies jar: "+ cUserid);
@@ -15,12 +15,14 @@ angular.
           $location.url('/forSale');
         }
 
+        
         //** click submit 
         self.redirect = function() {
           console.log('User clicked submit with ', self.userName);
 
           //$http.get('/getUser/'+self.userName)
           $http.get('/getLogin/' + self.userName + '/' + self.password)
+
             .then(function (res) {    //** Function handles success
                 $cookies.put('userid', res.data.userid);
                 $cookies.put('email', res.data.email);

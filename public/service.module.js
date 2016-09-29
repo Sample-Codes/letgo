@@ -3,8 +3,7 @@ angular.module('servicesMod', [
   'login'
 ]).service('ListingService', function($http){    
 
-    var myListings;
-    var singleListing;
+    var allListings;
     
     //save method create a new contact if not already exists
     //else update the existing object
@@ -25,18 +24,16 @@ angular.module('servicesMod', [
     //simply search contacts list for given id
     //and returns the contact object if found
     this.myList = function (id, listings) {
-        var x =0;
+        var arr = [];
         for (i in listings) {
             if (listings[i].userid == id) {
-               myListings[x] = listings[i];
-               x++;
-                
+               arr.push(listings[i]);                
             }
         }
-        return myListings;
+        return arr;
     }
 
-    this.singleItem = function(listId){
+    this.singleItem = function(listId, listings){
         for (i in listings){
             if(listings[i].listid === listId){
                 singleListing = listings[i];
@@ -60,8 +57,11 @@ angular.module('servicesMod', [
     //simply returns the contacts list
     this.allList = function () {
         console.log('inside saveListings');
-        return $http.get('/getListings');
-       
+        var p = $http.get('/getListings');
+        p.then(function(res){
+            allListings = res.data;
+        });
+       return p;
     }
         
     }
