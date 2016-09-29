@@ -15,6 +15,7 @@ angular.
       var cLocation = $cookies.get('location');
       self.username = cUsername;
       self.location = cLocation;
+      self.userId = cUserid;
       self.watching = 0;
 
       if (cUserid == undefined) {
@@ -23,16 +24,36 @@ angular.
 
       //set/remove from watchlist
       self.likeMe = function (listing) {
+
+        console.dir(listing)
         listing.liked = !listing.liked;
-        
+
+        console.dir(listing)
+        self.listId = listing.listid;
+
         if(listing.liked){
-           $http.post('/insertWatchList/').then(function (response) {
-             ++self.watching;
+          listing.liked = true;
+
+        console.log('listId' + self.listId)
+        console.log('userId' + self.userId)
+
+          
+        $http.post('/insertWatchList/' + self.userId + '/' + self.listId)
+          .success(function (response) {
+            ++self.watching;
+          })
+          .error(function (res) {
+            console.log("error: " + res);
           });
         }else{
-           $http.post('/deleteWatchList/').then(function (response) {
-             --self.watching;
-          });
+          listing.liked = false;
+          $http.post('/deleteWatchList/' + self.userId + '/' + self.listId)
+            .success(function (response) {
+              --self.watching;
+            })
+            .error(function (res) {
+              console.log("error: " + res);
+            });
         }
          
       }
@@ -75,6 +96,8 @@ angular.
         reloadBG();   //** reload background image *optional*
         $location.url('/login');
       }
+
+      
     }
   }).directive('backImg', function () {
     return function (scope, element, attrs) {

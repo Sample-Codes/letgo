@@ -72,10 +72,6 @@ app.get('/getLogin/:userName/:password', function (req, res) {
     var p = db.getUser(login.email, login.password);
     p.then(
         (val) => {
-            console.dir(val)
-            console.log('User Id: ' + val.userid)
-            console.log('User Name: ' + val.userName)
-            console.log('Password: ' + val.password)
 
             if (login.email === val.email & login.password === val.password){
             res.send(val);
@@ -166,15 +162,15 @@ app.post('/insertListing/', multer({dest: './public/photos/'}).single('file'), f
 
 });
 
-app.post('/insertWatchList/', function (req, res) {
+app.post('/insertWatchList/:userId/:listId', function (req, res) {
 
     var user = {
         email: req.body.email,
-        userId: req.body.userId
+        userId: req.params.userId
     };
 
     var listing = {
-        listId: req.body.listId,
+        listId: req.params.listId,
     };
 
     var insertWatchList = db.insertWatchList(user.userId, listing.listId);
@@ -477,12 +473,12 @@ app.post('/deleteEntireWatchList/', function (req, res) {
 
 });
 
-app.post('/deleteWatchList/', function (req, res) {
+app.post('/deleteWatchList/:userId/:listId', function (req, res) {
 
     var watchlist = {
         watchId: req.body.watchId,
-        listId: req.body.listId,
-        userId: req.body.userId
+        listId: req.params.listId,
+        userId: req.params.userId
     };
 
     var deleteWatchList = db.deleteWatchList(watchlist.userId, watchlist.listId);
