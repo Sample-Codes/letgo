@@ -9,6 +9,13 @@
                         value="" placeholder="" size="40" maxlength="2048" />
                         <span ng-show="loginForm.email.$error.required">Required!</span>
                         <span ng-show="loginForm.email.$error.email" class="error">Not valid email!</span>
+                <label class='lgLabel'>Password</label>
+                <input ng-model="$ctrl.password" required type="text" 
+                id="password" class="textBox" name="password" title="Password" 
+                value="" placeholder="" size="30" maxlength="30" />
+                <div class="errorBox">
+                    <span ng-show="loginForm.password.$error.required">Password Required!</span>
+                </div>
                 <label class='lgLabel'>Name</label>
                 <input ng-model="$ctrl.name"  required type="text"
                         id="name"  class="textBox" name="name" title="name" 

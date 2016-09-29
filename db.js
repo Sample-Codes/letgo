@@ -9,6 +9,7 @@ exports.clearTables=clearTables;
 exports.insertUser=insertUser;  // name, email, location
 exports.updateUser=updateUser;  // userid
 exports.updateUserName=updateUserName;  // userid
+exports.updateUserPassword=updateUserPassword;  // userid
 exports.updateUserEmail=updateUserEmail;  // userid
 exports.updateUserLocation=updateUserLocation;  // userid
 exports.deleteUser=deleteUser;  // userid
@@ -19,6 +20,11 @@ exports.updateListingPrice=updateListingPrice; //userid, listid,price
 exports.updateListingDescription=updateListingDescription; //userid, listid,description
 exports.updateListingLocation=updateListingLocation;//userid, listid, location
 exports.updateListingPhoto=updateListingPhoto; //userid, listid,photo
+exports.addListingPhoto=addListingPhoto; //userid, listid,photo
+exports.deleteListingPhoto=deleteListingPhoto; //userid, listid,photo
+exports.deleteListingPhotos=deleteListingPhotos;
+exports.deleteUserPhotos=deleteUserPhotos;
+exports.getListingPhotos=getListingPhotos; //listid,photo
 exports.updateListingStatus=updateListingStatus;//userid, listid,status
 exports.getAllListings=getAllListings;   // NONE
 exports.getListings=getListings;  //  Listing object
@@ -33,6 +39,7 @@ exports.getWatchersForListing=getWatchersForListing;
 var user = {
     userid: '',
     name: '',
+    password: '',
     location: '',
     email: ''
 };
@@ -53,11 +60,27 @@ var watchedListing = {
     insertDt: '',
     listing: ''
 };
+var imageFile = {
+  imageid: '',
+  userid: '',
+  listid: '',
+  imageName: ''
+};
+function createImageFile(thisRow)
+{
+    var anImage = Object.create(imageFile);
+    anImage.imageid = thisRow.IMAGEID;
+    anImage.userid = thisRow.USERID;
+    anImage.listid = thisRow.LISTID;
+    anImage.imageName = thisRow.IMAGENAME;
+};
+
 function createUserFrom(thisRow)
 {
     var aUser = Object.create(user);
     aUser.userid = thisRow.USERID;
     aUser.name = thisRow.NAME;
+    aUser.password = thisRow.PASSWORD;
     aUser.email = thisRow.EMAIL;
     aUser.location = thisRow.LOCATION;
     return aUser;
@@ -94,6 +117,7 @@ function initDB()
         db.run("CREATE TABLE IF NOT EXISTS users \
         (USERID INTEGER PRIMARY KEY NOT NULL, \
         NAME TEXT NOT NULL, \
+        PASSWORD TEXT NOT NULL, \
         EMAIL TEXT UNIQUE NOT NULL,\
         LOCATION TEXT)", function (err) { if (err) { console.log(err); } });
     });
@@ -122,7 +146,17 @@ function initDB()
         FOREIGN KEY (USERID) REFERENCES users(USERID))",
          function (err) { if (err) { console.log(err); } });
     });
-
+    db.serialize(function () {
+        console.log("create imageFiles table");
+        db.run("CREATE TABLE IF NOT EXISTS imageFiles \
+        (IMAGEID INTEGER PRIMARY KEY, \
+        LISTID INT NOT NULL, \
+        USERID INT NOT NULL, \
+        IMAGENAME TEXT NOT NULL, \
+        FOREIGN KEY (LISTID) REFERENCES listing(LISTID), \
+        FOREIGN KEY (USERID) REFERENCES users(USERID))",
+         function (err) { if (err) { console.log(err); } });
+    });
 }
 
 
@@ -131,6 +165,7 @@ function clearTables()
     db.run("DELETE from watchlist", function (err) { if (err) { } }); //x
     db.run("DELETE from listing", function (err) { if (err) { } }); //x
     db.run("DELETE from users", function (err) { if (err) { } });
+    db.run("DELETE from imageFiles", function (err) { if (err) { } });
 
 }
 function asMyQuote(input) {
@@ -141,18 +176,36 @@ function asMyQuote(input) {
     
     return '\'' + input + '\'';
 }
+/*
 function insertUser(name, email, location)
 {
     var p = new Promise(function (resolve, reject) {
- /*       if ((email === null) || (email === undefined))
-        {
-            reject(new Error('Missing required email'));
-            return p;
-        }
-        */
         db.serialize(function () {
-            var values = asMyQuote(name) + ', ' + asMyQuote(email) + ', ' + asMyQuote(location);
-            var insertCommand = "INSERT INTO users (NAME, EMAIL, LOCATION) VALUES (" + values + ")"
+            var values = asMyQuote(name)+ ', ' + asMyQuote('password') + ', ' + asMyQuote(email) + ', ' + asMyQuote(location);
+            var insertCommand = "INSERT INTO users (NAME, PASSWORD, EMAIL, LOCATION) VALUES (" + values + ")"
+            console.log(insertCommand);
+            db.run(insertCommand, 
+                function (err) { 
+                    if (err) 
+                    { console.log(err);
+                        reject(err);
+                    } 
+                    resolve(this.lastID);
+                });
+        });
+    });
+    return p;
+}
+*/
+// FUTURE 
+function insertUser(name, email, location, password)
+{
+    var p = new Promise(function (resolve, reject) {
+        db.serialize(function () {
+            if ((password === undefined) || (password === null))
+            password = 'passsword';
+            var values = asMyQuote(name) + ', ' + asMyQuote(password) + ', ' + asMyQuote(email) + ', ' + asMyQuote(location);
+            var insertCommand = "INSERT INTO users (NAME, PASSWORD, EMAIL, LOCATION) VALUES (" + values + ")"
             console.log(insertCommand);
             db.run(insertCommand, 
                 function (err) { 
@@ -188,11 +241,55 @@ function updateUser(userid, name, email, location)
     });
     return p;
 }
+
+// FUTURE
+/*function updateUser(userid, name, password, email, location)
+{
+    var p = new Promise(function (resolve, reject) {
+        db.serialize(function () {
+             var updateCommand = "UPDATE users SET "
+                + "NAME=" + asMyQuote(name) 
+                + ", PASSWORD=" + asMyQuote(password)
+                + ", EMAIL=" + asMyQuote(email)
+                + ", LOCATION=" + asMyQuote(location) 
+                + " WHERE USERID=" + userid;
+            console.log(updateCommand);
+            db.run(updateCommand, 
+                function (err) { 
+                    if (err) 
+                    { console.log(err);
+                        reject(err);
+                    } 
+                    resolve();
+                });
+        });
+    });
+    return p;
+}
+*/
 function updateUserName(userid, name)
 {
     var p = new Promise(function (resolve, reject) {
         db.serialize(function () {
             var updateCommand = "UPDATE users SET NAME=" + asMyQuote(name) + " WHERE USERID=" + userid;
+            console.log(updateCommand);
+            db.run(updateCommand, 
+                function (err) { 
+                    if (err) 
+                    { console.log(err);
+                        reject(err);
+                    } 
+                    resolve();
+                });
+        });
+    });
+    return p;
+}
+function updateUserPassword(userid, password)
+{
+    var p = new Promise(function (resolve, reject) {
+        db.serialize(function () {
+            var updateCommand = "UPDATE users SET PASSWORD=" + asMyQuote(password) + " WHERE USERID=" + userid;
             console.log(updateCommand);
             db.run(updateCommand, 
                 function (err) { 
@@ -247,17 +344,29 @@ function deleteUser(userid)
 {
     var p = new Promise(function (resolve, reject) 
     {
+
         db.beginTransaction(function(err, transaction) 
         {
-            console.log("DELETE FROM users WHERE USERID=" + userid);
-             transaction.run("DELETE FROM users WHERE USERID=" + userid, 
-                function (err) { if (err) { transaction.rollback(); reject(err); } resolve(); });
+
             console.log("DELETE FROM watchlist WHERE USERID=" + userid);
              transaction.run("DELETE FROM watchlist WHERE USERID=" + userid,
-                function (err) { if (err) {transaction.rollback(); reject(err); } resolve(); });
-            console.log("DELETE FROM listing WHERE USERID=" + userid);
-             transaction.run("DELETE FROM listing WHERE USERID=" + userid, 
-                function (err) { if (err) { transaction.rollback();  reject(err); } resolve(); });
+                function (err) { if (err) {transaction.rollback(); reject(err); }});
+            (getSellList(userid)).then ((listings) => {
+                for (var i in listings)
+                {
+                    (deleteListing(listings[i].userid,listings[i].listid)).then(() => {
+
+                    }, (error)=>{ transaction.rollback(); reject(err);});
+                }
+            }, (error)=>{
+                transaction.rollback(); reject(err);
+            });
+ //           console.log("DELETE FROM listing WHERE USERID=" + userid);
+ //            transaction.run("DELETE FROM listing WHERE USERID=" + userid, 
+ //               function (err) { if (err) { transaction.rollback();  reject(err); } resolve(); });
+            console.log("DELETE FROM users WHERE USERID=" + userid);
+             transaction.run("DELETE FROM users WHERE USERID=" + userid, 
+                function (err) { if (err) { transaction.rollback(); reject(err); } });
 
              transaction.commit(function(err) {
                 if (err)
@@ -265,6 +374,7 @@ function deleteUser(userid)
                     return console.log("Delete user failed.", err);
                 }
                 console.log("Delete user was successful.");
+                resolve();
             });
         });
         
@@ -273,13 +383,15 @@ function deleteUser(userid)
     return p;
 }
 
-function getUser(email)
+function getUser(email, password)
 {
    var p;
     p = new Promise(function (resolve, reject) {
         db.serialize(function () {
-
             var command = "SELECT * FROM users WHERE EMAIL = " + asMyQuote(email);
+
+            if ((password !== undefined) && (password !== null))        
+                command = command + ' AND PASSWORD=' + asMyQuote(password);
             console.log(command);
             db.all(command, function (err, row) {
                 if (err) {
@@ -326,12 +438,7 @@ function updateListing(userid, listid, description, price, category,status, loca
     var p = new Promise(function (resolve, reject) {
         db.serialize(function () {
             var command = "UPDATE listing SET" 
-             + " DESCRIPTION=" + asMyQuote(description)
-             + ", PRICE=" + price 
-             + ", CATEGORY=" + asMyQuote(category)
-             + ", STATUS=" + asMyQuote(status)
-             + ", LOCATION=" + asMyQuote(location)
-             + ", IMGFILE=" + asMyQuote(photo)
+             + createUpdateList(description, price, category,status, location, photo);
              + " WHERE LISTID=" + listid
              + " AND USERID=" + userid;
             console.log(command);
@@ -344,6 +451,51 @@ function updateListing(userid, listid, description, price, category,status, loca
              });
    });
     return p;
+}
+function createUpdateList(description, price, category,status, location, photo)
+{
+    var count = 0;
+    var output = '';
+
+    if ((description != undefined) && ( description != null))
+    {
+        if (count > 0)
+            output += ',';
+        output += " DESCRIPTION=" +asMyQuote(description);
+        count++;
+    }
+    if ((category != undefined) && ( category != null))
+    {
+        if (count > 0)
+            output += ',';
+        output += " CATEGORY=" +asMyQuote(category);
+        count++;
+    }
+    if ((status != undefined) && ( status != null))
+    {
+        if (count > 0)
+            output += ',';
+        output += " STATUS=" +asMyQuote(status);
+        count++;
+    }
+    if ((location != undefined) && ( location != null))
+    {
+        if (count > 0)
+            output += ',';
+        output += " LOCATION=" +asMyQuote(location);
+        count++;
+    }
+    if ((photo != undefined) && ( photo != null))
+    {
+        if (count > 0)
+            output += ',';
+        output += " IMGFILE=" +asMyQuote(photo);
+        count++;
+    }
+    if (count >0)
+        output += ',';
+    output += " PRICE=" + price;
+    return output;
 }
 function updateListingPrice(userid,listid, price)
 {   
@@ -395,6 +547,7 @@ function updateListingLocation(userid,listid, location)
     });
     return p;
 }
+// Deprecated
 function updateListingPhoto(userid,listid,photo)
 {
     var p = new Promise(function (resolve, reject) {
@@ -409,6 +562,102 @@ function updateListingPhoto(userid,listid,photo)
             });
         });
     });
+    return p;
+}
+function addListingPhoto(userid,listid,photo)
+{
+    var p = new Promise(function (resolve, reject) {
+        db.serialize(function () {
+
+            var values = userid + ', ' + userid + ', ' + asMyQuote(photo);
+            var insertCommand = "INSERT INTO imageFiles (LISTID, USERID, IMAGENAME) VALUES (" + values + ")"
+            console.log(insertCommand);
+            db.run(insertCommand, function (err) {
+                if (err) {
+                    reject(err);
+                }
+                resolve(this.lastID);
+            });
+        });
+    });
+    return p;
+}
+function deleteListingPhoto(userid, imageid)
+{
+    var p = new Promise(function (resolve, reject) {
+        db.serialize(function () {
+            var command = "DELETE imageFiles where IMAGEID=" + imageid + " AND USERID=" + userid;
+            db.run(command, function (err) {
+                if (err) {
+                    reject(err);
+                }
+                resolve(imageid);
+            });
+        });
+    });
+    return p;
+} 
+function deleteListingPhotos(userid, listid)
+{
+    var p = new Promise(function (resolve, reject) {
+        db.serialize(function () {
+            var command = "DELETE imageFiles where LISTID=" + listid + " AND USERID=" + userid;
+            db.run(command, function (err) {
+                if (err) {
+                    reject(err);
+                }
+                resolve(imageid);
+            });
+        });
+    });
+    return p;
+} 
+function deleteUserPhotos(userid)
+{
+    var p = new Promise(function (resolve, reject) {
+        db.serialize(function () {
+            var command = "DELETE imageFiles where USERID=" + userid;
+            db.run(command, function (err) {
+                if (err) {
+                    reject(err);
+                }
+                resolve(imageid);
+            });
+        });
+    });
+    return p;
+} 
+function getListingPhotos(listid)
+{
+   var p;
+    p = new Promise(function (resolve, reject) {
+        db.serialize(function () {
+            var command = "SELECT * FROM imageFiles WHERE LISTID = " +listid;
+            console.log(command);
+            db.all(command, function (err, rows) {
+                if (err) {
+                    reject(err);
+                }
+                resolve(rows);
+            });
+        });
+    }).then(
+        (rows) => {
+            // Process them.
+            var output = [];
+            var count = 0;
+            for (var i in rows)
+            {
+                output[count] =createImageFile(rows[i]);
+                count++;
+            }
+            return output;
+        },
+        (err) => {
+            console.log('Error getting images for: ' + listid);
+            return [];
+        }
+        );
     return p;
 }
 function updateListingStatus(userid,listid,status)
@@ -432,7 +681,12 @@ function deleteListing(userid,listid)
     var p = new Promise(function (resolve, reject) {
         db.beginTransaction(function(err, transaction) 
         {
-             var command = "DELETE FROM watchlist WHERE USERID=" + userid+ " AND LISTID=" + listid;
+            (deleteListingPhotos(userid, listi)).then( ()=>{},(err)=>{transaction.rollback(); reject(err); });
+             var command = "DELETE FROM watchlist WHERE LISTID=" + listid;
+             console.log(command);
+             transaction.run(command, 
+                function (err) { if (err) {transaction.rollback(); reject(err); } resolve(); });
+             var command = "DELETE FROM imageFiles WHERE LISTID=" + listid;
              console.log(command);
              transaction.run(command, 
                 function (err) { if (err) {transaction.rollback(); reject(err); } resolve(); });
@@ -581,7 +835,7 @@ function getSellList(userid)  // returns a list of listing
     p = new Promise(function (resolve, reject) {
         db.serialize(function () {
 
-            var command = "SELECT * FROM listing WHERE USERID = " + userid;
+            var command = "SELECT * FROM listing WHERE USERID=" + userid;
             console.log(command);
             db.all(command, function (err, row) {
                 if (err) {
@@ -594,12 +848,12 @@ function getSellList(userid)  // returns a list of listing
         (rows) => {
             // Process them.
             var outputData = [];
-
+            var count = 0;
             for (thisRow of rows) {
                 var aListing = createListingFrom(thisRow);
 
-                outputData[aListing.listid] = aListing;
-                console.log('Listing#:  ' + aListing.listid);
+                outputData[count] = aListing;
+                count++;
             }
             return outputData;
         },
@@ -751,7 +1005,6 @@ function getListingsLike(inListing)
             for (thisRow of rows) {
                 var aListing = createListingFrom(thisRow);
                 outputData[count] = aListing;
-                console.log('Listing#:  ' + aListing.listid);
                 count++;
             }
             return outputData;
