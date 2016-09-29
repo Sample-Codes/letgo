@@ -45,6 +45,8 @@ var user = {
 };
 var listing = {
     listid: '',
+    userName: '',
+    userEmail: '',
     userid: '',
     description: '',
     price: '',
@@ -88,8 +90,10 @@ function createUserFrom(thisRow)
 function createListingFrom(thisRow)
 {
     var aListing = Object.create(listing);
-    aListing.listid = thisRow.LISTID;
     aListing.userid = thisRow.USERID;
+    aListing.userName = thisRow.NAME;
+    aListing.listid = thisRow.LISTID;
+    aListing.userEmail = thisRow.EMAIL;
     aListing.description = thisRow.DESCRIPTION;
     aListing.price = thisRow.PRICE;
     aListing.category = thisRow.CATEGORY;
@@ -176,28 +180,7 @@ function asMyQuote(input) {
     
     return '\'' + input + '\'';
 }
-/*
-function insertUser(name, email, location)
-{
-    var p = new Promise(function (resolve, reject) {
-        db.serialize(function () {
-            var values = asMyQuote(name)+ ', ' + asMyQuote('password') + ', ' + asMyQuote(email) + ', ' + asMyQuote(location);
-            var insertCommand = "INSERT INTO users (NAME, PASSWORD, EMAIL, LOCATION) VALUES (" + values + ")"
-            console.log(insertCommand);
-            db.run(insertCommand, 
-                function (err) { 
-                    if (err) 
-                    { console.log(err);
-                        reject(err);
-                    } 
-                    resolve(this.lastID);
-                });
-        });
-    });
-    return p;
-}
-*/
-// FUTURE 
+
 function insertUser(name, email, location, password)
 {
     var p = new Promise(function (resolve, reject) {
@@ -241,32 +224,6 @@ function updateUser(userid, name, email, location)
     });
     return p;
 }
-
-// FUTURE
-/*function updateUser(userid, name, password, email, location)
-{
-    var p = new Promise(function (resolve, reject) {
-        db.serialize(function () {
-             var updateCommand = "UPDATE users SET "
-                + "NAME=" + asMyQuote(name) 
-                + ", PASSWORD=" + asMyQuote(password)
-                + ", EMAIL=" + asMyQuote(email)
-                + ", LOCATION=" + asMyQuote(location) 
-                + " WHERE USERID=" + userid;
-            console.log(updateCommand);
-            db.run(updateCommand, 
-                function (err) { 
-                    if (err) 
-                    { console.log(err);
-                        reject(err);
-                    } 
-                    resolve();
-                });
-        });
-    });
-    return p;
-}
-*/
 function updateUserName(userid, name)
 {
     var p = new Promise(function (resolve, reject) {
@@ -547,7 +504,6 @@ function updateListingLocation(userid,listid, location)
     });
     return p;
 }
-// Deprecated
 function updateListingPhoto(userid,listid,photo)
 {
     var p = new Promise(function (resolve, reject) {
@@ -710,7 +666,8 @@ function deleteListing(userid,listid)
 }
 function getAllListings()
 {
-    var p;
+    return getListings(null);
+/*    var p;
     p = new Promise(function (resolve, reject) {
         db.serialize(function () {
 
@@ -742,15 +699,14 @@ function getAllListings()
         }
         );
     return p;
-  
+  */
 }
 function getListings(inListing)
 {
       var p;
     p = new Promise(function (resolve, reject) {
         db.serialize(function () {
-
-            var command = "SELECT * FROM listing";
+            var command = "SELECT A.NAME, A.EMAIL, B.* FROM users as A inner join listing as B on A.USERID = B.USERID";
             if ((inListing != undefined) && (inListing != null))
                 command += buildWhereClause(inListing);
             console.log(command);
@@ -784,18 +740,18 @@ function getListings(inListing)
 }
 function buildWhereClause(aListing)
 {
-    var WHERE = " WHERE ";
+    var WHERE = " AND ";
     var clause = "";
     var temp;
-    temp = clauseFor(aListing.listid, "LISTID", false);
+    temp = clauseFor(aListing.listid, "B.LISTID", false);
         if (temp != null) return WHERE + temp;
-    temp = clauseFor(aListing.userid, "USERID", false);
+    temp = clauseFor(aListing.userid, "B.USERID", false);
         if (temp != null) return WHERE + temp;
     var clauses = [];
 
-    clauses[0] = clauseFor(aListing.category, "CATEGORY", true);
-    clauses[1] = clauseFor(aListing.status, "STATUS", true);
-    clauses[2] = clauseFor(aListing.location, "LOCATION", true);
+    clauses[0] = clauseFor(aListing.category, "B.CATEGORY", true);
+    clauses[1] = clauseFor(aListing.status, "B.STATUS", true);
+    clauses[2] = clauseFor(aListing.location, "B.LOCATION", true);
     var cnt = 0;
     var i = 0;
     for (i in clauses )
