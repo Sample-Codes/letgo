@@ -134,6 +134,7 @@ function initDB()
         FOREIGN KEY (USERID) REFERENCES users(USERID))",
          function (err) { if (err) { console.log(err); } });
     });
+
 }
 
 
@@ -268,6 +269,39 @@ function updateUserLocation(userid, location)
     });
     return p;
 }
+function getListidsForDelete(userid)  // returns a list of listids
+{
+    var p;
+    p = new Promise(function (resolve, reject) {
+        db.serialize(function () {
+
+            var command = "SELECT LISTID FROM listing WHERE USERID=" + userid;
+            console.log(command);
+            db.all(command, function (err, row) {
+                if (err) {
+                    reject(err);
+                }
+                resolve(row);
+            });
+        });
+    }).then(
+        (rows) => {
+            // Process them.
+            var outputData = [];
+            var count = 0;
+            for (thisID of rows) {
+                outputData[count] = thisID;
+                count++;
+            }
+            return outputData;
+        },
+        (err) => {
+            console.log('Error getting my listing');
+            return [];
+        }
+        );
+    return p;
+}
 
 function deleteUser(userid)
 {
@@ -276,36 +310,23 @@ function deleteUser(userid)
 
         db.beginTransaction(function(err, transaction) 
         {
+            var del1 = "DELETE FROM watchlist WHERE USERID=" + userid;
+             console.log(del1);
+             transaction.run(del1, function (err) { if (err) {transaction.rollback(); reject(err); }});
+ 
+             var del2 = "DELETE FROM listing WHERE listid IN (SELECT listid FROM listing WHERE USERID=" + userid +')';
+             console.log(del2);
+             transaction.run(del2, function (err) { if (err) {transaction.rollback(); reject(err); }});
 
-             console.log("DELETE FROM watchlist WHERE USERID=" + userid);
-             transaction.run("DELETE FROM watchlist WHERE USERID=" + userid,
-                function (err) { if (err) {transaction.rollback(); reject(err); }});
+             var del3 = "DELETE FROM users WHERE USERID=" + userid
+             console.log(del3);
+             transaction.run(del3, function (err) { if (err) { transaction.rollback(); reject(err); } });
 
-            (getSellList(userid)).then ((listings) => {
-                for (var i in listings)
-                {
-                    (deleteListing(listings[i].userid,listings[i].listid)).then(() => {
-
-                    }, (error)=>{ transaction.rollback(); reject(err);});
-                }
-            }, (error)=>{
-                transaction.rollback(); reject(err);
-            });
-             console.log("DELETE FROM users WHERE USERID=" + userid);
-             transaction.run("DELETE FROM users WHERE USERID=" + userid, 
-                function (err) { if (err) { transaction.rollback(); reject(err); } });
-
-             transaction.commit(function(err) {
-                if (err)
-                {
-                    return console.log("Delete user failed.", err);
-                }
+             transaction.commit(function(err) {if (err){return console.log("Delete user failed.", err);}
                 console.log("Delete user was successful.");
                 resolve();
             });
         });
-        
-        // or transaction.rollback() 
     });
     return p;
 }
