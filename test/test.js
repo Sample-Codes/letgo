@@ -3,8 +3,11 @@ var fs = require('fs');
 var db = require('../db.js');
 
 var mocha = require('mocha');
-var promise = require('chai-as-promised').promise;
-//var promise = require('chai').promise;
+var chai = require('chai');
+var expect = chai.expect;
+
+var chaiAsPromised = require('chai-as-promised');
+chai.use(chaiAsPromised);
 var assert = require('chai').assert;
 
 var user = {
@@ -15,6 +18,8 @@ var user = {
 };
 var listing = {
   listid: '',
+  userName: '',
+  userEmail: '',
   userid: '',
   description: '',
   price: '',
@@ -30,364 +35,534 @@ var watchedListing = {
   insertDt: '',
   listing: ''
 };
-var user1 = Object.create(user);
-user1.name = 'Inigo Montoya';
-user1.email = 'Inigo@PrincessBride.com';
-user1.location = 'Baltimore';
-var user2 = Object.create(user);
-user2.name = 'Fessig d\'Giant';
-user2.email = 'Fessig@PrincessBride.com';
-user2.location = 'Columbia';
-var list1 = Object.create(listing);
-list1.description = 'Nice painting by Leonard O Davinci';
-list1.price = 20.00;
-list1.category = 'Art';
-list1.status = 'POSTED';
+var imageFile = {
+  imageid: '',
+  userid: '',
+  listid: '',
+  imageName: ''
+};
 
+/**********************************************************************************
+ * Before running the tests make sure to run the populateDB.js
+ * This will populate the database with known values
+ * Data Summary
+ * userid between 1 and 10
+ * listid between 1 and 60
+ * userid listids  watchlist
+ * -------------------------
+ *    1   1-6       [10,20,30,40,50,60]; //uid 1 exclude 1-6
+ *    2   7-12      [1,21,31,41,51]; //uid 2 exclude  7-12
+ *    3   13-18     [2,4,8,32]; //uid 3 exclude  13-18
+ *    4   19-24     [3,6,9,12,15,18,27,30,33,36,]; //uid 4 exclude 19-24
+ *    5   25-30     [4,8,12,16,20,24,32,36,40,44,48,52,56,60]; //uid 5 exclude 25-30
+ *    6   31-36     [5,10,15,20,25,30,40,45,50,55,60]; //uid 6 exclude 31-36
+ *    7   37-42     [6,12,18,24,30,48,54,60]; //uid 7 exclude 37-42
+ *    8   43-48     [7,14,21,28,35,42,49,56]; //uid 8 exclude 43-48
+ *    9   49-54     [8,16,24,32,40,48,56]; //uid 9 exclude 49-54
+ *   10   55-60     [9,18,27,36,45,54]; //uid 10 exclude 55-60
+ * 
+ * user email = 'user_email' + (userid -1) + '@gmail.com'
+ * 
+ * getUser;        // email
+ * updateUser;  // userid name, email, location, password
+ * updateUserName;  // userid
+ * updateUserPassword;  // userid
+ * updateUserEmail;  // userid
+ * insertUser;  // name, email, location, password
+ * updateUserLocation;  // userid
+ * deleteUser;  // userid
+ * insertListing;  // userid, description, price, category, location, photo
+ * updateListing;  //userid, listid, description, price, category, status, location, photo
+ * updateListingPrice; //userid, listid,price
+ * updateListingDescription; //userid, listid,description
+ * updateListingLocation;//userid, listid, location
+ * updateListingPhoto; //userid, listid,photo
+ * addListingPhoto; //userid, listid,photo
+ * deleteListingPhoto; //userid, listid,photo
+ * deleteListingPhotos;
+ * deleteUserPhotos;
+ * getListingPhotos; //listid,photo
+ * updateListingStatus;//userid, listid,status
+ * getAllListings;   // NONE
+ * getListings;  //  Listing object
+ * deleteListing; //userid, listid
+ * getSellList; //userid
+ * getWatchList; // userid
+ * insertWatchList; //userid, listid
+ * deleteWatchList; //userid, listid
+ * deleteEntireWatchList; //
+ * getWatchersForListing; * 
+ **********************************************************************************/
 
-
-describe('Database', function () {
-
-  describe('insertUser()', function () {
-    // name, email, location
-    it('Test the ability to insert a user', function () {
-
-      (db.insertUser(user1.name, user1.email, user1.location)).then(function (pk) {
-        console.log(pk);
-        user1.userid = pk;
-        expect(pk).to.above(0);
-        done();
-      }, function (error) {
-        console.log(error);
-        assert.fail(error);
-        done();
-      });
-    });
-    it('test duplicate insert', function () {
-
-      (db.insertUser(user1.name, user1.email, user1.location)).then(function (pk) {
-        console.log(pk);
-        console.log('success is failure');
-        assert.isTrue(false, 'success is failure');
-        done();
-      }, function (error) {
-        console.log('failure is a success');
-        assert.isTrue(true, 'failure is a success');
-        done();
-      });
-    });
-    it('test Missing email', function () {
-
-      (db.insertUser(user1.name, null, user1.location)).then(function (pk) {
-        console.log(pk);
-        console.log('success is failure');
-        assert.isTrue(false, 'success is failure');
-        done();
-      }, function (error) {
-        console.log('failure is a success');
-        assert.isTrue(true, 'failure is a success');
-        done();
-      });
-    });
-  });
-  describe('Retrieve User()', function () {
+describe('Database Testing', function () {
+  // Test user retrieval and modifications first
+  /*
+    describe('Retrieve User()', function () {
     it('Test the retrieve a user profile', function () {
-
-      (db.getUser(user1.email)).then(function (user) {
-        console.log(user);
-        expect(user).to.not.be.null;
-        if (user != null) {
-          expect(user.userid).to.not.be.null;
-          expect(user.name).to.not.be.null;
-          expect(user.email).to.not.be.null;
-          expect(user.location).to.not.be.null;
-        }
-        else {
-          console.log("User not found");
-        }
-        done();
+      return (db.getUser('user_email0@gmail.com','password')).then(function (user) {
+        expect(user).to.not.equal(null);
+        expect(user.userid).to.not.equal(null);
+        expect(user.name).to.not.equal(null);
+        expect(user.email).to.not.equal(null);
+        expect(user.location).to.not.equal(null);
       }, function (error) {
-        console.log(error);
-        assert.fail(error);
-        done();
+         assert.fail(error);
       });
     });
     it('Test the retrieve a unknown user profile', function () {
-
-      (db.getUser(user2.email)).then(function (user) {
-        expect(user).to.be.null;
-        if (user != null) {
-          expect(user.userid).to.not.be.null;
-          expect(user.name).to.not.be.null;
-          expect(user.email).to.not.be.null;
-          expect(user.location).to.not.be.null;
-        }
-        else {
-          console.log("User not found");
-        }
-        done();
+      return (db.getUser('useremail0@gmail.com','password')).then(function (user) {
+        expect(user).to.equal(null);
       }, function (error) {
         assert.fail(error);
-        done();
+       });
+    });
+    it('Test the retrieve a known user profile w bad password', function () {
+      return (db.getUser('user_email0@gmail.com','Password')).then(function (user) {
+        expect(user).to.equal(null);
+      }, function (error) {
+        assert.fail(error);
       });
     });
+    
+  });  // End Retrieve user
 
+  describe('Test updating user profile', function(){
+    it('updateUser', function() {
+      var name = 'Anshe Purdy';
+      var email= 'AnshePurdy@verizon.net';
+      var loc = 'Glen Burnie';
+      var pwd = 'password';
+      return (db.updateUser(4,name, email,loc)).then(function(){
+        return (db.getUser(email,pwd)).then(function (user) {
+          expect(user).to.not.equal(null);
+          expect(user.userid).to.equal(4);
+          expect(user.name).to.equal(name);
+          expect(user.email).to.equal(email);
+          expect(user.location).to.equal(loc);
+        }, function (error) {
+          assert.fail(error);
+        }); 
+      }, function (error) {
+         assert.fail(error);
+      });
+    })
+    it('updateUserName', function() {
+     var email= 'user_email4@gmail.com';
+     var name = 'Damifino Purdy';
+     var pwd = 'password';
+    return (db.updateUserName(5,name)).then(function(){
+       return (db.getUser(email,pwd)).then(function (user) {
+        expect(user).to.not.equal(null);
+        expect(user.userid).to.equal(5);
+        expect(user.name).to.equal(name);
+      }, function (error) {
+         assert.fail(error);
+      });
+       
+      }, function (error) {
+         assert.fail(error);
+      });
+    });
+    it('updateUserPassword', function() {
+      var email= 'user_email4@gmail.com';
+      var pwd = 'Damifino';
+      return (db.updateUserPassword(5,pwd)).then(function(){
+        return (db.getUser(email,pwd)).then(function (user) {
+          expect(user).to.not.equal(null);
+          expect(user.userid).equal(5);
+          expect(user.password).equal(pwd);
+        }, function (error) {
+          assert.fail(error);
+        });
+       
+      }, function (error) {
+         assert.fail(error);
+      });
+    })
+    it('updateUserEmail', function() {
+      var email= 'Damifino@verizon.net';
+      var pwd = 'Damifino';
+      return (db.updateUserEmail(5,email)).then(function(){
+        return (db.getUser(email,pwd)).then(function (user) {
+          expect(user).to.not.equal(null);
+          expect(user.userid).equal(5);
+          expect(user.email).equal(email);
+        }, function (error) {
+          assert.fail(error);
+        });
+       
+      }, function (error) {
+         assert.fail(error);
+      });
+    })
+    it('updateUserLocation', function() {
+      var loc = 'Odenton';
+      var email= 'Damifino@verizon.net';
+      var pwd = 'Damifino';
+      return (db.updateUserLocation(5,loc)).then(function(){
+        return (db.getUser(email,pwd)).then(function (user) {
+          expect(user).to.not.equal(null);
+          expect(user.userid).equal(5);
+          expect(user.location).equal(loc);
+        }, function (error) {
+          assert.fail(error);
+        });
+       
+      }, function (error) {
+         assert.fail(error);
+      });
+    });
   });
-  describe('Test Listings()', function () {
-    // name, email, location
-    it('Test the ability to insert a user', function () {
 
-      (db.insertListing(user1.userid, list1.description, list1.price, list1.category, user1.location, null)).then(function (data) {
-        console.log(data);
-        list1.listid = data;
-        expect(data).to.above(0);
-        done();
+   describe('Test listing retrieval and updated', function(){
+    it('getAllListings()', function () {
+      return (db.getAllListings()).then(function (list) {
+        expect(list.length).gt(0);
+        expect(list.length).equal(60);
       }, function (error) {
-        console.log(error);
         assert.fail(error);
-        done();
       });
     });
-    it('Update listing(all)', function () {
-      list1.price = 25.65;
-      list1.photo = 'photo1.jpg';
-      (db.updateListing(user1.userid, list1.listid, list1.description, list1.price, list1.category, list1.status, list1.location, list1.photo)).then(function () {
-        console.log(list1);
-        assert.isTrue(true, 'Listing updated');
-      }, function (error) {
-        console.log(error);
+    it('getListings(null)', function () {
+      return (db.getListings(null)).then(function (list){
+        expect(list.length).gt(0);
+        expect(list.length).equal(60);
+      }, function (error){
         assert.fail(error);
-        done();
+      });
+    });
+    it('getListings(listid)', function () {
+      var srch = Object.create(listing)
+      srch.listid= 15;
+      srch.userName= null;
+      srch.userEmail= null;
+      srch.userid= null;
+      srch.description= null;
+      srch.price= null;
+      srch.category= null;
+      srch.status= null;
+      srch.location= null;
+      srch.imageFile= null;
+      srch.insertDt= null;
+      return (db.getListings(srch)).then(function (list){
+        expect(list.length).equal(1);
+
+      }, function (error){        
+        assert.fail(error);
+      });
+    });
+    it('getListings(userid)', function () {
+      var srch = Object.create(listing)
+      srch.listid= null;
+      srch.userName= null;
+      srch.userEmail= null;
+      srch.userid= 5;
+      srch.description= null;
+      srch.price= null;
+      srch.category= null;
+      srch.status= null;
+      srch.location= null;
+      srch.imageFile= null;
+      srch.insertDt= null;
+      return (db.getListings(srch)).then(function (list){
+        expect(list.length).equal(6);
+      }, function (error){
+        assert.fail(error);        
+      });
+    });
+    it('getListings(category)', function () {
+      var srch = Object.create(listing)
+      srch.listid= null;
+      srch.userName= null;
+      srch.userEmail= null;
+      srch.userid= null;
+      srch.description= null;
+      srch.price= null;
+      srch.category= 'Car';
+      srch.status= null;
+      srch.location= null;
+      srch.imageFile= null;
+      srch.insertDt= null;
+      return (db.getListings(srch)).then(function (list){
+        expect(list.length).equal(10);
+      }, function (error){
+        assert.fail(error);        
+      });
+    });
+    it('getListings(location)', function () {
+      var srch = Object.create(listing)
+      srch.listid= null;
+      srch.userName= null;
+      srch.userEmail= null;
+      srch.userid= null;
+      srch.description= null;
+      srch.price= null;
+      srch.category= null;
+      srch.status= null;
+      srch.location= 'Baltimore';
+      srch.imageFile= null;
+      srch.insertDt= null;
+      return (db.getListings(srch)).then(function (list){
+        expect(list.length).equal(24);
+      }, function (error){
+        assert.fail(error);        
+      });
+    });
+    it('getListings(category, location)', function () {
+      var srch = Object.create(listing)
+      srch.listid= null;
+      srch.userName= null;
+      srch.userEmail= null;
+      srch.userid= null;
+      srch.description= null;
+      srch.price= null;
+      srch.category= 'Car';
+      srch.status= null;
+      srch.location= 'Baltimore';
+      srch.imageFile= null;
+      srch.insertDt= null;
+      return (db.getListings(srch)).then(function (list){
+        expect(list.length).equal(4);
+      }, function (error){
+        assert.fail(error);        
+      });
+    });
+  });
+   */ 
+  describe('Test updating listings', function() {
+    it('Update listing(all)', function () {
+       var list1 = Object.create(listing)
+      list1.listid= 4;
+      list1.userid= 1;
+      list1.description= 'White cigarette boat with racing decals  40 feet long';
+      list1.price= 100000;
+      list1.category= null;
+      list1.status= 'Pending';
+      list1.location= null;
+      list1.imageFile= null;
+   
+      return (db.updateListing(list1.userid, list1.listid, list1.description, list1.price, 
+        list1.category, list1.status, list1.location, list1.imageFile)).then(function () {
+          assert.isTrue(true, 'Listing updated');
+          return (db.getListings(list1)).then(function (list) {
+            expect(list.length).equal(1);
+            list1 = list[0];
+            expect(list1.price).equal(100000);
+            expect(list1.status).equal('Pending');
+          }, function(error){
+              assert.fail(error);
+          });
+      }, function (error) {
+        assert.fail(error);
       });
     });
     it('Update listing(Price)', function () {
-      list1.price = 2565.99;
+      var price = 2565.99;
 
-      (db.updateListingPrice(user1.userid, list1.listid, list1.price)).then(function () {
-        console.log(list1);
-        assert.isTrue(true, 'Listing updated');
+      return (db.updateListingPrice(2, 9, price)).then(function () {
+         assert.isTrue(true, 'Listing updated');
       }, function (error) {
-        console.log(error);
         assert.fail(error);
-        done();
       });
     });
     it('Update listing(Description)', function () {
-      list1.description = 'The moaning lisa';
-      list1.photo = 'photo1.jpg';
-      (db.updateListing(user1.userid, list1.listid, list1.description)).then(function () {
+      var description = 'The moaning lisa';
+ 
+      return (db.updateListing(2, 9, description)).then(function () {
         assert.isTrue(true, 'Listing updated');
       }, function (error) {
-        console.log(error);
-        assert.fail(error);
-        done();
+         assert.fail(error);
       });
     });
     it('Update listing(Photo)', function () {
-      list1.photo = 'photo2.jpg';
-      (db.updateListing(user1.userid, list1.listid, list1.photo)).then(function () {
-        console.log(list1);
+      var photo = 'photo2.jpg';
+      return (db.updateListing(2, 9, photo)).then(function () {
         assert.isTrue(true, 'Listing updated');
       }, function (error) {
-        console.log(error);
+  
         assert.fail(error);
-        done();
       });
     });
 
     it('Update listing(Status)', function () {
-      list1.status = 'pending';
+      var status = 'pending';
 
-      (db.updateListing(user1.userid, list1.listid, list1.status)).then(function () {
-        console.log(list1);
+      return (db.updateListing(2, 9, status)).then(function () {
         assert.isTrue(true, 'Listing updated');
       }, function (error) {
-        console.log(error);
+  
         assert.fail(error);
-        done();
       });
     });
     it('Update listing(Location)', function () {
-      list1.location = 'DC';
+      var location = 'DC';
 
-      (db.updateListingLocation(user1.userid, list1.listid, list1.location)).then(function () {
-         console.log(list1);
+      return (db.updateListingLocation(2, 9, location)).then(function () {
        assert.isTrue(true, 'Listing updated');
       }, function (error) {
-        console.log(error);
+  
         assert.fail(error);
-        done();
+      });
+    });
+
+    it('getSellList(userid)', function () {
+      var srchListing = Object.create(listing);
+      return (db.getSellList(1)).then(function (list) {
+  
+        expect(list.length > 0);
+        expect(list.length).to.equal(6, 'Six rows');
+
+      }, function (error) {
+  
+        assert.fail(error);
       });
     });
   });
-  describe('Test listing retrieval', function () {
-    it('retrieve listings', function () {
-      (db.getAllListings()).then(function (list) {
-        console.log(list);
-        expect(list).to.have.length.above(0);
-        assert(list[0].listid).equal(1);
-      }, function (error) {
-        console.log(error);
-        assert.fail(error);
-        done();
-      });
-    });
+ /*  // Test listing insert
+  describe('Test Listings()', function () {
+    // name, email, location
+    it('Test the ability to insert a user', function () {
 
-    it('retrieve select listings(userid)', function () {
-      var srchListing = Object.create(listing);
-      srchListing.userid = 1;
-      (db.getListings(srchListing)).then(function (list) {
-         console.log(list);
-       expect(list).length.equal(7);
-
+      return (db.insertListing(user1.userid, list1.description, list1.price, list1.category, user1.location, null)).then(function (data) {
+        list1.listid = data;
+        expect(data > 0);
       }, function (error) {
-        console.log(error);
+  
         assert.fail(error);
-        done();
-      });
-    });
-    it('retrieve select listings(listid)', function () {
-      var srchListing = Object.create(listing);
-      srchListing.listid = 1;
-      (db.getListings(srchListing)).then(function (list) {
-         console.log(list);
-       expect(list).length.equal(7);
-
-      }, function (error) {
-        console.log(error);
-        assert.fail(error);
-        done();
-      });
-    });
-    it('retrieve select listings(category)', function () {
-      var srchListing = Object.create(listing);
-      srchListing.category = 'Car';
-      (db.getListings(srchListing)).then(function (list) {
-        console.log(list);
-        expect(list).length.equal(7);
-
-      }, function (error) {
-        console.log(error);
-        assert.fail(error);
-        done();
-      });
-    });
-    it('retrieve select listings(category,location)', function () {
-      var srchListing = Object.create(listing);
-      srchListing.category = 'Car';
-      srchListing.location = 'Baltimore';
-      (db.getListings(srchListing)).then(function (list) {
-        console.log(list);
-        assert(list.length > 0);
-        assert(list.length == 7, 'Seven rows');
-
-      }, function (error) {
-        console.log(error);
-        assert.fail(error);
-        done();
-      });
-    });
-    it('retrieve select a users sell list(userid)', function () {
-      var srchListing = Object.create(listing);
-      (db.getSellList(1)).then(function (list) {
-        console.log(list);
-        assert(list.length > 0);
-        assert(list.length == 7, 'Seven rows');
-
-      }, function (error) {
-        console.log(error);
-        assert.fail(error);
-        done();
       });
     });
   });
+  // Test watchlist retrieval
   describe('Test watchlist functions', function () {
     it('retrieve a users watch list(userid)', function () {
-      (db.getWatchList(1)).then(function (list) {
-        console.log(list);
-        assert(list.length > 0);
-        assert(list.length == 1, 'One rows');
+      return (db.getWatchList(1)).then(function (list) {
+        expect(list.length).gt(0);
+        expect(list.length).to.equal(1, 'One rows');
 
       }, function (error) {
-        console.log(error);
         assert.fail(error);
-        done();
       });
     });
     it('add a listing to a users watch list(userid, listid)', function () {
-      (db.insertWatchList(1, 10)).then(function (list) {
-        console.log(list);
-        assert(list.length > 0);
-        assert(list.length == 1, 'One rows');
+      return (db.insertWatchList(1, 10)).then(function (list) {
+  
+        expect(list.length).gt(0);
+        expect(list.length).equal(1, 'One rows');
 
       }, function (error) {
-        console.log(error);
+  
         assert.fail(error);
-        done();
       });
     });
     it('add a list of users watchinng a listing(listid)', function () {
-      (db.getWatchersForListing(10)).then(function (list) {
-        console.log(list);
-        assert(list.length > 0);
-        assert(list.length == 1, 'One rows');
+      return (db.getWatchersForListing(10)).then(function (list) {
+  
+        expect(list.length).gt(0);
+        expect(list.length).to.equal(1, 'One rows');
 
       }, function (error) {
-        console.log(error);
+  
         assert.fail(error);
-        done();
       });
     });
   });
+  // Test inserting a user
+  describe('Test User Insert()', function () {
+    it('insertUser(name, email, location)', function () {
+      var user1 = Object.create(user);
+      user1.name = "Iniyo Montoya";
+      user1.email = "Iniyo@PrincessBride.com";
+      user1.location = "Philadelphia";
+      return (db.insertUser(user1.name, user1.email, user1.location)).then(function (pk) {
+        user1.userid = pk;
+        expect(pk).gt(0);
+      }, function (error) {
+        assert.fail(error);
+      });
+    });
+    it('insertUser(name, email, location, password)', function () {
+      var user1 = Object.create(user);
+      user1.name = "Fessig Giant";
+      user1.email = "Fessig@PrincessBride.com";
+      user1.location = "Philadelphia";
+      user1.password = 'Abc123';
+      return (db.insertUser(user1.name, user1.email, user1.location,user1.password)).then(function (pk) {
+        user1.userid = pk;
+        expect(pk).gt(0);
+      }, function (error) {
+  
+        assert.fail(error);
+      });
+    });
+    it('test duplicate insert', function () {
+      var user1 = Object.create(user);
+      user1.name = "Fessig Giant";
+      user1.email = "Fessig@PrincessBride.com";
+      user1.location = "Philadelphia";
+      user1.password = 'Abc123';
+      return (db.insertUser(user1.name, user1.email, user1.location, user1.password)).then(function (pk) {
+        assert.isTrue(false, 'success is failure');
+      }, function (error) {
+        assert.isTrue(true, 'failure is a success');
+      });
+    });
+    it('test Missing email', function () {
+      var user1 = Object.create(user);
+      user1.name = "Princess Buttercup";
+      user1.email = null;
+      user1.location = "Philadelphia";
+      user1.password = 'Abc123';
+      return (db.insertUser(user1.name, null, user1.location)).then(function (pk) {
+        assert.isTrue(false, 'success is failure');
+      }, function (error) {
+        assert.isTrue(true, 'failure is a success');
+      });
+    });
+  });
+  // Test Delete functions
+
+
   describe('Test delete functions', function () {
     it('Delete an item from the watchlist(userid, listid)', function () {
-      (db.deleteWatchList(1, 10)).then(function () {
-        console.log('deleted');
-        assert(list.length > 0);
-        assert(list.length == 1, 'One rows');
+      return (db.deleteWatchList(1, 10)).then(function () {
+        expect(list.length > 0);
+        expect(list.length).to.equal(1, 'One rows');
 
       }, function (error) {
-        console.log(error);
+  
         assert.fail(error);
-        done();
       });
     });
     it('Delete a listing deletes watchlist too(listid)', function () {
-      (db.deleteListing(2,11)).then(function () {
-        console.log('deleted');
-        assert(list.length > 0);
-        assert(list.length == 1, 'One rows');
+      return (db.deleteListing(2,11)).then(function () {
+        expect(list.length > 0);
+        expect(list.length).to.equal(1, 'One rows');
 
       }, function (error) {
-        console.log(error);
+  
         assert.fail(error);
-        done();
       });
     });
     it('Delete a user deletes listing, watchlist too(listid)', function () {
-      (db.deleteUser(2)).then(function () {
-        console.log('deleted');
-        assert(list.length > 0);
-        assert(list.length == 1, 'One rows');
+      return (db.deleteUser(2)).then(function () {
+        expect(list.length > 0);
+        expect(list.length).to.equal(1, 'One rows');
 
       }, function (error) {
-        console.log(error);
+  
         assert.fail(error);
-        done();
       });
     });
     it('Delete a users watchlist too(listid)', function () {
-      (db.deleteEntireWatchList(3)).then(function () {
-        console.log('Success');
-        assert(list.length > 0);
-        assert(list.length == 1, 'One rows');
+      return (db.deleteEntireWatchList(3)).then(function () {
+        expect(list.length > 0);
+        expect(list.length).to.equal(1, 'One rows');
 
       }, function (error) {
-        console.log(error);
+  
         assert.fail(error);
-        done();
       });
     });
   });
-
+*/
 });

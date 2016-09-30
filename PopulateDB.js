@@ -25,6 +25,7 @@ var watchedListing = {
     insertDt: '',
     listing: ''
 };
+
 var locs = ['Baltimore','Columbia','DC'];
 var items = ['Picture Frame','TV','Car','Speed Boat','Guitar','DVDs'];
 var prices = [5.0,45.00,750.00,650.00,100.00,2.00];
@@ -32,7 +33,7 @@ var usedNew = ['New ', 'Used ', 'Damaged ','Parts '];
 var colors = ['White ', 'Black ', 'Red ','Blue '];
 var userList = [];
 var listings = [];
-
+var photos = [];
 var maxUsers = 10;
 var maxItems = 6;
 
@@ -81,7 +82,7 @@ function loadTables()
         printoutListing(newList);
         listing[nextIdx] = newList;
         nextIdx++;
-        }
+       }
     }
     for (var i = 0; i < nextIdx; i++)
     {
@@ -94,15 +95,28 @@ function loadTables()
  *  This section inserts 1 to 10 watched listings for each user
  *  
  *********************************************************************/
+var watchlist = [];
+    watchlist[0] = [10,20,30,40,50,60]; //uid 1 exclude 1-6
+    watchlist[1] = [1,21,31,41,51]; //uid 2 exclude  7-12
+    watchlist[2] = [2,4,8,32]; //uid 3 exclude  13-18
+    watchlist[3] = [3,6,9,12,15,18,27,30,33,36,]; //uid 4 exclude 19-24
+    watchlist[4] = [4,8,12,16,20,24,32,36,40,44,48,52,56,60]; //uid 5 exclude 25-30
+    watchlist[5] = [5,10,15,20,25,30,40,45,50,55,60]; //uid 6 exclude 31-36
+    watchlist[6] = [6,12,18,24,30,48,54,60]; //uid 7 exclude 37-42
+    watchlist[7] = [7,14,21,28,35,42,49,56]; //uid 8 exclude 43-48
+    watchlist[8] = [8,16,24,32,40,48,56]; //uid 9 exclude 49-54
+    watchlist[9] = [9,18,27,36,45,54]; //uid 10 exclude 55-60
+
+   
     var nextwid = 0;
     for (var i = 0; i <maxUsers; i++)
     {
         var uid = i+1;
-        for (var x = 0; x < uid; x++)
+        var list = watchlist[i];
+        for (var x = 0; x < list.length; x++)
         {
-            var lidx = (Math.floor((Math.random())*100) % 60) + 1;   // Randomlly generate a listing key
 
-            (db.insertWatchList(uid, lidx)).then( (pk) => {
+            (db.insertWatchList(uid, list[x])).then( (pk) => {
           
                 }, (err) => {
                     var errStr = "PDB-" + err;
