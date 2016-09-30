@@ -112,8 +112,6 @@ angular.
         reloadBG();   //** reload background image *optional*
         $location.url('/login');
       }
-
-
     }
   }).directive('backImg', function () {
     return function (scope, element, attrs) {

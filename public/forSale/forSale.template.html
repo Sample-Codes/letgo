@@ -8,8 +8,8 @@
         <br>
         <label class="smLabel">Location: </label><label class="smValue" ng-bind='$ctrl.location'></label>
         <br><br>
-        <br>  
-        <a class="smLink" ng-click="$ctrl.watchlist()">Watch List:</a> {{$ctrl.watching}}
+        <a class="smLink" ng-click="$ctrl.watchlist()">Watch List: </a><label class="smValue">{{$ctrl.watching}}</label>
+        <br />
         <input class="button" type="submit" value="Add New Listing" name="New Listing" id="submit" />
       </div>
     </form>
@@ -17,13 +17,12 @@
       <table>
         <tr>
           <td>
-
             <label class="smLabel">Search: </label>
           </td>
         </tr>        
         <tr>
           <td>
-            <input ng-model="query" type="text" class="textBox"/>
+            <input ng-model="query" type="text" class="smTextBox"/>
           </td>
         </tr>
         <tr>

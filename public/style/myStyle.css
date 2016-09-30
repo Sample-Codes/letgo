@@ -74,14 +74,15 @@ label.lgLabel
     margin-bottom: 15px;
  }
 label.smLabel  {
-    color: #3F3F46;
+    color: #1a1a1d;
     font-weight: bold;
     font-family: Verdana, sans-serif;
     font-size: 15px;
 }
 
 label.smValue  {
-    color: #3F3F46;
+    /*color: #3F3F46;*/
+    color: #1a1a1d;
     text-decoration: none;
     font-family: Verdana, sans-serif;
     font-size: 15px;
@@ -106,6 +107,28 @@ label.smValue  {
     width:360px;
 }
 
+.smTextBox
+{
+    background-color: #333;
+    color: #ccc;
+    font-size: 24px;
+    width: 305px;
+    padding: 6px 15px 6px 15px;
+    margin-bottom: 15px;
+    border-radius: 20px;
+    /*box-shadow: 0 1px 0 #ccc inset;*/
+    transition:500ms all ease;
+    float:right;
+}
+
+.smTextBox:hover
+{
+    width:330px;
+}
+
+table {
+    width: 342px;
+}
 .textArea
 {
     background-color: #333;
@@ -176,12 +199,13 @@ label.smValue  {
 #content {
   float: right;
   width: 68%;
+  min-width: 765px;
   height: 100%;
   margin-left: 5px;
 }
 #sidebar {
   position:fixed;
-  float: left;
+  /*float: left;*/
   width: 30%;
   height: 100%;
   min-width: 360px;
@@ -421,4 +445,14 @@ figcaption {
 
 input[type="radio"] {
   margin-left: 15px;
+}
+
+#closemenu {
+    width: 34;
+    float: right;
+}
+
+#closemenu:hover {
+  transition: all .2s ease-in-out;
+  transform: scale(1.3);
 }
