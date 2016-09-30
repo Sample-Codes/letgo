@@ -279,24 +279,25 @@ app.get('/getWatchersForListing/:listId', function (req, res) {
     );
 })
 
-app.post('/updateListing/', multer({dest: './public/photos/'}).single('file'), function (req, res) {
+app.post('/updateListing/', function (req, res) {
 
-    var user = {
-        email: req.body.email,
-        userId: req.body.userId
-    };
+console.log('update listing begin')
+    console.dir(req)
+    console.log(req.body.userId)
+
 
     var listing = {
+        userId: req.body.userId,
         listId: req.body.listId,
         description: req.body.description,
         price: req.body.price,
         category: req.body.category,
-        location: req.body.listinglocation,
+        location: req.body.location,
         status: req.body.status,
-        photo: req.file.filename
+        //photo: req.file.filename
     };
 
-    var updateListing = db.updateListing(user.userId, listing.listId, listing.description, listing.price, listing.category, listing.location, listing.status);
+    var updateListing = db.updateListing(listing.userId, listing.listId, listing.description, listing.price, listing.category, listing.location, listing.status);
 
     updateListing.then((val) => {
         res.send('Listing Id ' + listing.listId + ' is updated successfully!');

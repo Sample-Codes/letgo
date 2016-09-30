@@ -12,6 +12,7 @@
         <a class="smLink" ng-click="$ctrl.watchlist()">Watch List:</a> {{$ctrl.watching}}
         <input class="button" type="submit" value="Add New Listing" name="New Listing" id="submit" />
       </div>
+      <a class="smLink" href="" ng-click="$ctrl.unsubscribe()">Unsubscribe from LetGo</a>
     </form>
     <div id="searchOptions">
       <table>
@@ -60,11 +61,12 @@
         <img back-img="/static/photos/{{listing.imageFile}}" ng-click="$ctrl.itemdetail(listing)" width="300">
 
         <a ng-click="$ctrl.likeMe(listing)"><img id="likeBtn" ng-src="/static/img/{{listing.liked ? 'heartLike.png' : 'heartNoLike.png' }} " /></a>
-        <p>Item: {{listing.category}}</p>
-        <p>Price: $ {{listing.price}}.00</p> 
-        <p>Seller: {{listing.username}}</p>
-        <p> Email: {{listing.userEmail}}</p>
+        <p>Item: {{listing.listid}} 
+        <p>Category: {{listing.category}}</p>
+        <p>Price: {{listing.price | currency}}</p> 
+        <p>Seller: {{listing.userName}}</p>
         <p>Description: {{listing.description}}</p>
+        <p>Status: {{listing.status}}</p>
       </section>
     </main>
   </div>

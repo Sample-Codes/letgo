@@ -4,6 +4,7 @@ angular.module('letgoApp', [
   'forSale',
   'newUser',
   'newListing',
+  'updateListing',
   'updateListingPrice',
   'itemDetail',
   'servicesMod'

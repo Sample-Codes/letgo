@@ -398,7 +398,7 @@ function updateListing(userid, listid, description, price, category,status, loca
              + createUpdateList(description, price, category,status, location, photo);
              + " WHERE LISTID=" + listid
              + " AND USERID=" + userid;
-            console.log(command);
+            console.log('updateListing sql' + command);
             db.run(command, function (err) {
                 if (err) {
                     reject(err);

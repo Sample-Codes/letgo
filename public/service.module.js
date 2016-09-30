@@ -63,6 +63,23 @@ angular.module('servicesMod', [
         });
        return p;
     }
+
+    
+     //Unsubscribe from LetGo
+    this.unsubscribeUser = function (userid) {
+        console.log('inside unsubscribe User');
+
+        var user = {
+        userId: userid}
+
+
+        $http.post('/deleteUser', user).then(function (response) {
+            console.log('deleted user');
+           
+        }),(err)=>{
+            console.log('error deleting user');
+        };
+    }
         
     }
 )

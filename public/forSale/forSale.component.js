@@ -113,6 +113,14 @@ angular.
         $location.url('/login');
       }
 
+      self.unsubscribe = function () {
+        console.log('unsubcribe here')
+        ListingService.unsubscribeUser(self.userId).then(function (dataResponse) {
+          console.dir(dataResponse)
+          self.signout();
+        });
+      }
+
 
     }
   }).directive('backImg', function () {
