@@ -72,13 +72,11 @@ angular.module('servicesMod', [
         var user = {
         userId: userid}
 
-
-        $http.post('/deleteUser', user).then(function (response) {
+        var p = $http.post('/deleteUser', user);
+        p.then(function (response) {
             console.log('deleted user');
-           
-        }),(err)=>{
-            console.log('error deleting user');
-        };
+        });
+        return p;
     }
         
     }

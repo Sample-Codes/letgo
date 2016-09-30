@@ -297,7 +297,7 @@ console.log('update listing begin')
         //photo: req.file.filename
     };
 
-    var updateListing = db.updateListing(listing.userId, listing.listId, listing.description, listing.price, listing.category, listing.location, listing.status);
+    var updateListing = db.updateListing(listing.userId, listing.listId, listing.description, listing.price, listing.category, listing.status, listing.location);
 
     updateListing.then((val) => {
         res.send('Listing Id ' + listing.listId + ' is updated successfully!');
