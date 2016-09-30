@@ -54,7 +54,7 @@ angular.
           description: self.listing.description,
           price: self.listing.price,
           category: self.listing.category,
-          location: self.listing.locationn,
+          location: self.listing.location,
           status: self.listing.status,
         };
 
