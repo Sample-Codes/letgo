@@ -310,17 +310,23 @@ function deleteUser(userid)
 
         db.beginTransaction(function(err, transaction) 
         {
-            var del1 = "DELETE FROM watchlist WHERE USERID=" + userid;
+            //Delete what user is watching
+            var whereClause = " WHERE USERID=" + userid;
+            var del1 = "DELETE FROM watchlist" + whereClause;
              console.log(del1);
              transaction.run(del1, function (err) { if (err) {transaction.rollback(); reject(err); }});
- 
-             var del2 = "DELETE FROM listing WHERE listid IN (SELECT listid FROM listing WHERE USERID=" + userid +')';
+             // Delete my items being watched
+             var del2 = "DELETE FROM watchlist WHERE listid IN (SELECT listid FROM listing" + whereClause +')';
              console.log(del2);
              transaction.run(del2, function (err) { if (err) {transaction.rollback(); reject(err); }});
-
-             var del3 = "DELETE FROM users WHERE USERID=" + userid
+             // Delete my listings
+             var del3 = "DELETE FROM listing" + whereClause;
              console.log(del3);
-             transaction.run(del3, function (err) { if (err) { transaction.rollback(); reject(err); } });
+             transaction.run(del3, function (err) { if (err) {transaction.rollback(); reject(err); }});
+             // Delete the user
+             var del4 = "DELETE FROM users" + whereClause;
+             console.log(del4);
+             transaction.run(del4, function (err) { if (err) { transaction.rollback(); reject(err); } });
 
              transaction.commit(function(err) {if (err){return console.log("Delete user failed.", err);}
                 console.log("Delete user was successful.");
