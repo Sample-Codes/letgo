@@ -90,7 +90,6 @@ var watchedListing = {
 
 describe('Database Testing', function () {
   // Test user retrieval and modifications first
-  /*
     describe('Retrieve User()', function () {
     it('Test the retrieve a user profile', function () {
       return (db.getUser('user_email0@gmail.com','password')).then(function (user) {
@@ -411,9 +410,10 @@ describe('Database Testing', function () {
       });
     });
   });
-  */
+
 
   // Test inserting a user
+
   describe('test user insert functions', function () {
     it('insertUser(name, email, location)clean', function () {
       var user1 = Object.create(user);
@@ -476,75 +476,101 @@ describe('Database Testing', function () {
     });
   });
 
- /*
   // Test listing insert
-  describe('Test Listings()', function () {
+  describe('Test inserting Listings()', function () {
     // name, email, location
-    it('Test the ability to insert a user', function () {
-      var userid, list1.description, list1.price, list1.category, user1.location, null
-      return (db.insertListing(userid, description, list1.price, list1.category, user1.location, null)).then(function (data) {
-        list1.listid = data;
+    it('insertListing(all)', function () {
+      var userid = 2;
+      var description = 'Oak Office Chair';
+      var price = 20.15;
+      var category = 'Office Furniture';
+      var location = 'DC';
+      var photo = 'Random.jpg';
+      return (db.insertListing(userid, description, price, category, location, photo)).then(function (data) {
         expect(data > 0);
+        var list1 = Object.create(listing);
+        list1.listid = data;
+        return (db.getListings(list1)).then(function (list){
+          expect(list.length).equal(1);
+          list1 = list[0];
+          expect(list1.userid).equal(userid);
+          expect(list1.description).equal(description);
+          expect(list1.price).equal(price);
+          expect(list1.category).equal(category);
+          expect(list1.location).equal(location);
+          expect(list1.imageFile).equal(photo);
+        });
       }, function (error) {
   
         assert.fail(error);
       });
     });
-    it('Test the ability to insert a user', function () {
+    it('insertListing(Null Photo)', function () {
+      var userid = 2;
+      var description = 'Maple Office Chair';
+      var price = 20.15;
+      var category = 'Home Office';
+      var location = 'Laurel';
+      var photo = null;
 
-      return (db.insertListing(user1.userid, list1.description, list1.price, list1.category, user1.location, null)).then(function (data) {
-        list1.listid = data;
-        expect(data > 0);
+      return (db.insertListing(userid, description, price, category, location, photo)).then(function (data) {
+        assert.isTrue(false, 'success is failure');
       }, function (error) {
-  
-        assert.fail(error);
+        assert.isTrue(true, 'failure is a success');
       });
     });
   });
-  */
-  /*
+
   // Test watchlist retrieval
   describe('Test watchlist functions', function () {
-    it('retrieve a users watch list(userid)', function () {
+    it('getWatchList(userid)', function () {
       return (db.getWatchList(1)).then(function (list) {
         expect(list.length).gt(0);
-        expect(list.length).to.equal(1, 'One rows');
+        expect(list.length).to.equal(6, 'One rows');
 
       }, function (error) {
         assert.fail(error);
       });
     });
-    it('add a listing to a users watch list(userid, listid)', function () {
-      return (db.insertWatchList(1, 10)).then(function (list) {
-  
-        expect(list.length).gt(0);
-        expect(list.length).equal(1, 'One rows');
-
-      }, function (error) {
-  
+    it('insertWatchList(userid, listid)', function () {
+      return (db.insertWatchList(2, 10)).then(function (list) {
+        return (db.testInsertWatchlist(2,10)).then(function (cnt)
+        {
+          expect(cnt.CNT).equal(1);
+        }, function (error) {
+           assert.fail(error);
+        });
+      }, function (error) { 
         assert.fail(error);
       });
     });
-    it('add a list of users watchinng a listing(listid)', function () {
+     it('insertWatchList(userid, listid) duplicate', function () {
+      return (db.insertWatchList(2, 10)).then(function (list) {
+           assert.isTrue(false, 'success is a failure');
+       }, function (error) {
+          assert.isTrue(true, 'failure is a success');
+      });
+    });
+   it('add a list of users watchinng a listing(listid)', function () {
       return (db.getWatchersForListing(10)).then(function (list) {
-  
         expect(list.length).gt(0);
-        expect(list.length).to.equal(1, 'One rows');
-
-      }, function (error) {
-  
+        expect(list.length).to.equal(3, 'Three rows');
+      }, function (error) { 
         assert.fail(error);
       });
     });
   });
   // Test Delete functions
 
-
   describe('Test delete functions', function () {
     it('Delete an item from the watchlist(userid, listid)', function () {
       return (db.deleteWatchList(1, 10)).then(function () {
-        expect(list.length > 0);
-        expect(list.length).to.equal(1, 'One rows');
+        return (db.testInsertWatchlist(1,10)).then(function (cnt)
+        {
+          expect(cnt.CNT).equal(0);
+        }, function (error) {
+           assert.fail(error);
+        });
 
       }, function (error) {
   
@@ -553,8 +579,12 @@ describe('Database Testing', function () {
     });
     it('Delete a listing deletes watchlist too(listid)', function () {
       return (db.deleteListing(2,11)).then(function () {
-        expect(list.length > 0);
-        expect(list.length).to.equal(1, 'One rows');
+        return (db.testInsertWatchlist(2,11)).then(function (cnt)
+        {
+          expect(cnt.CNT).equal(0);
+        }, function (error) {
+           assert.fail(error);
+        });
 
       }, function (error) {
   
@@ -563,8 +593,7 @@ describe('Database Testing', function () {
     });
     it('Delete a user deletes listing, watchlist too(listid)', function () {
       return (db.deleteUser(2)).then(function () {
-        expect(list.length > 0);
-        expect(list.length).to.equal(1, 'One rows');
+        assert.isTrue(true, 'delete user');
 
       }, function (error) {
   
@@ -573,14 +602,12 @@ describe('Database Testing', function () {
     });
     it('Delete a users watchlist too(listid)', function () {
       return (db.deleteEntireWatchList(3)).then(function () {
-        expect(list.length > 0);
-        expect(list.length).to.equal(1, 'One rows');
-
+         assert.isTrue(true, 'delete user');
       }, function (error) {
   
         assert.fail(error);
       });
     });
   });
-*/
+
 });

@@ -29,6 +29,7 @@ exports.deleteListing=deleteListing; //userid, listid
 
 exports.getWatchList=getWatchList; // userid
 exports.insertWatchList=insertWatchList; //userid, listid
+exports.testInsertWatchlist=testInsertWatchlist;
 exports.deleteWatchList=deleteWatchList; //userid, listid
 exports.deleteEntireWatchList=deleteEntireWatchList; //
 exports.getWatchersForListing=getWatchersForListing;
@@ -764,6 +765,24 @@ function getWatchList(userid)  // returns a list of listing
     );
 
     return p;    
+}
+function testInsertWatchlist(userid, listid)
+{
+    var p = new Promise(function (resolve, reject) {
+    var command = 'SELECT COUNT(USERID) AS CNT FROM watchlist WHERE  LISTID=' + listid + ' AND USERID=' + userid;
+        console.log(command);
+        db.all(command , (err, rows) => {
+        if (err) {
+        reject(err);
+        }
+        resolve(rows);
+        });
+    }).then(
+        (rows) => {
+            return rows[0];
+        }, (err) => {console.log(err);
+    });
+    return p;
 }
 function getWatchersForListing(listid)
 {
