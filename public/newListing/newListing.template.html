@@ -1,44 +1,60 @@
 <div>
-    <h1>New Listing</h1>
-    <div id="new-listing" class="divBox">
+    <h1>New Listing</h1>            
+    <div id="new-listing">
         <form ng-submit="$ctrl.redirect()" name="newListingForm">
-            <div>
-                User Id:<input ng-model="$ctrl.userId" required type="number" 
-                        id="userId"  class="textBox" name="userId" title="User Id">
-                        <span ng-show="newListingForm.userId.$error.required">Required!</span>
-                        <span ng-show="newListingForm.userId.$error.number" class="error">Not valid number!</span>
-                Description:<input ng-model="$ctrl.description"  required type="text"
-                        id="name"  class="textBox" name="description" title="description" 
-                        value="" placeholder="description" size="30" maxlength="40"  />
-                        <span ng-show="newListingForm.description.$error.required">Description is Required!</span>
+            <div id="entry-listing">
+                <label class='lgLabel'>Photo</label>
+                <input type = "file" name="photo" file-model = "$ctrl.myFile" class="textBox" required/>
+                        <span ng-show="newListingForm.photo.$error.required">Photo is Required!</span>
                         <br>
-                        <br>
-                Category:<input ng-model="$ctrl.category"  required type="text"
+                        <br> 
+                <label class='lgLabel'>Category</label>
+                <input ng-model="$ctrl.category"  required type="text"
                         id="category"  class="textBox" name="category" title="category" 
-                        value="" placeholder="category" size="30" maxlength="40"  />
+                        value="" placeholder="" size="25" maxlength="20"  />
                         <span ng-show="newListingForm.category.$error.required">Category is Required!</span>
                         <br>
                         <br>
-                Price:<input ng-model="$ctrl.price"  required type="number"
-                        id="price"  class="textBox" name="location" title="price" 
-                        value="" placeholder="price" size="30" maxlength="40"  />
+                <label class='lgLabel'>Description</label>
+                <textarea ng-model="$ctrl.description"  required type="text"
+                        id="name"  class="textArea" name="description" title="description" 
+                        value="" placeholder="" size="30" maxlength="144"></textarea>
+                        <span ng-show="newListingForm.description.$error.required">Description is Required!</span>
+                        <br>
+                        <br>
+                <label class='lgLabel'>Price  (currency: {{$ctrl.price | currency}})</label>
+                <input ng-model="$ctrl.price"  required type="text"
+                        id="price"  class="textBox" name="price" title="price" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/"
+                        value="" placeholder="" size="7" maxlength="6"  />
                         <span ng-show="newListingForm.price.$error.required">Price is Required!</span>
+                        <span ng-show="!newListingForm.price.$valid" class="error">Price is Invalid!</span>
                         <br>
                         <br> 
-                Photo:<input ng-model="$ctrl.photo"  required type="text"
-                        id="photo"  class="textBox" name="photo" title="photo" 
-                        value="" placeholder="photo" size="30" maxlength="40"  />
-                        <span ng-show="newListingForm.photo.$error.required">Photo is Required!</span>
-                        <br>
-                        <br>                   
-                Selling Location:<input ng-model="$ctrl.location"
+                <label class='lgLabel'>Selling Location</label>
+                <input ng-model="$ctrl.location"
                         id="location" class="textBox" name="location" title="location" 
-                        value="" placeholder="Location" size="30" maxlength="40"/>
+                        value="" placeholder="" size="30" maxlength="40"/>   
+                <br>
+                <br /><br /><br />
+                <a class="link" ng-click="$ctrl.cancel()">Cancel</a><br>
+                <button class="button" ng-click="$ctrl.reset()" title="Clear Form">Clear Form</button>             
             </div>
-            <br /><br /><br /><br /><br /><br />
-            <div class="spacer2"></div> 
-            <a class="link" ng-click="$ctrl.cancel()">Cancel</a>
-            <input class="button" type="submit" value="Submit" name="submit" id="submit" />
+            <div id="preview-listing">
+                <div id="preview-box">
+                        <label class='lgLabel darkgray'><u>Preview</u></label><br><br>
+                        <label class='smValue'> Photo: {{$ctrl.myFile.name}}</label><br><br>
+                        <div id="frame">
+                          <img width= 250 height=NaN ng-src="{{$ctrl.ImageSrc}}"/><br>
+                        </div>
+                        <label class='smValue'> Category: {{$ctrl.category}}</label> <br><br>    
+                        <label class='smValue'> Description: {{$ctrl.description}}</label> <br><br>      
+                        <label class='smValue'> Price: {{$ctrl.price | currency}}</label> <br><br>
+                        <label class='smValue'> Selling Location: {{$ctrl.location}}</label>
+                        <br /><br />
+                        <input class="button fixedNewPost" type="submit" value="Submit New Posting" name="submit" id="submit" title="Submit New Posting"/><br>
+                </div> 
+            </div>
+            
         </form>
     </div>
 </div>

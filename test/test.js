@@ -1,4 +1,3 @@
-
 var fs = require('fs');
 var db = require('../db.js');
 
@@ -35,12 +34,7 @@ var watchedListing = {
   insertDt: '',
   listing: ''
 };
-var imageFile = {
-  imageid: '',
-  userid: '',
-  listid: '',
-  imageName: ''
-};
+
 
 /**********************************************************************************
  * Before running the tests make sure to run the populateDB.js
@@ -152,13 +146,12 @@ describe('Database Testing', function () {
      var pwd = 'password';
     return (db.updateUserName(5,name)).then(function(){
        return (db.getUser(email,pwd)).then(function (user) {
-        expect(user).to.not.equal(null);
-        expect(user.userid).to.equal(5);
-        expect(user.name).to.equal(name);
-      }, function (error) {
-         assert.fail(error);
-      });
-       
+          expect(user).to.not.equal(null);
+          expect(user.userid).to.equal(5);
+          expect(user.name).to.equal(name);
+        }, function (error) {
+          assert.fail(error);
+        });
       }, function (error) {
          assert.fail(error);
       });
@@ -328,27 +321,29 @@ describe('Database Testing', function () {
       });
     });
   });
-   */ 
+ 
   describe('Test updating listings', function() {
     it('Update listing(all)', function () {
        var list1 = Object.create(listing)
       list1.listid= 4;
       list1.userid= 1;
-      list1.description= 'White cigarette boat with racing decals  40 feet long';
-      list1.price= 100000;
+      list1.description= null;
+      list1.price= 18999.95;
       list1.category= null;
-      list1.status= 'Pending';
-      list1.location= null;
+      list1.status= 'Offer';
+      list1.location= 'Belair';
       list1.imageFile= null;
    
       return (db.updateListing(list1.userid, list1.listid, list1.description, list1.price, 
-        list1.category, list1.status, list1.location, list1.imageFile)).then(function () {
+        list1.category, list1.status, list1.location)).then(function () {
           assert.isTrue(true, 'Listing updated');
           return (db.getListings(list1)).then(function (list) {
             expect(list.length).equal(1);
-            list1 = list[0];
-            expect(list1.price).equal(100000);
-            expect(list1.status).equal('Pending');
+            var list2 = list[0];
+            expect(list2.price).equal(list1.price);
+            expect(list2.status).equal(list1.status);
+            expect(list2.location).equal(list1.location);
+     //       expect(list2.description).equal(list1.description);
           }, function(error){
               assert.fail(error);
           });
@@ -383,7 +378,6 @@ describe('Database Testing', function () {
         assert.fail(error);
       });
     });
-
     it('Update listing(Status)', function () {
       var status = 'pending';
 
@@ -404,7 +398,6 @@ describe('Database Testing', function () {
         assert.fail(error);
       });
     });
-
     it('getSellList(userid)', function () {
       var srchListing = Object.create(listing);
       return (db.getSellList(1)).then(function (list) {
@@ -418,9 +411,85 @@ describe('Database Testing', function () {
       });
     });
   });
- /*  // Test listing insert
+  */
+
+  // Test inserting a user
+  describe('test user insert functions', function () {
+    it('insertUser(name, email, location)clean', function () {
+      var user1 = Object.create(user);
+      user1.name = "Iniyo Montoya";
+      user1.email = "Iniyo@PrincessBride.com";
+      user1.location = "Philadelphia";
+      return (db.insertUser(user1.name, user1.email, user1.location)).then(function (pk) {
+        user1.userid = pk;
+        expect(pk).gt(0);
+        return (db.getUser(user1.email, 'password')).then(function (iniyo){
+          expect(iniyo).not.equal(null);
+          expect(iniyo.userid).equal(pk);
+        }, function (err) {assert.fail(err);});
+      }, function (error) {
+        assert.fail(error);
+      });
+    });
+    it('insertUser(name, email, location)duplicate', function () {
+      var user1 = Object.create(user);
+      user1.name = "Iniyo Montoya";
+      user1.email = "Iniyo@PrincessBride.com";
+      user1.location = "Philadelphia";
+      return (db.insertUser(user1.name, user1.email, user1.location)).then(function (pk) {
+        expect(pk).equal(null);
+        assert.isTrue(false, 'duplicate allowed');
+       }, function (error) {
+        assert.isTrue(true, 'Duplicate insert blocked');
+      });
+    });
+
+    it('insertUser(name, email, location, password)', function () {
+      var user1 = Object.create(user);
+      user1.name = "Fessig Giant";
+      user1.email = "Fessig@PrincessBride.com";
+      user1.location = "Philadelphia";
+      user1.password = 'Abc123';
+      return (db.insertUser(user1.name, user1.email, user1.location,user1.password)).then(function (pk) {
+        user1.userid = pk;
+        expect(pk).gt(0);
+        return (db.getUser(user1.email, user1.password)).then(function (fessig){
+          expect(fessig).not.equal(null);
+          expect(fessig.userid).equal(pk);
+        }, function (err) {assert.fail(err);});
+      }, function (error) {
+  
+        assert.fail(error);
+      });
+    });
+    it('insertUser(Missing email)', function () {
+      var user1 = Object.create(user);
+      user1.name = "Princess Buttercup";
+      user1.email = null;
+      user1.location = "Philadelphia";
+      user1.password = 'Abc123';
+      return (db.insertUser(user1.name, null, user1.location)).then(function (pk) {
+        assert.isTrue(false, 'success is failure');
+      }, function (error) {
+        assert.isTrue(true, 'failure is a success');
+      });
+    });
+  });
+
+ /*
+  // Test listing insert
   describe('Test Listings()', function () {
     // name, email, location
+    it('Test the ability to insert a user', function () {
+      var userid, list1.description, list1.price, list1.category, user1.location, null
+      return (db.insertListing(userid, description, list1.price, list1.category, user1.location, null)).then(function (data) {
+        list1.listid = data;
+        expect(data > 0);
+      }, function (error) {
+  
+        assert.fail(error);
+      });
+    });
     it('Test the ability to insert a user', function () {
 
       return (db.insertListing(user1.userid, list1.description, list1.price, list1.category, user1.location, null)).then(function (data) {
@@ -432,6 +501,8 @@ describe('Database Testing', function () {
       });
     });
   });
+  */
+  /*
   // Test watchlist retrieval
   describe('Test watchlist functions', function () {
     it('retrieve a users watch list(userid)', function () {
@@ -463,59 +534,6 @@ describe('Database Testing', function () {
       }, function (error) {
   
         assert.fail(error);
-      });
-    });
-  });
-  // Test inserting a user
-  describe('Test User Insert()', function () {
-    it('insertUser(name, email, location)', function () {
-      var user1 = Object.create(user);
-      user1.name = "Iniyo Montoya";
-      user1.email = "Iniyo@PrincessBride.com";
-      user1.location = "Philadelphia";
-      return (db.insertUser(user1.name, user1.email, user1.location)).then(function (pk) {
-        user1.userid = pk;
-        expect(pk).gt(0);
-      }, function (error) {
-        assert.fail(error);
-      });
-    });
-    it('insertUser(name, email, location, password)', function () {
-      var user1 = Object.create(user);
-      user1.name = "Fessig Giant";
-      user1.email = "Fessig@PrincessBride.com";
-      user1.location = "Philadelphia";
-      user1.password = 'Abc123';
-      return (db.insertUser(user1.name, user1.email, user1.location,user1.password)).then(function (pk) {
-        user1.userid = pk;
-        expect(pk).gt(0);
-      }, function (error) {
-  
-        assert.fail(error);
-      });
-    });
-    it('test duplicate insert', function () {
-      var user1 = Object.create(user);
-      user1.name = "Fessig Giant";
-      user1.email = "Fessig@PrincessBride.com";
-      user1.location = "Philadelphia";
-      user1.password = 'Abc123';
-      return (db.insertUser(user1.name, user1.email, user1.location, user1.password)).then(function (pk) {
-        assert.isTrue(false, 'success is failure');
-      }, function (error) {
-        assert.isTrue(true, 'failure is a success');
-      });
-    });
-    it('test Missing email', function () {
-      var user1 = Object.create(user);
-      user1.name = "Princess Buttercup";
-      user1.email = null;
-      user1.location = "Philadelphia";
-      user1.password = 'Abc123';
-      return (db.insertUser(user1.name, null, user1.location)).then(function (pk) {
-        assert.isTrue(false, 'success is failure');
-      }, function (error) {
-        assert.isTrue(true, 'failure is a success');
       });
     });
   });

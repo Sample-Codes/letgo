@@ -1,3 +1,4 @@
 angular.module('newListing', [
-    'ngRoute'
+    'ngRoute',
+    'ngCookies'
 ]);

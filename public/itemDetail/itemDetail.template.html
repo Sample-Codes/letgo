@@ -1,0 +1,69 @@
+<div>
+    <div id="headDetails">
+        <a id="backIcon" ng-click="$ctrl.goback()"><img class="icon_pos" src="../static/img/back.png" /></a>
+        <label class="lgLabel">{{$ctrl.listing.price | currency}}</label>
+        <div id="buttonDetails">
+            <input class="button" type="button" value="Ask a Question" name="ask" id="ask" ng-click="$ctrl.ask()" />
+            <input class="button" type="button" value="Make an Offer" name="offer" id="offer" ng-click="$ctrl.ask()" />
+        </div>
+        <div id="buttonDetailsUpdate">
+            <input class="button" type="button" value="Update" name="update" id="update" ng-click="$ctrl.update()" />
+        </div>
+    </div>
+    <br /><br /><br />
+    <div id="wrapperDetails">
+                    <!--// category:"soccer"
+                    // description:"soccer ball"
+                    // imageFile:"456"
+                    // insertDt:"2016-09-23 14:08:48"
+                    // listid:1
+                    // location:"Baltimore"
+                    // price:25
+                    // status:"POSTED"
+                    // userEmail:"test@letgo.com"
+                    // userName:"testsqlname"
+                    // userid:1        -->
+        <figure>
+            <div id="photo">
+                <img ng-src="/static/photos/{{$ctrl.listing.imageFile}}" width="250" height="250"/>
+            </div>
+            <figcaption>
+            <p id="description">Description: {{$ctrl.listing.description}}</p>
+            <p id="description">Status: {{$ctrl.listing.status}}</p>
+            <p id="description">Posted on: {{$ctrl.listing.insertDt}}</p>
+            <p id="description">Email: {{$ctrl.listing.userEmail}}</p>
+            <p id="description">Owner: {{$ctrl.listing.userName}}</p>
+            <p id="description">Location: {{$ctrl.listing.location}}</p>
+            </figcaption>
+        </figure>
+        <div id="location_map">
+            <label class="smLabel" ng-bind="$ctrl.listing.location"></label>
+            <map center="{{$ctrl.listing.location}}" zoom="14" />
+        </div>
+    </div>
+    <div id="chat">
+        <a id="backIcon"><img class="sm_back" src="../static/img/back.png" ng-click="$ctrl.closechat()" /></a>
+        <div id="chathead">
+            <img class="avatar" src="../static/img/avatar.png" />
+            <label class="xlgLabel">Billy</label>
+        </div>
+        <div id="chatbox">
+            <p><b>You:</b> Hello! I have a question about your bike.  How old is it? Is it good?</p>
+            <p><b>Billy:</b> I thought you have one question?</p>
+            <p><b>You:</b> Uh oh... apparently you are not nice seller.  How old is it?</p>
+            <p><b>Billy:</b> 4</p>            
+            <p><b>You:</b> months or years?</p>            
+            <p><b>Billy:</b> days</p>                        
+            <p><b>You:</b> Cool! I would like to buy it! Can we meet at Columbia Mall tonight?</p>
+            <p><b>Billy:</b> Tonight ?@$!? urh well ok but do not bring your goons. I have gun. Meet me there at 7:30pm</p>
+            <p><b>You:</b> Geez! You moron! Forget it. Bye!</p>
+            <p><b>Billy:</b> likewise</p>
+        </div>
+        <div id="typebox">
+            <p><b>You:</b> what @#$%^&*!!?!?!</p>            
+        </div>
+         <a id="sendIcon"><img class="sm_send" src="../static/img/send.png" /></a>
+    </div>
+</div>
+
+ 

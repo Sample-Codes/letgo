@@ -40,19 +40,70 @@ app.get('/getUser/:userName', function (req, res) {
     )
 });
 
+app.get('/getPhotos/:listid', function(req, res) {
+    console.log('listid: ' + req.params.listid);
+
+    var listid = req.params.listid;
+    var p = db.getListingPhotos(listid);
+    p.then(
+        (val) => {
+            console.log('Photos: ', val);
+            res.send(val);
+        }
+    ).catch(
+        (err) => {
+            res.status(500);
+            console.log(err);
+            res.send(err);
+        }
+    )
+});
+
+app.get('/getLogin/:userName/:password', function (req, res) {
+    console.log('Body: ' + req.body.userName)
+    console.log('userName: ' + req.params.userName)
+    console.log('password: ' + req.params.password)
+
+    var login = {
+        email: req.params.userName,
+        password: req.params.password
+    };
+
+    var p = db.getUser(login.email, login.password);
+    p.then(
+        (val) => {
+
+            if (login.email === val.email & login.password === val.password){
+            res.send(val);
+            }
+            else {
+            res.send('Invalid Login');    
+            }
+        }
+    ).catch(
+        (err) => {
+            res.status(500);
+            console.log(err);
+            res.send(err);
+        }
+    )
+});
+
 app.post('/insertUser/', function (req, res) {
 
     console.log('insert user body email:' + req.body.email)
+    console.log('insert user body password:' + req.body.password)
     console.log('insert user body name:' + req.body.name)
     console.log('insert user body:' + req.body.location)
 
     var user = {
         email: req.body.email,
+        password: req.body.password,
         name: req.body.name,
         location: req.body.location
     };
 
-    var p = db.insertUser(user.name, user.email, user.location);
+    var p = db.insertUser(user.name, user.email, user.location, user.password);
     p.then(
         (userid) => {
             //res.send('User Added');
@@ -66,13 +117,19 @@ app.post('/insertUser/', function (req, res) {
     )
 });
 
-app.post('/insertListing/', multer({dest: './public/photos/'}).single('photo'), function (req, res) {
+app.post('/insertListing/', multer({dest: './public/photos/'}).single('file'), function (req, res) {
+
+    console.log('Req')
+    console.dir(req)
+    console.log('file')
+    console.dir(req.file)
 
 	console.log('Body userid: ' + req.body.userId); 
 	console.log('Body description: ' + req.body.description); 
 	console.log('Body category: ' + req.body.category); 
     console.log('Body price: ' + req.body.price); 
-	console.log('Body photo: ' + req.body.photo); 
+	//console.log('Body photo: ' + req.body.photo); 
+    console.log('File photo: ' + req.file.filename); 
 	console.log('Body location: ' + req.body.location);     
 	//console.log('File: ' + req.file);
 
@@ -83,8 +140,8 @@ app.post('/insertListing/', multer({dest: './public/photos/'}).single('photo'), 
         price: req.body.price,
         category: req.body.category,
         location: req.body.location,
-        //photo: req.file.filename
-        photo: req.body.photo
+        photo: req.file.filename
+        //photo: req.body.photo
     };
 
     var insertListing = db.insertListing(listing.userId, listing.description, listing.price, listing.category, listing.location, listing.photo);
@@ -105,15 +162,15 @@ app.post('/insertListing/', multer({dest: './public/photos/'}).single('photo'), 
 
 });
 
-app.post('/insertWatchList/', function (req, res) {
+app.post('/insertWatchList/:userId/:listId', function (req, res) {
 
     var user = {
         email: req.body.email,
-        userId: req.body.userId
+        userId: req.params.userId
     };
 
     var listing = {
-        listId: req.body.listId,
+        listId: req.params.listId,
     };
 
     var insertWatchList = db.insertWatchList(user.userId, listing.listId);
@@ -130,20 +187,6 @@ app.post('/insertWatchList/', function (req, res) {
 });
 
 app.get('/getListings/', function (req, res) {
-
-    var user = {
-        email: req.body.email,
-        userId: req.body.userId
-    };
-
-    var listing = {
-        description: req.body.description,
-        price: req.body.price,
-        category: req.body.category,
-        location: req.body.listinglocation,
-        status: req.body.status,
-        postedBy: req.body.postedBy
-    };
 
     var listings = db.getAllListings();
 
@@ -238,22 +281,23 @@ app.get('/getWatchersForListing/:listId', function (req, res) {
 
 app.post('/updateListing/', function (req, res) {
 
-    var user = {
-        email: req.body.email,
-        userId: req.body.userId
-    };
+console.log('update listing begin')
+    console.dir(req)
+    console.log(req.body.userId)
+
 
     var listing = {
+        userId: req.body.userId,
         listId: req.body.listId,
         description: req.body.description,
         price: req.body.price,
         category: req.body.category,
-        location: req.body.listinglocation,
+        location: req.body.location,
         status: req.body.status,
-        photo: req.file.filename
+        //photo: req.file.filename
     };
 
-    var updateListing = db.updateListing(user.userId, listing.listId, listing.description, listing.price, listing.category, listing.location, listing.status);
+    var updateListing = db.updateListing(listing.userId, listing.listId, listing.description, listing.price, listing.category, listing.status, listing.location);
 
     updateListing.then((val) => {
         res.send('Listing Id ' + listing.listId + ' is updated successfully!');
@@ -430,12 +474,12 @@ app.post('/deleteEntireWatchList/', function (req, res) {
 
 });
 
-app.post('/deleteWatchList/', function (req, res) {
+app.post('/deleteWatchList/:userId/:listId', function (req, res) {
 
     var watchlist = {
         watchId: req.body.watchId,
-        listId: req.body.listId,
-        userId: req.body.userId
+        listId: req.params.listId,
+        userId: req.params.userId
     };
 
     var deleteWatchList = db.deleteWatchList(watchlist.userId, watchlist.listId);

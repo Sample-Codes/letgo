@@ -5,12 +5,20 @@
   <div id="login-box" class="divBox">
       <form ng-submit="$ctrl.redirect()"  name="loginForm">
       <div>
+          <label class='lgLabel'>Username</label>
           <input ng-model="$ctrl.userName" required type="email" 
                 id="userName" class="textBox" name="userName" title="Username" 
-                value="" placeholder="Username" size="30" maxlength="2048" />
+                value="" placeholder="" size="30" maxlength="2048" />
                 <div class="errorBox">
                     <!--<span ng-show="loginForm.userName.$error.required">Required!</span>-->
                     <span ng-show="loginForm.userName.$error.email" class="error">Not valid email!</span>
+                </div>
+          <label class='lgLabel'>Password</label>
+          <input ng-model="$ctrl.password" required type="password" 
+                id="password" class="textBox" name="password" title="Password" 
+                value="" placeholder="" size="30" maxlength="30" />
+                <div class="errorBox">
+                    <span ng-show="loginForm.password.$error.required">Password Required!</span>
                 </div>
       </div>
             <br /><br />

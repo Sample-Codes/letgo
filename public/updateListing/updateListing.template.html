@@ -1,0 +1,66 @@
+<div>
+    <h1>Update Listing</h1>
+    <div id="update-listing" class="divBox">>
+        <form ng-submit="$ctrl.redirect()" name="updateListingForm">
+            <div id="entry-listing">
+                <label class='lgLabel'>Category</label>
+                <input ng-model="$ctrl.listing.category"  required type="text"
+                        id="category"  class="textBox" name="category" title="category" 
+                        value="" placeholder="" size="25" maxlength="20"  />
+                        <span ng-show="updateListingForm.category.$error.required">Category is Required!</span>
+                        <br>
+                        <br>
+                <label class='lgLabel'>Description</label>
+                <textarea ng-model="$ctrl.listing.description"  required type="text"
+                        id="name"  class="textArea" name="description" title="description" 
+                        value="" placeholder="" size="30" maxlength="144"></textarea>
+                        <span ng-show="updateListingForm.description.$error.required">Description is Required!</span>
+                        <br>
+                        <br>
+                <label class='lgLabel'>Price  (currency: {{$ctrl.listing.price | currency}})</label>
+                <input ng-model="$ctrl.listing.price"  required type="text"
+                        id="price"  class="textBox" name="price" title="price" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/"
+                        value="" placeholder="" size="7" maxlength="6"  />
+                        <span ng-show="updateListingForm.price.$error.required">Price is Required!</span>
+                        <span ng-show="!updateListingForm.price.$valid" class="error">Price is Invalid!</span>
+                        <br>
+                        <br> 
+                <label class='lgLabel'>Selling Location</label>
+                <input ng-model="$ctrl.listing.location"
+                        id="location" class="textBox" name="location" title="location" 
+                        value="" placeholder="" size="30" maxlength="40"/>   
+                <br>
+                <br>
+                <label class='lgLabel'>Status</label>
+                <select name='status' ng-model="$ctrl.listing.status" class="textBox" required>
+                <option value="POSTED" >POSTED</option>
+                <option value="PENDING" >PENDING</option>
+                <option value="SOLD" >SOLD</option>
+                </select>
+                
+                <span ng-show="updateListingForm.status.$error.required">Status is Required!</span>
+                <br>
+                <br>
+                <br /><br /><br />
+                <a class="link" ng-click="$ctrl.cancel()">Cancel</a><br>
+                <button class="button" ng-click="$ctrl.reset()" title="Clear Form">Clear Form</button>             
+            </div>
+            <div id="preview-listing">
+                <div id="preview-box">
+                        <label class='lgLabel darkgray'><u>Preview</u></label><br><br>
+                        <div id="frame">
+                          <img ng-src="/static/photos/{{$ctrl.listing.imageFile}}" width="250" height="250"/><br>
+                        </div>
+                        <label class='smValue'> Category: {{$ctrl.listing.category}}</label> <br><br>    
+                        <label class='smValue'> Description: {{$ctrl.listing.description}}</label> <br><br>  
+                        <label class='smValue'> Price: {{$ctrl.listing.price | currency}}</label> <br><br>
+                        <label class='smValue'> Selling Location: {{$ctrl.listing.location}}</label><br /><br />
+                        <label class='smValue'> Status: {{$ctrl.listing.status}}</label> 
+                        <br><br>
+                        <input class="button fixedNewPost" type="submit" value="Update Posting" name="submit" id="submit" title="Update Posting"/><br>
+                </div> 
+            </div>
+            
+        </form>
+    </div>
+</div>

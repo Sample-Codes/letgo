@@ -1,35 +1,73 @@
 <div id="wrapper">
   <div id="sidebar">
-    <!--Sidebar content 
-      <a class="linkForSale" ng-click="$ctrl.signout()">Sign Out</a>
-    -->
-    <input class="button" type="button" value="Sign Out" name="signout" id="signout" ng-click="$ctrl.signout()" />
-    <br /><br /><br /><br />
+
     <form ng-submit="$ctrl.redirect()"  name="newListingForm"> 
       <div id="profile">
-        User Name: {{$ctrl.username}}
+        <label class="smLabel">Name: </label><label class="smValue" ng-bind='$ctrl.username'>&nbsp;</label>
+        (<a class="smLink" href="" ng-click="$ctrl.signout()">Sign Out</a>)
         <br>
-        Location: {{$ctrl.location}}
-        <br>
+        <label class="smLabel">Location: </label><label class="smValue" ng-bind='$ctrl.location'></label>
+        <br><br>
+        <a class="smLink" ng-click="$ctrl.watchlist()">Watch List: </a><label class="smValue">{{$ctrl.watching}}</label>
+        <br />
         <input class="button" type="submit" value="Add New Listing" name="New Listing" id="submit" />
+        <br>
+        <a class="smLink" href="" ng-click="$ctrl.unsubscribe()">Unsubscribe from LetGo</a>
       </div>
+      
     </form>
     <div id="searchOptions">
-         Search: <input ng-model="query" type="text" class="textBox"/>
+      <table>
+        <tr>
+          <td>
+            <label class="smLabel">Search: </label>
+          </td>
+        </tr>        
+        <tr>
+          <td>
+            <input ng-model="query" type="text" class="smTextBox"/>
+          </td>
+        </tr>
+        <tr>
+         <td> 
+            <label class="smLabel">Sort by: </label>
+              <select name="sortfield" ng-model="sortField" >
+                <option value="item" selected="selected">Item</option>
+                <option value="price">Price</option>
+              </select>
+            <label class="smLabel"><br />
+              <input type="radio" ng-model="direction" name="direction" checked>
+              ascending
+            </label>
+            <label class="smLabel"><br />
+              <input type="radio" ng-model="direction" name="direction" value="reverse">
+              descending
+            </label>
+          </td>
+        </tr>
+      </table>    
     </div>
-  </div>
-    <div id= "content">
-      <!--Body content-->
-
-      <div id="feed" ng-repeat="listing in $ctrl.listings | toArray:true | filter:query">
-        <a href="#/itemDetail/{{listing.listid}}" class="thumb">
-                <img ng-src="{{listing.imageFile}}" alt="{{listing.description}}" />
-            </a>
-         <span> Item: {{listing.category}}</span>
-          <p>Description: {{listing.description}}</p>
-        
-      </div>
-
+    <div id="vcanvas">
+      <iframe style="position: inherit; height: 37%; width: 100%;" src="https://www.youtube.com/embed/s0sbTLCLpgY" frameborder="0"
+        allowfullscreen></iframe>
     </div>
+
   </div>
+  <div id="content">
+    <!--Body content-->
+    <main>
+      <section id="feed" ng-repeat="listing in $ctrl.listings | filter:query | orderBy:sortField:direction"  >
+        <img back-img="/static/photos/{{listing.imageFile}}" ng-click="$ctrl.itemdetail(listing)" width="300">
+
+        <a ng-click="$ctrl.likeMe(listing)"><img id="likeBtn" ng-src="/static/img/{{listing.liked ? 'heartLike.png' : 'heartNoLike.png' }} " /></a>
+        <p>Item: {{listing.listid}} 
+        <p>Category: {{listing.category}}</p>
+        <p>Price: {{listing.price | currency}}</p> 
+        <p>Seller: {{listing.userName}}</p>
+        <p>Description: {{listing.description}}</p>
+        <p>Status: {{listing.status}}</p>
+      </section>
+    </main>
+  </div>
+</div>
 </div>
