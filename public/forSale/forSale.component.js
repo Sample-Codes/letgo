@@ -112,6 +112,22 @@ angular.
         reloadBG();   //** reload background image *optional*
         $location.url('/login');
       }
+
+      self.unsubscribe = function () {
+        console.log('unsubcribe here')
+        var r = confirm("Are you sure you want to unsubcribe?", "LetGo");
+        if (r == true) {
+          ListingService.unsubscribeUser(self.userId).then(function (dataResponse) {
+            //$location.url('/login');
+            console.log('here')
+            self.signout();
+          }).error(function (res) {
+            console.log("error deleting user: " + res);
+          });
+        }
+
+      }
+
     }
   }).directive('backImg', function () {
     return function (scope, element, attrs) {

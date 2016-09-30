@@ -55,7 +55,7 @@ angular.
 
       //** click update
       self.update = function() {
-        alert("Done! All of your changes are updated!");
+        $location.url('/updateListing/' + self.listid);
       }   
     }
   });

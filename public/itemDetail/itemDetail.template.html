@@ -25,10 +25,11 @@
                     // userid:1        -->
         <figure>
             <div id="photo">
-                <img src="/static/photos/{{$ctrl.listing.imageFile}}" />
+                <img ng-src="/static/photos/{{$ctrl.listing.imageFile}}" width="250" height="250"/>
             </div>
             <figcaption>
-            <p id="description">{{$ctrl.listing.description}}</p>
+            <p id="description">Description: {{$ctrl.listing.description}}</p>
+            <p id="description">Status: {{$ctrl.listing.status}}</p>
             <p id="description">Posted on: {{$ctrl.listing.insertDt}}</p>
             <p id="description">Email: {{$ctrl.listing.userEmail}}</p>
             <p id="description">Owner: {{$ctrl.listing.userName}}</p>
