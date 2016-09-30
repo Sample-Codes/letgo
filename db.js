@@ -137,13 +137,23 @@ function initDB()
 
 }
 
-
 function clearTables()
 {
-    db.run("DELETE from watchlist", function (err) { if (err) { } }); //x
-    db.run("DELETE from listing", function (err) { if (err) { } }); //x
+    clearWatchlistTable();
+    clearListingTable();
+    clearUserTable();
+}
+function clearUserTable()
+{
     db.run("DELETE from users", function (err) { if (err) { } });
-
+}
+function clearListingTable()
+{
+    db.run("DELETE from listing", function (err) { if (err) { } }); //x
+}
+function clearWatchlistTable()
+{
+    db.run("DELETE from watchlist", function (err) { if (err) { } }); //x
 }
 function asMyQuote(input) {
     if (input === null)
@@ -395,7 +405,7 @@ function updateListing(userid, listid, description, price, category,status, loca
              + createUpdateList(description, price, category,status, location, photo)
              + " WHERE LISTID=" + listid
              + " AND USERID=" + userid;
-            console.log('updateListing sql' + command);
+            console.log(command);
             db.run(command, function (err) {
                 if (err) {
                     reject(err);

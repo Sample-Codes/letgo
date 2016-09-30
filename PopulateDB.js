@@ -25,13 +25,6 @@ var watchedListing = {
     insertDt: '',
     listing: ''
 };
-var imageFile = {
-    imageid: '',
-    userid: '',
-    listid: '',
-    imageName: '',
-    
-}
 var locs = ['Baltimore','Columbia','DC'];
 var items = ['Picture Frame','TV','Car','Speed Boat','Guitar','DVDs'];
 var prices = [5.0,45.00,750.00,650.00,100.00,2.00];
@@ -87,13 +80,7 @@ function loadTables()
         newList.imageFile = img;
         printoutListing(newList);
         listing[nextIdx] = newList;
-        var newPic = Object.create(imageFile);
-        newPic.userid = uid;
-        newPic.listid = nextIdx+1;
-        newPic.imageName = img;
-        photos[nextIdx]=newPic;
         nextIdx++;
-
        }
     }
     for (var i = 0; i < nextIdx; i++)
@@ -102,12 +89,6 @@ function loadTables()
             listing[i].listid = pk;
             printoutListing(listing[i]);
         }, (err) => {console.log("Insert error")});
-    }
-    for (var i = 0; i < nextIdx; i++)
-    {
-        (db.addListingPhoto(photos[i].userid, photos[i].listid, photos[i].imageName)).then((pk) => {
-            photos[i].imageid = pk;
-        }, (err) => {console.log("Insert Phtoto error")});
     }
  /********************************************************************
  *  This section inserts 1 to 10 watched listings for each user
