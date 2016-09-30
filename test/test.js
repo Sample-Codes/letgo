@@ -371,8 +371,7 @@ describe('Database Testing', function () {
       return (db.updateListing(2, 9, description)).then(function () {
         assert.isTrue(true, 'Listing updated');
       }, function (error) {
-  
-        assert.fail(error);
+         assert.fail(error);
       });
     });
     it('Update listing(Photo)', function () {
@@ -396,9 +395,9 @@ describe('Database Testing', function () {
       });
     });
     it('Update listing(Location)', function () {
-      list1.location = 'DC';
+      var location = 'DC';
 
-      return (db.updateListingLocation(user1.userid, list1.listid, list1.location)).then(function () {
+      return (db.updateListingLocation(2, 9, location)).then(function () {
        assert.isTrue(true, 'Listing updated');
       }, function (error) {
   
@@ -406,12 +405,12 @@ describe('Database Testing', function () {
       });
     });
 
-    it('retrieve select a users sell list(userid)', function () {
+    it('getSellList(userid)', function () {
       var srchListing = Object.create(listing);
       return (db.getSellList(1)).then(function (list) {
   
         expect(list.length > 0);
-        expect(list.length).to.equal(7, 'Seven rows');
+        expect(list.length).to.equal(6, 'Six rows');
 
       }, function (error) {
   

@@ -121,7 +121,6 @@ angular.
         });
       }
 
-
     }
   }).directive('backImg', function () {
     return function (scope, element, attrs) {

@@ -3,13 +3,13 @@
 
     <form ng-submit="$ctrl.redirect()"  name="newListingForm"> 
       <div id="profile">
-        <label class="smLabel">User Name: </label><label class="smValue" ng-bind='$ctrl.username'>&nbsp;</label>
+        <label class="smLabel">Name: </label><label class="smValue" ng-bind='$ctrl.username'>&nbsp;</label>
         (<a class="smLink" href="" ng-click="$ctrl.signout()">Sign Out</a>)
         <br>
         <label class="smLabel">Location: </label><label class="smValue" ng-bind='$ctrl.location'></label>
         <br><br>
-        <br>  
-        <a class="smLink" ng-click="$ctrl.watchlist()">Watch List:</a> {{$ctrl.watching}}
+        <a class="smLink" ng-click="$ctrl.watchlist()">Watch List: </a><label class="smValue">{{$ctrl.watching}}</label>
+        <br />
         <input class="button" type="submit" value="Add New Listing" name="New Listing" id="submit" />
       </div>
       <a class="smLink" href="" ng-click="$ctrl.unsubscribe()">Unsubscribe from LetGo</a>
@@ -18,32 +18,29 @@
       <table>
         <tr>
           <td>
-
             <label class="smLabel">Search: </label>
           </td>
         </tr>        
         <tr>
           <td>
-            <input ng-model="query" type="text" class="textBox"/>
+            <input ng-model="query" type="text" class="smTextBox"/>
           </td>
         </tr>
         <tr>
          <td> 
-            <label class="smLabel">Sort by:
-              <select ng-model="sortField">
+            <label class="smLabel">Sort by: </label>
+              <select name="sortfield" ng-model="sortField" >
+                <option value="item" selected="selected">Item</option>
                 <option value="price">Price</option>
-                <option value="item">Item</option>
               </select>
-            </label>
-            <label class="smLabel">
+            <label class="smLabel"><br />
               <input type="radio" ng-model="direction" name="direction" checked>
               ascending
             </label>
-            <label class="smLabel">
+            <label class="smLabel"><br />
               <input type="radio" ng-model="direction" name="direction" value="reverse">
               descending
             </label>
-                    <!--<label class="smLabel">Sort by</label> <a class="smLink" href="" ng-click="sortField = 'price'">Price</a> -->
           </td>
         </tr>
       </table>    
